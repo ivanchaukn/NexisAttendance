@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Nexis</string>
+    <string name="title_section1">Upload</string>
+    <string name="title_section2">Statistics</string>
+    <string name="title_section3">New Comer</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
