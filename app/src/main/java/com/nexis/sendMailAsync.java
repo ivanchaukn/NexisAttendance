@@ -9,12 +9,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-public class sendMailAsync extends AsyncTask<String, Void, String> {
+public class SendMailAsync extends AsyncTask<String, Void, String> {
 	
 	private SendGrid sender;
 	private Context context;
 	
-	public sendMailAsync(Context context) {
+	public SendMailAsync(Context context) {
 		this.context = context;
 	}
 
@@ -39,7 +39,7 @@ public class sendMailAsync extends AsyncTask<String, Void, String> {
 					sender.addTo(rep);
 			}
 			
-			sender.setFrom("nexisApplication@gmail.com");
+			sender.setFrom(Constants.GMAIL_USER_NAMAE);
 			sender.setSubject(info[0]);
 			sender.setText(info[1]);
 			

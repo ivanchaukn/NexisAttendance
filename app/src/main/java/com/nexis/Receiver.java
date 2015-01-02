@@ -2,6 +2,8 @@ package com.nexis;
 
 import android.content.Context;
 import android.content.Intent;
+
+import com.nexis.Activity.MainActivity;
 import com.parse.ParsePushBroadcastReceiver;
 
 public class Receiver extends ParsePushBroadcastReceiver {

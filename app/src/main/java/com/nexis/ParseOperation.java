@@ -15,11 +15,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.content.Context;
 
 public class ParseOperation {
 
-	static public int getMostRecentVersionCode(Activity actv)
+	static public int getMostRecentVersionCode(Context actv)
 	{
 		try
         {
@@ -40,7 +40,7 @@ public class ParseOperation {
 	}
 	
 	
-	static public List<ParseUser> getUserList(int level, String nexcell, String lessThan, Activity actv)
+	static public List<ParseUser> getUserList(int level, String nexcell, String lessThan, Context actv)
 	{
 		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
 		List<ParseUser> userObject = new ArrayList<ParseUser>();
@@ -76,7 +76,7 @@ public class ParseOperation {
     	return userObject;
 	}
 	
-	static public String getUserEmail(int level, String nexcell, Activity actv)
+	static public String getUserEmail(int level, String nexcell, Context actv)
 	{
 		List<String> emails = new ArrayList<String>();
 		List<ParseUser> users = getUserList(level, nexcell, "", actv);
@@ -88,7 +88,7 @@ public class ParseOperation {
 		return recipients;
 	}
 	
-	static public String getMultilevelUserEmail(int level, String nexcell, String lessThan, Activity actv)
+	static public String getMultilevelUserEmail(int level, String nexcell, String lessThan, Context actv)
 	{
 		List<String> emails = new ArrayList<String>();
 		List<ParseUser> users = getUserList(level, nexcell, lessThan, actv);
@@ -100,7 +100,7 @@ public class ParseOperation {
 		return recipients;
 	}
 	
-	static public List<ParseObject> getUserLevelList(int level, Activity actv)
+	static public List<ParseObject> getUserLevelList(int level, Context actv)
 	{
 		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
 		
@@ -122,7 +122,7 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 	
-	static public List<ParseObject> getAuthorLevel(Activity actv)
+	static public List<ParseObject> getAuthorLevel(Context actv)
 	{
 		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
 		
@@ -143,7 +143,7 @@ public class ParseOperation {
 	}
 	
 
-	static public List<ParseObject> getNexcellList(boolean nameOnly, Activity actv) {
+	static public List<ParseObject> getNexcellList(boolean nameOnly, Context actv) {
 		
         List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
         
@@ -165,7 +165,7 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 	
-	static public List<ParseObject> getNexcellData(String nexcell, DateTime date, Activity actv) {
+	static public List<ParseObject> getNexcellData(String nexcell, DateTime date, Context actv) {
 		
         List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
         
@@ -190,7 +190,7 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 	
-	static public void updateUser(String objectID, final int level, final Activity actv) {
+	static public void updateUser(String objectID, final int level, final Context actv) {
 		
     	ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
     	
@@ -204,7 +204,7 @@ public class ParseOperation {
     	}); 
 	}
 	
-	static public void updateData(String objectID, final int f, final int s, final int c, final int n, final String userName, Activity actv) {
+	static public void updateData(String objectID, final int f, final int s, final int c, final int n, final String userName, Context actv) {
 		
     	ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
     	
@@ -222,7 +222,7 @@ public class ParseOperation {
     	}); 
 	}
 	
-	static public void saveData(int f, int s, int c, int n, DateTime date, String nexcell, String userName, Activity actv) {
+	static public void saveData(int f, int s, int c, int n, DateTime date, String nexcell, String userName, Context actv) {
 		
 		DateTime lastWeek = date.minusWeeks(1);
 		

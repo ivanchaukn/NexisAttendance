@@ -1,4 +1,4 @@
-package com.nexis;
+package com.nexis.Fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +11,9 @@ import java.text.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import com.nexis.Constants;
+import com.nexis.Activity.MainActivity;
+import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.parse.ParseObject;
 

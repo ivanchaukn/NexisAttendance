@@ -1,21 +1,21 @@
-package com.nexis;
+package com.nexis.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nexis.ParseOperation;
 import com.nexis.R;
+import com.nexis.UIDialog;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,7 +36,7 @@ public class RegisterActivity extends Activity {
         
         final Spinner nexcellSpin = (Spinner) findViewById(R.id.nexcellSpinner);
         
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellList(true, this);        
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellList(true, this);
         for(ParseObject x: nexcellObject) nexcellList.add(x.get("Name").toString());
 
         populateSpinner(nexcellList, nexcellSpin);

@@ -17,7 +17,8 @@ public final class Constants {
 	public static final int ADMIN_LEVEL = 3;
 	public static final int CC_LEVEL = 2;
 	public static final int USER_LEVEL = 1;
-	
+
+    public static final String GMAIL_USER_NAMAE = "nexisapplication@gmail.com";
 	public static final String SENDGRID_USER_NAMAE = "nexisapplication";
 	public static final String SENDGRID_PASSWORD = "(Nexis14!#";
 	

@@ -1,12 +1,11 @@
-package com.nexis;
+package com.nexis.Activity;
 
 import com.nexis.R;
+import com.nexis.UIDialog;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.RequestPasswordResetCallback;
-import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;

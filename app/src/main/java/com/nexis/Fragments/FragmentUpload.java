@@ -1,15 +1,20 @@
-package com.nexis;
+package com.nexis.Fragments;
 
 import java.util.List;
 import java.util.Locale;
 import java.text.DateFormatSymbols;
 
+import com.nexis.Constants;
+import com.nexis.Activity.MainActivity;
+import com.nexis.ParseOperation;
 import com.nexis.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
+import com.nexis.UIDialog;
+import com.nexis.SendMailAsync;
 import com.parse.ParseObject;
 
 import android.support.v4.app.DialogFragment;
@@ -260,7 +265,7 @@ public class FragmentUpload extends DialogFragment {
 				+ "Fellowship: %s \nService: %s \nCollege: %s \nNew Comer: %s \n\nTime of Submission: %s \nSubmitted By: %s", 
 				nexcell, dateString, fellNum, servNum, collNum, newcNum, currentDateTimeString, userName);
 		
-		sendMailAsync sendMail = new sendMailAsync(getActivity());
+		SendMailAsync sendMail = new SendMailAsync(getActivity());
 		sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, "", "");
 
 		Toast.makeText(getActivity(), "Saved Successfully" , Toast.LENGTH_LONG).show();

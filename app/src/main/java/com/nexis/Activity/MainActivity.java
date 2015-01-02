@@ -1,21 +1,26 @@
-package com.nexis;
+package com.nexis.Activity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 //import nexis.FragmentUpload.OnFragmentUploadSelectedListener;
 
+import com.nexis.Constants;
+import com.nexis.ExcelReports.genWeeklyReport;
+import com.nexis.Fragments.FragmentHData;
+import com.nexis.Fragments.FragmentNewComer;
+import com.nexis.Fragments.FragmentUpload;
+import com.nexis.ParseOperation;
 import com.nexis.R;
+import com.nexis.UIDialog;
+import com.nexis.SendMailAsync;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseException;
@@ -279,17 +284,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 		@Override
 		public void onClick(DialogInterface dialog, int id) {
-			 ParsePush.unsubscribeInBackground(userNexcell);
+        ParsePush.unsubscribeInBackground(userNexcell);
 
-	   		 ParseInstallation.getCurrentInstallation().put("lastSignIn", "");
-	   		 ParseInstallation.getCurrentInstallation().saveInBackground();
+        ParseInstallation.getCurrentInstallation().put("lastSignIn", "");
+        ParseInstallation.getCurrentInstallation().saveInBackground();
 
-	       	 ParseUser.logOut();
+        ParseUser.logOut();
 
-	       	 endCurrentActivity();
+        endCurrentActivity();
 
-	       	 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-	       	 startActivity(i);
+        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(i);
 		}
 	};
 
@@ -456,121 +461,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		String today = new DateTime().toString("yyyy-MM-dd");
 		
 		String filePath = this.getFilesDir().getPath().toString() +  "/Nexis Attendance " + today + ".xls";
-		
-		String toRecipients = ParseOperation.getMultilevelUserEmail(2, null, "G", this);
-		String ccRecipients = null;
-		
-		List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
-		nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
-		
-		List<DateTime> dateList = new ArrayList<DateTime>();
-		List<List<Integer>> mainList = new ArrayList<List<Integer>>();
 
-		parseData(dateList, mainList, Constants.CATEGORY_LIST);	
-		
-		if (mainList.size() == 0)
-		{
-			UIDialog.onCreateInvalidDialog(this, "No data are found! Report cannot be generated");
-			return;
-		}
-		
-		Boolean excel = Excel.createWeeklyReport(this, filePath, nexcellTitles, Constants.CATEGORY_LIST, dateList, mainList);
-		if (!excel) return;
-		
-		sendMailAsync sendMail = new sendMailAsync(this);
+        String toRecipients = ParseOperation.getMultilevelUserEmail(Constants.CC_LEVEL, null, "G", this);
+        String ccRecipients = null;
+
+        List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
+        nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
+
+        genWeeklyReport report = new genWeeklyReport(this, filePath);
+        report.genReport();
+
+        SendMailAsync sendMail = new SendMailAsync(this);
 		sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , toRecipients, ccRecipients, filePath);
-	}
-	
-	private void parseData(List<DateTime> dateList, List<List<Integer>> mainList, List<String> categoryList)
-	{
-		List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, null, this);
-		
-		int startRow = 0;
-		
-		while(startRow < nexcellObject.size() && !Constants.NEXCELL_LIST.contains(nexcellObject.get(startRow).get("Nexcell"))) startRow++;
-		
-		if (startRow == nexcellObject.size()) return;
-		
-		DateTime rowDate = new DateTime((Date)nexcellObject.get(startRow).get("Date"), DateTimeZone.UTC);
-		
-		List<Integer> row = new ArrayList<Integer>();
-		List<Integer> hsData = Arrays.asList(0, 0, 0, 0);
-		List<Integer> uniData = Arrays.asList(0, 0, 0, 0);
-		List<Integer> nexisData = Arrays.asList(0, 0, 0, 0);
-		
-		int nexcellCount = 0;
-		
-		for(int i = startRow; i < nexcellObject.size(); i++)
-    	{	
-			DateTime currentDate = new DateTime((Date)nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
-			String currentNexcell = (String)nexcellObject.get(i).get("Nexcell");
-			
-			if (!Constants.NEXCELL_LIST.contains(currentNexcell)) continue;
-			
-			if (!currentDate.equals(rowDate))
-			{
-				while (nexcellCount != Constants.NEXCELL_LIST.size())
-				{
-					row.addAll(Arrays.asList(0, 0, 0, 0));
-					nexcellCount++;
-				}
-				
-				for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
-				
-				//Add data to the main list
-				dateList.add(rowDate);
-				row.addAll(hsData);
-				row.addAll(uniData);
-				row.addAll(nexisData);
-				mainList.add(row);
-				
-				//clear containers and update variable
-				rowDate = currentDate;
-				row = new ArrayList<Integer>();
-				hsData = Arrays.asList(0, 0, 0, 0);
-				uniData = Arrays.asList(0, 0, 0, 0);
-				
-				nexcellCount = 0;
-			}
-			
-			while (!currentNexcell.equals(Constants.NEXCELL_LIST.get(nexcellCount)))
-			{
-				row.addAll(Arrays.asList(0, 0, 0, 0));
-				nexcellCount++;
-			}
-			
-			for(int j = 0; j < categoryList.size(); j++)
-			{
-				int num = nexcellObject.get(i).getInt(categoryList.get(j));
-				
-				row.add(num);
-				
-				List<Integer> tempData;
-				
-				if (Constants.NEXCELL_MAP.get(currentNexcell).equals("HighSchool")) tempData = hsData;
-				else tempData = uniData;
-				
-				int newTotal = tempData.get(j) + num;
-				tempData.set(j, newTotal);
-			}
-			
-			nexcellCount++;
-    	}
-		
-		while (nexcellCount != Constants.NEXCELL_LIST.size())
-		{
-			row.addAll(Arrays.asList(0, 0, 0, 0));
-			nexcellCount++;
-		}
-		
-		for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
-		
-		//Add the last row to the main list
-		dateList.add(rowDate);
-		row.addAll(hsData);
-		row.addAll(uniData);
-		row.addAll(nexisData);
-		mainList.add(row);
 	}
 	
 	public String getUserNexcell()

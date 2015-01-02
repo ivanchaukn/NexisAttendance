@@ -1,7 +1,8 @@
-package com.nexis;
+package com.nexis.Activity;
 
-import com.parse.ParseInstallation;
-import com.parse.ParsePush;
+import com.nexis.ParseOperation;
+import com.nexis.R;
+import com.nexis.UIDialog;
 import com.parse.ParseUser;
 
 import android.app.Activity;
