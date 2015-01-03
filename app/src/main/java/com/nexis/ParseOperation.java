@@ -82,41 +82,41 @@ public class ParseOperation {
 		List<ParseUser> users = getUserList(level, nexcell, "", actv);
 		
 		for(ParseUser x: users) emails.add(x.get("email").toString());
-		
-		String recipients = StringUtils.join(emails, ", ");
-		
-		return recipients;
-	}
-	
-	static public String getMultilevelUserEmail(int level, String nexcell, String lessThan, Context actv)
-	{
-		List<String> emails = new ArrayList<String>();
-		List<ParseUser> users = getUserList(level, nexcell, lessThan, actv);
-		
-		for(ParseUser x: users) emails.add(x.get("email").toString());
-		
-		String recipients = StringUtils.join(emails, ", ");
-		
-		return recipients;
-	}
-	
-	static public List<ParseObject> getUserLevelList(int level, Context actv)
-	{
-		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
-		
-		try
+
+        String recipients = StringUtils.join(emails, ", ");
+
+        return recipients;
+    }
+
+    static public String getMultilevelUserEmail(int level, String nexcell, String lessThan, Context actv)
+    {
+        List<String> emails = new ArrayList<String>();
+        List<ParseUser> users = getUserList(level, nexcell, lessThan, actv);
+
+        for(ParseUser x: users) emails.add(x.get("email").toString());
+
+        String recipients = StringUtils.join(emails, ", ");
+
+        return recipients;
+    }
+
+    static public List<ParseObject> getUserLevelList(int level, Context actv)
+    {
+        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
+
+        try
         {
-        	ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
-        	query.whereGreaterThanOrEqualTo("level", level);
-        	query.orderByAscending("level");
-        	query.addAscendingOrder("username");
-        	
-        	nexcellObject = query.find();
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
+            query.whereGreaterThanOrEqualTo("level", level);
+            query.orderByAscending("level");
+            query.addAscendingOrder("username");
+
+            nexcellObject = query.find();
 
         }
         catch (ParseException e)
         {
-        	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
 		
     	return nexcellObject;

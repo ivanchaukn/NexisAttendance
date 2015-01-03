@@ -36,9 +36,6 @@ import android.widget.Toast;
 
 public class FragmentUpload extends DialogFragment {
 
-	static final int dateDialog_id = 1;
-	static final int confirmDialog_id = 2;
-	static final int nexcellListDialog_id = 3;
 	static final int numberPickerMax = 50;
 	static final int numberPickerMin = 0;
 	

@@ -1,47 +1,46 @@
 package com.nexis;
 
-        import java.util.List;
+import java.util.List;
 
-        import android.app.AlertDialog;
-        import android.app.Dialog;
-        import android.content.Context;
-        import android.content.DialogInterface;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 
 
-        public class UIDialog {
+public class UIDialog {
 
-            static public void onCreateErrorDialog(Context actv, String errorType) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(actv);
-                builder.setMessage(String.format("%s Error, please contact administrator!", errorType));
-                builder.setTitle("Error");
-                builder.setIcon(R.drawable.ic_action_error);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                    }
-                });
-
-                AlertDialog d = builder.create();
-                d.show();
+    static public void onCreateErrorDialog(Context actv, String errorType) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        builder.setMessage(String.format("%s Error, please contact administrator!", errorType));
+        builder.setTitle("Error");
+        builder.setIcon(R.drawable.ic_action_error);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id)
+            {
             }
+        });
 
-            static public void onCreateInvalidDialog(Context actv, String msg) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(actv);
-                builder.setMessage(String.format("%s", msg));
-                builder.setTitle("Invalid");
-                builder.setIcon(R.drawable.ic_action_warning);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                    }
-                });
+        AlertDialog d = builder.create();
+        d.show();
+    }
 
-                AlertDialog d = builder.create();
-                d.show();
+    static public void onCreateInvalidDialog(Context actv, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        builder.setMessage(String.format("%s", msg));
+        builder.setTitle("Invalid");
+        builder.setIcon(R.drawable.ic_action_warning);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id)
+            {
             }
+        });
 
-            static public void onCreateMsgDialog(Context actv, String title, String msg) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog d = builder.create();
+        d.show();
+    }
+
+    static public void onCreateMsgDialog(Context actv, String title, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
         builder.setMessage(String.format("%s", msg));
         builder.setTitle(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

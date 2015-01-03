@@ -115,40 +115,40 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		}
 		
 		//Current user info
-		ParseUser user = ParseUser.getCurrentUser();
-		userName = user.getUsername();
-		userEmail = (String)user.get("email");
-		userNexcell = (String)user.get("Nexcell");
-		
-		try
-		{
-			ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("UserLevelMap");
-			userQuery.whereEqualTo("username", userName);
-			List<ParseObject> obj = userQuery.find();
-			
-			userAuthLevel = obj.get(0).getInt("level");
-		}
-		catch (ParseException e)
-		{
-		}
-		
-		nexcellObject = ParseOperation.getNexcellList(false, this);
-		Constants.initializeNexcell(nexcellObject);
-		
-		nexcellObject = ParseOperation.getAuthorLevel(this);
-		Constants.initializeUserLevel(nexcellObject);
-		
-		// Subscribe the Broadcast push channel
-		ParsePush.subscribeInBackground("");
-		ParsePush.subscribeInBackground(userNexcell);
+        ParseUser user = ParseUser.getCurrentUser();
+        userName = user.getUsername();
+        userEmail = (String)user.get("email");
+        userNexcell = (String)user.get("Nexcell");
 
-		ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
-		ParseInstallation.getCurrentInstallation().saveInBackground();
+        try
+        {
+            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("UserLevelMap");
+            userQuery.whereEqualTo("username", userName);
+            List<ParseObject> obj = userQuery.find();
 
-		//Hide keyboard until user actually touches the edittext view
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            userAuthLevel = obj.get(0).getInt("level");
+        }
+        catch (ParseException e)
+        {
+        }
 
-		getOverflowMenu();
+        nexcellObject = ParseOperation.getNexcellList(false, this);
+        Constants.initializeNexcell(nexcellObject);
+
+        nexcellObject = ParseOperation.getAuthorLevel(this);
+        Constants.initializeUserLevel(nexcellObject);
+
+        // Subscribe the Broadcast push channel
+        ParsePush.subscribeInBackground("");
+        ParsePush.subscribeInBackground(userNexcell);
+
+        ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        //Hide keyboard until user actually touches the edittext view
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        getOverflowMenu();
 	}
 
 	private void getOverflowMenu() {
@@ -273,8 +273,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 			return null;
 		}
 	}
-	
-	
+
 	public void onUploadAttendance(DateTime date, int f, int s, int c)
 	{
 		FragmentHData statFrag = (FragmentHData) getSupportFragmentManager().findFragmentById(R.layout.fragment_hdata);
@@ -375,7 +374,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 	}
-	
+
 	private void checkStatusDialog()
 	{
 		FragmentUpload uploadFrag = (FragmentUpload) mSectionsPagerAdapter.getItem(0);
