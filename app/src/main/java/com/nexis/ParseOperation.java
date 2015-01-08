@@ -113,8 +113,31 @@ public class ParseOperation {
 
         return recipients;
     }
-	
-	static public List<ParseObject> getAuthorLevel(Context actv)
+
+    static public List<ParseObject> getUserLevelList(int level, Context actv)
+    {
+        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
+
+        try
+        {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
+            query.whereGreaterThanOrEqualTo("level", level);
+            query.orderByAscending("level");
+            query.addAscendingOrder("username");
+
+            nexcellObject = query.find();
+
+        }
+        catch(ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        return nexcellObject;
+    }
+
+
+    static public List<ParseObject> getAuthorLevel(Context actv)
 	{
 		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
 		
