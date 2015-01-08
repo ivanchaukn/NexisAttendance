@@ -106,7 +106,7 @@ public class FragmentNewComer extends DialogFragment {
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
-        sendMail.execute(nexcell + " New Comer Detail", "Please refer to the attachment for details" , toRecipients, ccRecipients, filePath);
+        sendMail.execute(nexcell + " New Comer Detail **TESTING", "Please refer to the attachment for details" , toRecipients, ccRecipients, filePath);
 
         Toast.makeText(getActivity(), "Saved Successfully" , Toast.LENGTH_LONG).show();
     }
@@ -173,7 +173,7 @@ public class FragmentNewComer extends DialogFragment {
     {
         for (int i = 0; i < labelList.size(); i++)
         {
-            if (labelList.get(i).contains("*") && infoList.get(i) == "")
+            if (labelList.get(i).contains("*") && infoList.get(i).equals(""))
             {
                 UIDialog.onCreateInvalidDialog(getActivity(), "Please make sure all required fields are entered!");
                 return true;
