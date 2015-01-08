@@ -39,7 +39,7 @@ public class SendMailAsync extends AsyncTask<String, Void, String> {
 					sender.addTo(rep);
 			}
 			
-			sender.setFrom(Constants.GMAIL_USER_NAMAE);
+			sender.setFrom(Constants.SYSTEM_GMAIL);
 			sender.setSubject(info[0]);
 			sender.setText(info[1]);
 			

@@ -40,7 +40,7 @@ public class ParseOperation {
 	}
 	
 	
-	static public List<ParseUser> getUserList(int level, String nexcell, String lessThan, Context actv)
+	static public List<ParseUser> getUserList(String nexcell, int lowerLevel, int upperLevel, Context actv)
 	{
 		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
 		List<ParseUser> userObject = new ArrayList<ParseUser>();
@@ -49,10 +49,9 @@ public class ParseOperation {
 		try
         {
         	ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
-        	
-        	if (lessThan == "L") query.whereLessThanOrEqualTo("level", level);
-        	else if (lessThan == "G") query.whereGreaterThanOrEqualTo("level", level);
-        	else query.whereEqualTo("level", level);
+
+        	query.whereGreaterThanOrEqualTo("level", lowerLevel);
+            query.whereLessThanOrEqualTo("level", upperLevel);
         	
         	nexcellObject = query.find();
         	
@@ -75,23 +74,11 @@ public class ParseOperation {
 
     	return userObject;
 	}
-	
-	static public String getUserEmail(int level, String nexcell, Context actv)
-	{
-		List<String> emails = new ArrayList<String>();
-		List<ParseUser> users = getUserList(level, nexcell, "", actv);
-		
-		for(ParseUser x: users) emails.add(x.get("email").toString());
 
-        String recipients = StringUtils.join(emails, ", ");
-
-        return recipients;
-    }
-
-    static public String getMultilevelUserEmail(int level, String nexcell, String lessThan, Context actv)
+    static public String getSubmitDataRecipient(String nexcell, Context actv)
     {
         List<String> emails = new ArrayList<String>();
-        List<ParseUser> users = getUserList(level, nexcell, lessThan, actv);
+        List<ParseUser> users = getUserList(nexcell, Constants.MEMBER_LEVEL, Constants.MASTER_LEVEL, actv);
 
         for(ParseUser x: users) emails.add(x.get("email").toString());
 
@@ -100,27 +87,32 @@ public class ParseOperation {
         return recipients;
     }
 
-    static public List<ParseObject> getUserLevelList(int level, Context actv)
+    static public String getWeeklyReportRecipient(Context actv)
     {
-        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
+        List<String> emails = new ArrayList<String>();
+        List<ParseUser> users = getUserList(null, Constants.COUS_LEVEL, Constants.COMM_LEVEL, actv);
 
-        try
-        {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
-            query.whereGreaterThanOrEqualTo("level", level);
-            query.orderByAscending("level");
-            query.addAscendingOrder("username");
+        for(ParseUser x: users) emails.add(x.get("email").toString());
 
-            nexcellObject = query.find();
+        String recipients = StringUtils.join(emails, ", ");
 
-        }
-        catch (ParseException e)
-        {
-            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-        }
-		
-    	return nexcellObject;
-	}
+        return recipients;
+    }
+
+    static public String getNewComerFormRecipient(String nexcell, Context actv)
+    {
+        List<String> emails = new ArrayList<String>();
+
+        List<ParseUser> users = getUserList(nexcell, Constants.ESM_LEVEL, Constants.MASTER_LEVEL, actv);
+        List<ParseUser> admin = getUserList(null, Constants.ADMIN_LEVEL, Constants.ADMIN_LEVEL, actv);
+        users.addAll(admin);
+
+        for(ParseUser x: users) emails.add(x.get("email").toString());
+
+        String recipients = StringUtils.join(emails, ", ");
+
+        return recipients;
+    }
 	
 	static public List<ParseObject> getAuthorLevel(Context actv)
 	{
@@ -141,7 +133,6 @@ public class ParseOperation {
 		
 		return nexcellObject;
 	}
-	
 
 	static public List<ParseObject> getNexcellList(boolean nameOnly, Context actv) {
 		

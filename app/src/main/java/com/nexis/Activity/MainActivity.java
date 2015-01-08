@@ -461,8 +461,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		
 		String filePath = this.getFilesDir().getPath().toString() +  "/Nexis Attendance " + today + ".xls";
 
-        String toRecipients = ParseOperation.getMultilevelUserEmail(Constants.CC_LEVEL, null, "G", this);
-        String ccRecipients = null;
+        String toRecipients = ParseOperation.getWeeklyReportRecipient(this);
+        String ccRecipients = Constants.SYSTEM_GMAIL;
 
         List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
         nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);

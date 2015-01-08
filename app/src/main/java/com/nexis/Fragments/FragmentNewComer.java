@@ -102,8 +102,8 @@ public class FragmentNewComer extends DialogFragment {
         report.genReport();
 
         //TODO Email should send to committee and ESMs
-        String toRecipients = ParseOperation.getUserEmail(Constants.USER_LEVEL, nexcell, getActivity());
-        String ccRecipients = ParseOperation.getUserEmail(Constants.MASTER_LEVEL, null, getActivity());
+        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity());
+        String ccRecipients = Constants.SYSTEM_GMAIL;
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
         sendMail.execute(nexcell + " New Comer Detail", "Please refer to the attachment for details" , toRecipients, ccRecipients, filePath);

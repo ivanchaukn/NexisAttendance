@@ -245,8 +245,8 @@ public class FragmentUpload extends DialogFragment {
 		
 		checkLastUpdated(getFragmentView());
 		
-		String toRecipients = ParseOperation.getMultilevelUserEmail(Constants.CC_LEVEL, nexcell, "L", getActivity());
-		String ccRecipients = ParseOperation.getMultilevelUserEmail(Constants.ADMIN_LEVEL, null, "G", getActivity());
+		String toRecipients = ParseOperation.getSubmitDataRecipient(nexcell, getActivity());
+        String ccRecipients = Constants.SYSTEM_GMAIL;
 
 		DateTime currentTime = new DateTime();
 		
