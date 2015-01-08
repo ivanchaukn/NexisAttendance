@@ -6,9 +6,12 @@ import com.nexis.UIDialog;
 import com.parse.ParseUser;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,8 +35,16 @@ public class SplashActivity extends Activity{
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+ "com.nexis")));
 			endActivity();
 		}
-	}; 
-	
+	};
+
+    private DialogInterface.OnClickListener exitListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+            System.exit(0);
+        }
+    };
+
 	private void checkCurrentUser()
 	{
 		ParseUser currentUser = ParseUser.getCurrentUser();
@@ -69,15 +80,27 @@ public class SplashActivity extends Activity{
  
         @Override
         protected String doInBackground(Void... arg0) {
-        	
-        	try
+
+            try
+            {
+                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                 if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED &&
+                         connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) return "NoConnection";
+            }
+            catch(Exception e)
+            {
+                return e.toString();
+            }
+
+            try
     		{
     			int mostRecentCode = ParseOperation.getMostRecentVersionCode(SplashActivity.this);
     			
     			PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
     			int versionNumber = pinfo.versionCode;
-    			
-    			if (mostRecentCode != versionNumber) return "Update";
+
+                if (mostRecentCode != versionNumber) return "Update";
     			else checkCurrentUser();
     		}
     		catch(Exception e)
@@ -94,7 +117,11 @@ public class SplashActivity extends Activity{
             
             if (result != "")
             {
-	            if (result == "Update")
+                if(result == "NoConnection")
+                {
+                   UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
+                }
+	            else if (result == "Update")
 	            {
 	            	UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "Update app", "A new version is available. Please update through google play!", googlePlayListener);
 	            }
@@ -102,6 +129,8 @@ public class SplashActivity extends Activity{
 	            {
 	            	UIDialog.onCreateErrorDialog(SplashActivity.this, result + ". Version Code");
 	            }
+
+
             }
         }
  
