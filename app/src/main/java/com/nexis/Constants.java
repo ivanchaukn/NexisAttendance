@@ -13,12 +13,15 @@ public final class Constants {
         // restrict instantiation
 	}
 
-	public static final int MASTER_LEVEL = 4;
-	public static final int ADMIN_LEVEL = 3;
-	public static final int CC_LEVEL = 2;
-	public static final int USER_LEVEL = 1;
+    public static final int MASTER_LEVEL = 7;
+	public static final int DEV_LEVEL = 6;
+	public static final int ADMIN_LEVEL = 5;
+    public static final int COMM_LEVEL = 4;
+	public static final int COUS_LEVEL = 3;
+    public static final int ESM_LEVEL = 2;
+	public static final int MEMBER_LEVEL = 1;
 
-    public static final String GMAIL_USER_NAMAE = "nexisapplication@gmail.com";
+    public static final String SYSTEM_GMAIL = "nexisapplication@gmail.com";
 	public static final String SENDGRID_USER_NAMAE = "nexisapplication";
 	public static final String SENDGRID_PASSWORD = "(Nexis14!#";
 	

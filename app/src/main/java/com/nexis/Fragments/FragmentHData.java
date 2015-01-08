@@ -78,7 +78,7 @@ public class FragmentHData extends DialogFragment {
 		plot2 = (XYPlot) rootView.findViewById(R.id.nexcellServiceData);
 		plot3 = (XYPlot) rootView.findViewById(R.id.nexcellCollegeData);
 		
-		if(((MainActivity)getActivity()).getUserAuthlevel() < Constants.CC_LEVEL)
+		if(((MainActivity)getActivity()).getUserAuthlevel() < Constants.COUS_LEVEL)
 		{
 			nexcellObject = ParseOperation.getNexcellData(nexcell, null, getActivity());
 			// initialize our XYPlot reference:			 
@@ -113,7 +113,7 @@ public class FragmentHData extends DialogFragment {
 	{
 		List<ParseObject> nexcellObject;
 		
-		if(((MainActivity)getActivity()).getUserAuthlevel() < Constants.CC_LEVEL)
+		if(((MainActivity)getActivity()).getUserAuthlevel() < Constants.COUS_LEVEL)
 		{
 			nexcell = ((MainActivity)getActivity()).getUserNexcell();
 		
