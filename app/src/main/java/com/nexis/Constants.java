@@ -33,6 +33,8 @@ public final class Constants {
 	
 	public static List<String> USER_LEVEL_LIST;
 
+    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer");
+
 	public static List<String> CATEGORY_LIST = Arrays.asList("Fellowship", "Service", "College", "NewComer");
 	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList("HighSchool","University","Nexis");
 	

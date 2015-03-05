@@ -2,20 +2,10 @@
 <ScrollView
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:fillViewport="true">
+  android:layout_height="fill_parent">
   <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
- 
-        <!--  Header Starts-->
-        <!--  Header Ends -->
- 
-        <!-- Footer Start -->
-                   <!-- Place footer next to header to set z-index property to minus value -->
-        <!-- Footer Ends -->
- 
-        <!-- Login Form -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,13 +13,11 @@
             android:orientation="vertical"
             android:padding="10dip" >
 
-            <!-- Email Label -->
-
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Username"
-                android:textColor="#ffffff" />
+                android:textColor="#ff000000" />
 
             <EditText
                 android:id="@+id/EditTextUsername"
@@ -42,13 +30,11 @@
                 android:singleLine="true"
                 android:textColor="#ffffff" />
 
-            <!-- Password Label -->
-
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Password"
-                android:textColor="#ffffff" />
+                android:textColor="#ff000000" />
 
             <EditText
                 android:id="@+id/EditTextPassword"
@@ -60,17 +46,13 @@
                 android:password="true"
                 android:textColor="#ffffff" />
 
-            <!-- Login button -->
-
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
                 android:text="Login"
-                android:textColor="#ffffff" />
-
-            <!-- Link to Registration Screen -->
+                android:textColor="#ff000000" />
 
             <TextView
                 android:id="@+id/resetPwdText"
@@ -82,10 +64,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="17sp" />
 
-
         </LinearLayout>
-
-        <!-- Login Form Ends -->
- 
   </RelativeLayout>
 </ScrollView>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="?attr/colorPrimary">
+
+        <RelativeLayout
+            android:id="@+id/header_infos_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/header_picture"
+                android:layout_width="36dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_success" />
+
+            <TextView
+                android:id="@+id/header_title"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/header_picture"
+                android:text="Status:"
+                android:textColor="@android:color/white"
+                android:layout_marginRight="5dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/header_subtitle"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header_title"
+                android:layout_toRightOf="@+id/header_picture"
+                android:text="Last Updated:"
+                android:textColor="@android:color/white"
+                android:textSize="13dp"
+                android:textIsSelectable="false"
+                android:layout_marginRight="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Submitted"
+                android:id="@+id/textView2"
+                android:layout_alignBottom="@+id/header_title"
+                android:layout_toRightOf="@+id/header_title"
+                android:layout_toEndOf="@+id/header_title"
+                android:textColor="@android:color/white"
+                android:textIsSelectable="false"
+                android:textSize="17dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Feb 20th, 2015"
+                android:id="@+id/textView5"
+                android:layout_alignTop="@+id/header_subtitle"
+                android:layout_toRightOf="@+id/header_subtitle"
+                android:layout_toEndOf="@+id/header_subtitle"
+                android:textColor="@android:color/white"
+                android:textSize="13dp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

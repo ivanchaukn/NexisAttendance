@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nexis.R;
 
 import java.util.List;
 
-/**
- * Created by poliveira on 24/10/2014.
- */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder> {
 
     private List<NavigationItem> mData;
@@ -43,36 +41,36 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     @Override
     public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, final int i) {
         viewHolder.textView.setText(mData.get(i).getText());
-        viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(mData.get(i).getDrawable(), null, null, null);
+        viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
 
         viewHolder.itemView.setOnTouchListener(new View.OnTouchListener() {
-                                                   @Override
-                                                   public boolean onTouch(View v, MotionEvent event) {
+           @Override
+           public boolean onTouch(View v, MotionEvent event) {
 
-                                                       switch (event.getAction()) {
-                                                           case MotionEvent.ACTION_DOWN:
-                                                               touchPosition(i);
-                                                               return false;
-                                                           case MotionEvent.ACTION_CANCEL:
-                                                               touchPosition(-1);
-                                                               return false;
-                                                           case MotionEvent.ACTION_MOVE:
-                                                               return false;
-                                                           case MotionEvent.ACTION_UP:
-                                                               touchPosition(-1);
-                                                               return false;
-                                                       }
-                                                       return true;
-                                                   }
-                                               }
+               switch (event.getAction()) {
+                   case MotionEvent.ACTION_DOWN:
+                       touchPosition(i);
+                       return false;
+                   case MotionEvent.ACTION_CANCEL:
+                       touchPosition(-1);
+                       return false;
+                   case MotionEvent.ACTION_MOVE:
+                       return false;
+                   case MotionEvent.ACTION_UP:
+                       touchPosition(-1);
+                       return false;
+               }
+               return true;
+               }
+           }
         );
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                   @Override
-                                                   public void onClick(View v) {
-                                                       if (mNavigationDrawerCallbacks != null)
-                                                           mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(i);
-                                                   }
-                                               }
+               @Override
+               public void onClick(View v) {
+                   if (mNavigationDrawerCallbacks != null)
+                       mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(i);
+               }
+           }
         );
 
         //TODO: selected menu position, change layout accordingly
@@ -106,10 +104,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
+        public ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
+            imageView = (ImageView) itemView.findViewById(R.id.drawer_row_icon);
         }
     }
 }

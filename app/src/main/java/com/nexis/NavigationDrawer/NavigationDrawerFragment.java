@@ -1,12 +1,13 @@
 package com.nexis.NavigationDrawer;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,10 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nexis.Constants;
 import com.nexis.R;
 
 public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks {
@@ -134,21 +136,42 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("item 1", null));
-        items.add(new NavigationItem("item 2", null));
-        items.add(new NavigationItem("item 3", null));
+
+        items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
+        items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
+        items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(2), getResources().getDrawable(R.drawable.ic_newcomer)));
+
         return items;
     }
 
-    void selectItem(int position) {
-        mCurrentSelectedPosition = position;
+    void selectItem(final int position) {
+
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
-        if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+
+        FragmentManager fragmentManager = getFragmentManager();
+
+        Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
+
+        if (currentfrag != null)
+        {
+            if (mCurrentSelectedPosition == position) return;
+            fragmentManager.beginTransaction().remove(currentfrag).commit();
         }
-        ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
+
+        mCurrentSelectedPosition = position;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (mCallbacks != null) {
+                    mCallbacks.onNavigationDrawerItemSelected(position);
+                }
+                ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
+            }
+        }, 400);
     }
 
     public boolean isDrawerOpen() {
@@ -166,7 +189,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
-
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         selectItem(position);
@@ -192,3 +214,4 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         return sharedPref.getString(settingName, defaultValue);
     }
 }
+

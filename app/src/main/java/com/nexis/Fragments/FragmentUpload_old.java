@@ -1,95 +1,95 @@
+/*
 package com.nexis.Fragments;
 
-import java.util.List;
-import java.util.Locale;
-import java.text.DateFormatSymbols;
-
-import com.nexis.Constants;
-import com.nexis.Activity.MainActivity;
-import com.nexis.ParseOperation;
-import com.nexis.R;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.DateTimeZone;
-
-import com.nexis.UIDialog;
-import com.nexis.SendMailAsync;
-import com.parse.ParseObject;
-
-import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.nexis.Activity.MainActivity;
+import com.nexis.Constants;
+import com.nexis.ParseOperation;
+import com.nexis.R;
+import com.nexis.SendMailAsync;
+import com.nexis.UIDialog;
+import com.parse.ParseObject;
 
-public class FragmentUpload extends DialogFragment {
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
+
+import java.text.DateFormatSymbols;
+import java.util.List;
+import java.util.Locale;
+
+
+public class FragmentUpload_old extends DialogFragment {
 
 	static final int numberPickerMax = 50;
 	static final int numberPickerMin = 0;
-	
+
 	static DateTime date = new DateTime(DateTimeZone.UTC);
-	
+
 	private String userName, nexcell;
 	private int authLevel;
 	private int fellNum, collNum, servNum, newcNum = 0;
-	
+
 	OnFragmentUploadSelectedListener mCallback;
-	
+
 	public interface OnFragmentUploadSelectedListener {
         public void onUploadAttendance(DateTime date, int f, int s, int c);
     }
-	
-	public static FragmentUpload newInstance() {
-		FragmentUpload fragment = new FragmentUpload();
+
+	public static FragmentUpload_old newInstance() {
+		FragmentUpload_old fragment = new FragmentUpload_old();
 		Bundle args = new Bundle();
 		args.putInt("Upload", 1);
 		fragment.setArguments(args);
 		return fragment;
 	}
 
-	public FragmentUpload() {
+	public FragmentUpload_old() {
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_upload, container, false);
-		
+
 		//NumberPickers Initialization
 		NumberPicker npF = (NumberPicker) rootView.findViewById(R.id.numberPickerFellowship);
 		NumberPicker npC = (NumberPicker) rootView.findViewById(R.id.numberPickerCollege);
 		NumberPicker npS = (NumberPicker) rootView.findViewById(R.id.numberPickerService);
 		NumberPicker npN = (NumberPicker) rootView.findViewById(R.id.numberPickerNewComer);
-		
+
 		initializeNumberPickers(npF);
 		initializeNumberPickers(npC);
 		initializeNumberPickers(npS);
 		initializeNumberPickers(npN);
 
 		//Date Select Button
-		Button dateSelectButton = (Button) rootView.findViewById(R.id.dateSelectbutton);		
-		
+		Button dateSelectButton = (Button) rootView.findViewById(R.id.dateSelectbutton);
+
 		date = date.dayOfWeek().setCopy(DateTimeConstants.FRIDAY);
 		date = date.withTimeAtStartOfDay();
-		
+
 		setDate(rootView);
 		setNexcell(rootView, ((MainActivity)getActivity()).getUserNexcell());
 		checkLastUpdated(rootView);
-		
+
 		userName = ((MainActivity)getActivity()).getUserName();
 		authLevel = ((MainActivity)getActivity()).getUserAuthlevel();
-		
+
 		dateSelectButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -97,19 +97,19 @@ public class FragmentUpload extends DialogFragment {
 				d.show();
 			}
 		});
-		
+
 		//Submit button
 		Button submitButton = (Button) rootView.findViewById(R.id.submitButton);
-		
+
 		submitButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?", uploadDataListener);
 			}
 		});
-		
+
 		Button nexcellButton = (Button) rootView.findViewById(R.id.nexcellSelectButton);
-		
+
 		nexcellButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -123,19 +123,19 @@ public class FragmentUpload extends DialogFragment {
 				}
 			}
 		});
-		
+
 		return rootView;
 	}
-	
+
 	private void initializeNumberPickers(NumberPicker np)
-	{			
+	{
 		np.setMaxValue(numberPickerMax);
 		np.setMinValue(numberPickerMin);
 		np.setOnValueChangedListener(valueChangeListener);
 		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 	}
-	
-	private NumberPicker.OnValueChangeListener valueChangeListener = new OnValueChangeListener() {
+
+	private OnValueChangeListener valueChangeListener = new OnValueChangeListener() {
 		
 	    @Override
 	    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -283,3 +283,4 @@ public class FragmentUpload extends DialogFragment {
 		return date;
 	}
 }
+*/

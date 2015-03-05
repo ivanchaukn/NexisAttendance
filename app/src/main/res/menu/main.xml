@@ -22,9 +22,4 @@
 
     </group>
 
-   	 <item
-        android:id="@+id/menu_logout"
-        android:icon="@drawable/logout_logo"
-        app:showAsAction="always"
-        android:title="Logout"/>
 </menu>

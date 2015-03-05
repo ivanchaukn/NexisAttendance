@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class FragmentHData extends DialogFragment {
+public class FragmentStat extends DialogFragment {
 
 	private XYPlot plot1, plot2, plot3;
 	private String nexcell;
@@ -41,10 +41,10 @@ public class FragmentHData extends DialogFragment {
 	private static ArrayList<List<Integer>> hsData = new ArrayList<List<Integer>>(3);
 	private static ArrayList<List<Integer>> uniData = new ArrayList<List<Integer>>(3);
 	private static ArrayList<Integer> domain = new ArrayList<Integer>();
-	protected static FragmentHData frag;
+	protected static FragmentStat frag;
 	
-	public static FragmentHData newInstance() {
-		FragmentHData fragment = new FragmentHData();
+	public static FragmentStat newInstance() {
+		FragmentStat fragment = new FragmentStat();
 		Bundle args = new Bundle();
 		args.putInt("HData", 2);
 		fragment.setArguments(args);
@@ -53,7 +53,7 @@ public class FragmentHData extends DialogFragment {
 		return fragment;
 	}
 
-	public FragmentHData() {
+	public FragmentStat() {
 	}
 	
 	public class pointData {

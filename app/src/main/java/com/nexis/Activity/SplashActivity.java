@@ -56,8 +56,7 @@ public class SplashActivity extends Activity{
             
             endActivity();
     	}
-    	else
-    	{
+    	else {
     		//Switch to Login Activity
 		    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
@@ -101,14 +100,12 @@ public class SplashActivity extends Activity{
     			int versionNumber = pinfo.versionCode;
 
                 if (mostRecentCode != versionNumber) return "Update";
-    			else checkCurrentUser();
+    			else return "Success";
     		}
     		catch(Exception e)
     		{
     			return e.toString();
     		}
-        	
-        	return "";
         }
  
         @Override
@@ -117,9 +114,13 @@ public class SplashActivity extends Activity{
             
             if (result != "")
             {
-                if(result == "NoConnection")
+                if (result == "Success")
                 {
-                   UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
+                    checkCurrentUser();
+                }
+                else if(result == "NoConnection")
+                {
+                    UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
                 }
 	            else if (result == "Update")
 	            {
@@ -129,8 +130,6 @@ public class SplashActivity extends Activity{
 	            {
 	            	UIDialog.onCreateErrorDialog(SplashActivity.this, result + ". Version Code");
 	            }
-
-
             }
         }
  
