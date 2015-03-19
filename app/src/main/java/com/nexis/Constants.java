@@ -21,6 +21,9 @@ public final class Constants {
     public static final int ESM_LEVEL = 2;
 	public static final int MEMBER_LEVEL = 1;
 
+    public static final int NUMBERPICKER_MAX = 50;
+    public static final int NUMBERPICKER_MIN = 0;
+
     public static final String SYSTEM_GMAIL = "nexisapplication@gmail.com";
 	public static final String SENDGRID_USER_NAMAE = "nexisapplication";
 	public static final String SENDGRID_PASSWORD = "(Nexis14!#";

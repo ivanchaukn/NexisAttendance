@@ -16,7 +16,7 @@ import com.nexis.Constants;
 import com.nexis.ExcelReports.genWeeklyReport;
 import com.nexis.Fragments.FragmentStat;
 import com.nexis.Fragments.FragmentNewComer;
-import com.nexis.Fragments.FragmentAttendance;
+import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;

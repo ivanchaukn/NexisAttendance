@@ -1,6 +1,5 @@
 package com.nexis.AttendanceView;
 
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -9,15 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.R;
-
 import java.util.List;
 
 public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.ViewHolder> {
 
+    private View v;
+
     private List<AttendanceItem> mData;
-    private NavigationDrawerCallbacks mNavigationDrawerCallbacks;
     private int mSelectedPosition;
     private int mTouchedPosition = -1;
 
@@ -27,7 +25,7 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
 
     @Override
     public AttendanceAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.attendance_card, viewGroup, false);
+        v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.attendance_card, viewGroup, false);
         return new ViewHolder(v);
     }
 
@@ -37,6 +35,19 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
         viewHolder.sText.setText(mData.get(i).getServiceText());
         viewHolder.cText.setText(mData.get(i).getCollegeText());
         viewHolder.nText.setText(mData.get(i).getNewComerText());
+        viewHolder.dateText.setText(mData.get(i).getDateText());
+        viewHolder.yearText.setText(mData.get(i).getYearText());
+
+        viewHolder.editButton.setOnClickListener(mData.get(i).getListener());
+        viewHolder.editButton.setOnTouchListener(new View.OnTouchListener() {
+                                                     @Override
+                                                     public boolean onTouch(View v, MotionEvent event) {
+                                                        touchPosition(i);
+                                                        return false;
+                                                     }
+                                                 }
+        );
+
 
         viewHolder.itemView.setOnTouchListener(new View.OnTouchListener() {
                                                    @Override
@@ -56,14 +67,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
                                                                return false;
                                                        }
                                                        return true;
-                                                   }
-                                               }
-        );
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                                   @Override
-                                                   public void onClick(View v) {
-                                                       if (mNavigationDrawerCallbacks != null)
-                                                           mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(i);
                                                    }
                                                }
         );
@@ -90,12 +93,20 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
         return mData != null ? mData.size() : 0;
     }
 
+    public int getmTouchedPosition()
+    {
+        return mTouchedPosition;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView fText;
         public TextView sText;
         public TextView cText;
         public TextView nText;
+        public TextView dateText;
+        public TextView yearText;
+
         public ImageButton editButton;
 
         public ViewHolder(View itemView) {
@@ -104,23 +115,10 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
             sText = (TextView) itemView.findViewById(R.id.serviceText);
             cText = (TextView) itemView.findViewById(R.id.collegeText);
             nText = (TextView) itemView.findViewById(R.id.newComerText);
+            dateText = (TextView) itemView.findViewById(R.id.cardDateText);
+            yearText = (TextView) itemView.findViewById(R.id.cardYearText);
 
             editButton = (ImageButton) itemView.findViewById(R.id.cardEditButton);
-
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
         }
     }
-
-    private DialogInterface.OnClickListener editListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-
-        }
-    };
 }

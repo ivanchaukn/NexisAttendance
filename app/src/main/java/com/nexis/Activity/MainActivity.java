@@ -8,22 +8,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 import com.nexis.Constants;
 import com.nexis.ExcelReports.genWeeklyReport;
 import com.nexis.Fragments.FragmentStat;
 import com.nexis.Fragments.FragmentNewComer;
-import com.nexis.Fragments.FragmentAttendance;
+import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
 import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
+import com.nexis.UIDialog;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -44,7 +48,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private static String userName, userNexcell, userEmail;
+    private static String userName, userFirstName, userLastName, userNexcell, userEmail;
     private static int userAuthLevel;
 
     List<ParseObject> nexcellObject;
@@ -68,8 +72,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         //Current user info
         ParseUser user = ParseUser.getCurrentUser();
         userName = user.getUsername();
+        userFirstName = (String)user.get("firstName");
+        userLastName = (String)user.get("lastName");
         userEmail = (String)user.get("email");
         userNexcell = (String)user.get("Nexcell");
+
+        mNavigationDrawerFragment.updateProfile(userFirstName + " " + userLastName, userNexcell);
 
         try
         {
@@ -106,22 +114,94 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position)
-    {
-        getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        Dialog d;
 
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.ChangeAuthorLevel:
+                List<ParseObject> nexcellObject = ParseOperation.getUserLevelList(1, this);
+
+                for(ParseObject x: nexcellObject) userIdMap.put(x.get("username").toString(), x.getObjectId());
+                d = changeLevelDialog(nexcellObject);
+
+                d.show();
+                break;
+
+            case R.id.SendReport:
+                UIDialog.onCreateActionDialog(this, "Send Report", "Are you sure you want to send weekly report?", sendReportListener);
+                break;
+
+            case R.id.checkStatus:
+                checkStatusDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position, int prevPosition)
+    {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (fragments.size() < 3)
+        if (position == 3)
         {
-            fragments.add(FragmentAttendance.newInstance());
-            fragments.add(FragmentStat.newInstance());
-            fragments.add(FragmentNewComer.newInstance());
+            UIDialog.onCreateActionDialog(this, "Logout", "Are you sure you want to exit?", logoutListener);
+
+        }
+        else
+        {
+            Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
+
+            if (currentfrag != null)
+            {
+                if (position == prevPosition) return;
+                fragmentManager.beginTransaction().remove(currentfrag).commit();
+            }
+
+            getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
+
+            if (fragments.size() < 3)
+            {
+                fragments.add(FragmentAttendance.newInstance());
+                fragments.add(FragmentStat.newInstance());
+                fragments.add(FragmentNewComer.newInstance());
+            }
+
+            displayFragment(position);
+        }
+    }
+
+    private void displayFragment(int position)
+    {
+        getSupportFragmentManager().executePendingTransactions();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment frag = fragments.get(position);
+
+        if (frag.isAdded())
+        {
+            ft.show(frag);
+        }
+        else
+        {
+            ft.add(R.id.container, frag);
         }
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragments.get(position))
-                .commit();
+        for(int i = 0; i < fragments.size(); i++)
+        {
+            Fragment otherFrag = fragments.get(position);
+
+            if (i != position && otherFrag.isAdded())
+            {
+                ft.hide(otherFrag);
+            }
+        }
+
+        ft.commit();
     }
 
     @Override
@@ -137,7 +217,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if(menuKeyField != null) {
+            if (menuKeyField != null) {
                 menuKeyField.setAccessible(true);
                 menuKeyField.setBoolean(config, false);
             }
@@ -145,24 +225,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             e.printStackTrace();
         }
     }
-
-    private DialogInterface.OnClickListener logoutListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            ParsePush.unsubscribeInBackground(userNexcell);
-
-            ParseInstallation.getCurrentInstallation().put("lastSignIn", "");
-            ParseInstallation.getCurrentInstallation().saveInBackground();
-
-            ParseUser.logOut();
-
-            endCurrentActivity();
-
-            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(i);
-        }
-    };
 
     private DialogInterface.OnClickListener sendReportListener = new DialogInterface.OnClickListener() {
 
@@ -242,10 +304,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         });
     }
 
-    /*private void checkStatusDialog()
+    private void checkStatusDialog()
     {
-        FragmentUpload uploadFrag = (FragmentUpload) mSectionsPagerAdapter.getItem(0);
-        DateTime date = uploadFrag.getDateTime();
+        FragmentAttendance uploadFrag = (FragmentAttendance) fragments.get(0);
+        DateTime date = uploadFrag.getNextUpdateDate();
 
         List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, this);
         final CharSequence[] nList = new CharSequence[Constants.NEXCELL_LIST.size()];
@@ -272,13 +334,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         builder.setTitle("Attendance Status: " + date.getYear() + "-" + date.getMonthOfYear() + "-" + date.getDayOfMonth());
         builder.setItems(nList, null);
 
-        // Set the action buttons
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-
         builder.setNegativeButton("Send Reminder", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -291,22 +346,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
         {
             @Override
-                                public void onClick(View v)
-    {
-        ArrayList<String> channels = new ArrayList<String>();
-        for(String nexcell: missingNexcell) channels.add(nexcell);
+           public void onClick(View v)
+            {
+                ArrayList<String> channels = new ArrayList<String>();
+                for(String nexcell: missingNexcell) channels.add(nexcell);
 
-        ParsePush push = new ParsePush();
-        push.setChannels(channels); // Notice we use setChannels not setChannel
-        push.setMessage("*REMINDER*: We have not receive your submission. Please submit attendance asap!");
-        push.sendInBackground();
+                ParsePush push = new ParsePush();
+                push.setChannels(channels); // Notice we use setChannels not setChannel
+                push.setMessage("*REMINDER*: We have not receive your submission. Please submit attendance asap!");
+                push.sendInBackground();
 
-        Toast.makeText(MainActivity.this, "Notification is sent to " + channels.size() + " groups", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Notification is sent to " + channels.size() + " groups", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-});
-        }*/
 
-private void tempSaveUserID(List<String> userList, List<Integer> mSelectedItems)
+    private void tempSaveUserID(List<String> userList, List<Integer> mSelectedItems)
     {
         for (Integer x: mSelectedItems)
         {
@@ -348,6 +403,24 @@ private void tempSaveUserID(List<String> userList, List<Integer> mSelectedItems)
             mToolbar.setElevation(elevation);
         }
     }
+
+    private DialogInterface.OnClickListener logoutListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+            ParsePush.unsubscribeInBackground(userNexcell);
+
+            ParseInstallation.getCurrentInstallation().put("lastSignIn", "");
+            ParseInstallation.getCurrentInstallation().saveInBackground();
+
+            ParseUser.logOut();
+
+            endCurrentActivity();
+
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
+        }
+    };
 
     public String getUserNexcell()
     {

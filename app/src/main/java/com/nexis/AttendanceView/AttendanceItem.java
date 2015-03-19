@@ -1,17 +1,29 @@
 package com.nexis.AttendanceView;
 
+import android.view.View;
+
+import org.joda.time.DateTime;
+
+import java.util.List;
+
 public class AttendanceItem {
+
     private int fInt;
     private int sInt;
     private int cInt;
     private int nInt;
 
+    private DateTime date;
+    private View.OnClickListener buttonListener;
 
-    public AttendanceItem(int fT, int sT, int cT, int nT) {
-        fInt = fT;
-        sInt = sT;
-        cInt = cT;
-        nInt = nT;
+    public AttendanceItem(List<Integer> dataPoints, DateTime dt, View.OnClickListener listener) {
+
+        fInt = dataPoints.get(0);
+        sInt = dataPoints.get(1);
+        cInt = dataPoints.get(2);
+        nInt = dataPoints.get(3);
+        date = dt;
+        buttonListener = listener;
     }
 
     public String getFellowshipText() {
@@ -28,5 +40,21 @@ public class AttendanceItem {
 
     public String getNewComerText() {
         return Integer.toString(nInt);
+    }
+
+    public String getDateText() {
+        return date.toString("MMM dd");
+    }
+
+    public DateTime getDate() {
+        return date;
+    }
+
+    public String getYearText() {
+        return date.toString("YYYY");
+    }
+
+    public View.OnClickListener getListener() {
+        return buttonListener;
     }
 }

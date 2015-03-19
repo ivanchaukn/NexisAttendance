@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.View;
 
 
 public class UIDialog {
@@ -95,4 +96,26 @@ public class UIDialog {
 	    AlertDialog d = builder.create();
         d.show();
 	}
+
+    static public void onCreateCustomDialog(Context actv, String title, View Viewlayout, String posButton, String negaButton, DialogInterface.OnClickListener positiveButtonListener, DialogInterface.OnClickListener negativeButtonListener)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+
+        //LayoutInflater inflater = ((Activity)actv).getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(Viewlayout);
+
+        builder.setTitle(title);
+
+        builder.setPositiveButton(posButton, positiveButtonListener);
+
+        if (negaButton != "") {
+            builder.setNegativeButton(negaButton, negativeButtonListener);
+        }
+
+        AlertDialog d = builder.create();
+        d.show();
+    }
 }

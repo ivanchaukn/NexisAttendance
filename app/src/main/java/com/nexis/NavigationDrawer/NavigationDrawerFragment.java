@@ -2,6 +2,7 @@ package com.nexis.NavigationDrawer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.annotation.Nullable;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +54,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItems);
         adapter.setNavigationDrawerCallbacks(this);
         mDrawerList.setAdapter(adapter);
-        selectItem(mCurrentSelectedPosition);
+        selectItem(mCurrentSelectedPosition, mCurrentSelectedPosition);
         return view;
     }
 
@@ -140,11 +143,12 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(2), getResources().getDrawable(R.drawable.ic_newcomer)));
+        items.add(new NavigationItem("Log Out", getResources().getDrawable(R.drawable.ic_exit)));
 
         return items;
     }
 
-    void selectItem(final int position) {
+    void selectItem(final int position, final int prevPosition) {
 
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
@@ -152,22 +156,13 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
         FragmentManager fragmentManager = getFragmentManager();
 
-        Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
-
-        if (currentfrag != null)
-        {
-            if (mCurrentSelectedPosition == position) return;
-            fragmentManager.beginTransaction().remove(currentfrag).commit();
-        }
-
-        mCurrentSelectedPosition = position;
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 if (mCallbacks != null) {
-                    mCallbacks.onNavigationDrawerItemSelected(position);
+
+                    mCallbacks.onNavigationDrawerItemSelected(position, prevPosition);
                 }
                 ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
             }
@@ -190,8 +185,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        selectItem(position);
+    public void onNavigationDrawerItemSelected(int position, int currentPosition) {
+        selectItem(position, currentPosition);
     }
 
     public DrawerLayout getDrawerLayout() {
@@ -213,5 +208,20 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         return sharedPref.getString(settingName, defaultValue);
     }
+
+    public void updateProfile(String userName, String userNexcell)
+    {
+        TextView userNameText = (TextView) mFragmentContainerView.findViewById(R.id.userName);
+        userNameText.setText(userName);
+
+        TextView userInfoText = (TextView) mFragmentContainerView.findViewById(R.id.userInfo);
+        userInfoText.setText("Nexcell: " + userNexcell);
+    }
+
+    public void resetSelectPosition(int pos)
+    {
+
+    }
+
 }
 

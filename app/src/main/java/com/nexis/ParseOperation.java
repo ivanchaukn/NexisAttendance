@@ -201,6 +201,8 @@ public class ParseOperation {
         	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
 
+        ParseObject.pinAllInBackground(nexcellObject);
+
     	return nexcellObject;
 	}
 	
@@ -233,8 +235,14 @@ public class ParseOperation {
   		    	nexcellData.saveInBackground();
   		    }
   		  }
-    	}); 
+    	});
 	}
+
+    static public void deleteData(String nexcell, DateTime date, Context actv) {
+
+        ParseObject obj = getNexcellData(nexcell, date, actv).get(0);
+        obj.deleteInBackground();
+    }
 	
 	static public void saveData(int f, int s, int c, int n, DateTime date, String nexcell, String userName, Context actv) {
 		

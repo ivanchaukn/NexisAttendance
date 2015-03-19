@@ -20,7 +20,8 @@ public class NexisApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
+
+        Parse.enableLocalDatastore(this);
         Parse.initialize(this, "n4gVHiC7PcB6fAvCkfMKSsAEyUODifl7JL33w3xT", "sag1RtZfVIVqJFhDbLTiHACtDPPCmBQbmdmOv670");
     }
 }

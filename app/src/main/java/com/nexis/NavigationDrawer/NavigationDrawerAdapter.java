@@ -68,7 +68,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                @Override
                public void onClick(View v) {
                    if (mNavigationDrawerCallbacks != null)
-                       mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(i);
+                   {
+                       mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(i, mSelectedPosition);
+                   }
                }
            }
         );
