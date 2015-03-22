@@ -201,8 +201,6 @@ public class ParseOperation {
         	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
 
-        ParseObject.pinAllInBackground(nexcellObject);
-
     	return nexcellObject;
 	}
 	

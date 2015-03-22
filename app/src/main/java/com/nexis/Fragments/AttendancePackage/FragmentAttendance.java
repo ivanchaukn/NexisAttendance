@@ -63,7 +63,7 @@ public class FragmentAttendance extends DialogFragment {
 
         attendanceList = new ArrayList<AttendanceItem>();
 
-        nextDate = new DateTime();
+        nextDate = new DateTime(DateTimeZone.UTC);
         nextDate = nextDate.dayOfWeek().setCopy(DateTimeConstants.FRIDAY);
         nextDate = nextDate.withTimeAtStartOfDay();
 
@@ -79,7 +79,7 @@ public class FragmentAttendance extends DialogFragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater());
+                submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), null);
                 UIDialog.onCreateCustomDialog(getActivity(), "New Record - " + nextDate.toString("MMM dd"), submitDialog.getView(), "Submit", "Change Date", submitAttendanceListener, null);
             }
         });
@@ -106,7 +106,7 @@ public class FragmentAttendance extends DialogFragment {
         List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, getActivity());
 
         for (int i = nexcellObject.size() - 1; i >= 0; i--) {
-            List<Integer> rowData = new ArrayList<Integer>();
+            final List<Integer> rowData = new ArrayList<Integer>();
             final DateTime rowDt = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
 
             for (int j = 0; j < Constants.CATEGORY_LIST.size(); j++) {
@@ -117,7 +117,7 @@ public class FragmentAttendance extends DialogFragment {
                 @Override
                 public void onClick(View v) {
 
-                    SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater());
+                    SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), rowData);
                     UIDialog.onCreateCustomDialog(getActivity(), "Edit Record - " + rowDt.toString("MMM dd") , submitDialog.getView(), "Modify", "Delete", editAttendanceListener, deleteAttendanceListener);
                 }
             }));
@@ -179,25 +179,24 @@ public class FragmentAttendance extends DialogFragment {
 
     private void checkAndUpdate()
     {
-        DateTime lastUpdate = checkUpdate();
+        List<ParseObject> nexcellObject = checkUpdate();
 
-        if (lastUpdate == null) {
+        if (nexcellObject.isEmpty()) {
             updateStatus(false, null);
         }
         else {
-            updateStatus(true, lastUpdate);
+            ParseObject obj = nexcellObject.get(0);
+            updateStatus(true, (String)obj.get("saveBy"));
         }
     }
 
-    private DateTime checkUpdate()
+    private  List<ParseObject> checkUpdate()
     {
         List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, nextDate, getActivity());
-
-        if (nexcellObject.isEmpty()) return null;
-        else return new DateTime(nexcellObject.get(0).getUpdatedAt());
+        return nexcellObject;
     }
 
-    private void updateStatus(boolean submitted, DateTime updateTime)
+    private void updateStatus(boolean submitted, String userName)
     {
         TextView lastUpdated = (TextView) rootView.findViewById(R.id.updateTextView);
         TextView status = (TextView) rootView.findViewById(R.id.statusTextView);
@@ -212,7 +211,7 @@ public class FragmentAttendance extends DialogFragment {
         }
         else
         {
-            lastUpdated.setText(updateTime.toString("MMM dd, YYYY  HH:MM:SS"));
+            lastUpdated.setText(userName);
             status.setText("Submitted");
             statusImage.setImageResource(R.drawable.ic_success);
         }
@@ -224,8 +223,8 @@ public class FragmentAttendance extends DialogFragment {
         UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?",  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                DateTime updateTime = checkUpdate();
-                if (updateTime == null) {
+                List<ParseObject> nexcellObject = checkUpdate();
+                if (nexcellObject.isEmpty()) {
                     uploadData();
                 }
                 else {
@@ -249,13 +248,13 @@ public class FragmentAttendance extends DialogFragment {
             ParseOperation.saveData(data.get(0), data.get(1), data.get(2), data.get(3), nextDate, userNexcell, userName, getActivity());
         }
 
-        updateStatus(true, new DateTime());
+        updateStatus(true, userName);
 
         addCardtoList(new AttendanceItem(data, nextDate,  new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater());
+                SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), null);
                 UIDialog.onCreateCustomDialog(getActivity(), "Edit Record - " + nextDate.toString("MMM dd") , submitDialog.getView(), "Modify", "Delete", editAttendanceListener, deleteAttendanceListener);
             }
         }));
