@@ -75,12 +75,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
            }
         );
 
-<<<<<<< HEAD
         //TODO: selected menu position, change layout accordingly
-
-=======
-        //TODO: selected menu position, change text accordingly
->>>>>>> 287d3bf8dfe9b7e6aa524367943554b82243ba77
         if (mSelectedPosition == i || mTouchedPosition == i) {
             viewHolder.itemView.setBackgroundColor(viewHolder.itemView.getContext().getResources().getColor(R.color.selected_gray));
         } else {
