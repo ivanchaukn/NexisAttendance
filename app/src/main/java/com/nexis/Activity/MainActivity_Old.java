@@ -276,7 +276,7 @@ public class MainActivity_Old extends ActionBarActivity implements ActionBar.Tab
 
 	public void onUploadAttendance(DateTime date, int f, int s, int c)
 	{
-		FragmentStat statFrag = (FragmentStat) getSupportFragmentManager().findFragmentById(R.layout.fragment_hdata);
+		FragmentStat statFrag = (FragmentStat) getSupportFragmentManager().findFragmentById(R.layout.fragment_stat);
 	}
 	
 	private DialogInterface.OnClickListener logoutListener = new DialogInterface.OnClickListener() {
