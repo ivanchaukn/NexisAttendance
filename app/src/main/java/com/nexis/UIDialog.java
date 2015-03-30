@@ -103,8 +103,8 @@ public class UIDialog {
 
         //LayoutInflater inflater = ((Activity)actv).getLayoutInflater();
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        // Inflate and set the text for the dialog
+        // Pass null as the parent view because its going in the dialog text
         builder.setView(Viewlayout);
 
         builder.setTitle(title);

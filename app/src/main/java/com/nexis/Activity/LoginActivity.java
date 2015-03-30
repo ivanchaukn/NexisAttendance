@@ -93,8 +93,8 @@ public class LoginActivity extends Activity {
 	    
 	    LayoutInflater inflater = this.getLayoutInflater();
 
-	    // Inflate and set the layout for the dialog
-	    // Pass null as the parent view because its going in the dialog layout
+	    // Inflate and set the text for the dialog
+	    // Pass null as the parent view because its going in the dialog text
 	    final View Viewlayout = inflater.inflate(R.layout.pwdresetdialog, null);
 	    builder.setView(Viewlayout);
 	    
