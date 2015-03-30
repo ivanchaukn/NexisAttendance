@@ -48,6 +48,7 @@ public class SplashActivity extends Activity{
 	private void checkCurrentUser()
 	{
 		ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser = null;
 		
     	if (currentUser != null) {
     		//Switch to Main Activity

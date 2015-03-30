@@ -1,83 +1,84 @@
 package com.nexis.Activity;
 
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.nexis.NavigationDrawer.NavigationDrawerAdapter;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.parse.LogInCallback;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.RequestPasswordResetCallback;
-
+import com.gc.materialdesign.views.ButtonRectangle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
  
 public class LoginActivity extends Activity {
-    
+
+    ProgressBarCircularIndeterminate progressCircle;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // setting default screen to login.xml
-        setContentView(R.layout.login);        
-        
+        setContentView(R.layout.activity_login);
+
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        
-        Button loginButton = (Button) findViewById(R.id.btnLogin);
-        
+
+        final ButtonRectangle loginButton = (ButtonRectangle) findViewById(R.id.loginButton);
+
+        progressCircle = (ProgressBarCircularIndeterminate) findViewById(R.id.progressCircular);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
- 
+
             public void onClick(View v) {
-            	//turnOnProgressDialog("Login","Wait while I log you in");
-            	EditText username = (EditText) findViewById(R.id.EditTextUsername);
-            	EditText password = (EditText) findViewById(R.id.EditTextPassword);
-            	
+                final EditText username = (EditText) findViewById(R.id.userNameLogIn);
+                final EditText password = (EditText) findViewById(R.id.userPwLogIn);
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
+
+                fadeOutButton(loginButton);
+
                 ParseUser.logInInBackground(username.getText().toString(), password.getText().toString(), new LogInCallback() {
-                	
-             	   @Override
-             	   public void done(ParseUser user, ParseException e) {
-             		     if (e == null && user != null) {
-             		    	//Switch to Main Activity
-             		    	Intent i = new Intent(getApplicationContext(), MainActivity.class);
+
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if (e == null && user != null) {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
                             endCurrentActivity();
-             		     } else if (user == null) {
-             		    	UIDialog.onCreateInvalidDialog(LoginActivity.this, "Invalid Username or password, please try again!");
-             		     } else {
-             		    	UIDialog.onCreateErrorDialog(LoginActivity.this, "Login Error, please contact administrator!");
-             		     }
-             	   }
-             });
+                            return;
+                        } else if (user == null) {
+                            UIDialog.onCreateInvalidDialog(LoginActivity.this, "Invalid Username or password, please try again!");
+                        } else {
+                            UIDialog.onCreateErrorDialog(LoginActivity.this, "Login Error, please contact administrator!");
+                        }
+                        showButton(loginButton);
+                    }
+                });
             }
         });
- 
-//        TextView registerScreen = (TextView) findViewById(R.id.link_to_signup);
-// 
-//        // Listening to register new account link
-//        registerScreen.setOnClickListener(new View.OnClickListener() {
-// 
-//            public void onClick(View v) {
-//                // Switching to Register screen
-//                Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-//                startActivity(i);
-//            }
-//        });
-        
+
         TextView resetPasswordText = (TextView) findViewById(R.id.resetPwdText);
-        
-        // Listening to register new account link
         resetPasswordText.setOnClickListener(new View.OnClickListener() {
- 
+
             public void onClick(View v) {
-            	pwdResetDialog();
+                pwdResetDialog();
             }
         });
     }
@@ -124,6 +125,24 @@ public class LoginActivity extends Activity {
 	    
 	    return builder.create();		
 	}
+
+    private void fadeOutButton(ButtonRectangle button)
+    {
+        Animation fadeout = AnimationUtils.loadAnimation(this, R.anim.abc_fade_out);
+        button.startAnimation(fadeout);
+        fadeout.setDuration(500);
+        fadeout.setFillAfter(true);
+
+        //progressCircle.setVisibility(View.VISIBLE);
+    }
+
+    private void showButton(ButtonRectangle button)
+    {
+        Animation fadein = AnimationUtils.loadAnimation(this, R.anim.abc_fade_in);
+        button.startAnimation(fadein);
+
+        //progressCircle.setVisibility(View.GONE);
+    }
     
     private void endCurrentActivity()
     {

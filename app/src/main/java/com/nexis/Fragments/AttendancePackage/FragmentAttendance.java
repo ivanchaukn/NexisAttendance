@@ -1,5 +1,6 @@
 package com.nexis.Fragments.AttendancePackage;
 
+import com.github.sendgrid.SendGrid;
 import com.nexis.AttendanceView.AttendanceAdapter;
 import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Activity.MainActivity;
@@ -8,13 +9,14 @@ import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
 import com.nexis.UIDialog;
-import com.parse.Parse;
 import com.parse.ParseObject;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +31,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 import com.melnykov.fab.FloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +43,12 @@ public class FragmentAttendance extends DialogFragment {
     private String userName, userNexcell;
     private List<AttendanceItem> attendanceList;
     private SubmitDialog submitDialog;
+    private DateTime dialogDate;
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private AttendanceAdapter mAttendanceAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public static FragmentAttendance newInstance() {
 		FragmentAttendance fragment = new FragmentAttendance();
@@ -61,10 +64,22 @@ public class FragmentAttendance extends DialogFragment {
         rootView = inflater.inflate(R.layout.fragment_attendance, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
 
-        attendanceList = new ArrayList<AttendanceItem>();
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getIntArray(R.array.swipeRefreshColors));
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateCardsAsync popCard = new populateCardsAsync();
+                popCard.execute("");
+            }
+        });
+
+        attendanceList = new ArrayList<>();
 
         nextDate = new DateTime(DateTimeZone.UTC);
-        nextDate = nextDate.dayOfWeek().setCopy(DateTimeConstants.FRIDAY);
+        if (nextDate.getDayOfWeek() < DateTimeConstants.FRIDAY) nextDate = nextDate.minusWeeks(1);
+        nextDate = nextDate.withDayOfWeek(DateTimeConstants.FRIDAY);
         nextDate = nextDate.withTimeAtStartOfDay();
 
         TextView dateText = (TextView) rootView.findViewById(R.id.attendanceDate);
@@ -73,7 +88,7 @@ public class FragmentAttendance extends DialogFragment {
         userName = ((MainActivity)getActivity()).getUserName();
         userNexcell = ((MainActivity)getActivity()).getUserNexcell();
 
-        checkAndUpdate();
+        checkAndUpdate(nextDate);
 
         FloatingActionButton addButton = (FloatingActionButton)rootView.findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +120,8 @@ public class FragmentAttendance extends DialogFragment {
     private void populateCards() {
         List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, getActivity());
 
+        attendanceList.clear();
+
         for (int i = nexcellObject.size() - 1; i >= 0; i--) {
             final List<Integer> rowData = new ArrayList<Integer>();
             final DateTime rowDt = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
@@ -116,19 +133,21 @@ public class FragmentAttendance extends DialogFragment {
             attendanceList.add(new AttendanceItem(rowData, rowDt, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dialogDate = rowDt;
 
-                    SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), rowData);
+                    submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), rowData);
                     UIDialog.onCreateCustomDialog(getActivity(), "Edit Record - " + rowDt.toString("MMM dd") , submitDialog.getView(), "Modify", "Delete", editAttendanceListener, deleteAttendanceListener);
                 }
             }));
         }
     }
 
+
     private DialogInterface.OnClickListener editAttendanceListener = new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int id) {
-            uploadConfirmation();
+            uploadConfirmation(true, dialogDate, "Attendance Modified");
         }
     };
 
@@ -152,7 +171,9 @@ public class FragmentAttendance extends DialogFragment {
             attendanceList.remove(pos);
             mAttendanceAdapter.notifyItemRangeRemoved(pos, 1);
 
-            checkAndUpdate();
+            checkAndUpdate(nextDate);
+
+            Toast.makeText(getActivity(), "Attendance Deleted", Toast.LENGTH_LONG).show();
         }
     };
 
@@ -160,26 +181,29 @@ public class FragmentAttendance extends DialogFragment {
 
         @Override
         public void onClick(DialogInterface dialog, int id) {
-            uploadConfirmation();
+            uploadConfirmation(false, nextDate, "Attendance Saved");
         }
     };
 
-    private void addCardtoList(AttendanceItem item)
+    private void editCardtoList(AttendanceItem item)
     {
-        if (!existInList(item.getDate())) attendanceList.add(0, item);
+        int pos = existInList(item.getDate());
+
+        if (pos == -1) attendanceList.add(0, item);
+        else attendanceList.set(pos, item);
     }
 
-    private boolean existInList(DateTime date)
+    private int existInList(DateTime date)
     {
         for (int i = 0; i < attendanceList.size(); i++) {
-            if (attendanceList.get(i).getDate() == date) return true;
+            if (attendanceList.get(i).getDate() == date) return i;
         }
-        return false;
+        return -1;
     }
 
-    private void checkAndUpdate()
+    private void checkAndUpdate(DateTime date)
     {
-        List<ParseObject> nexcellObject = checkUpdate();
+        List<ParseObject> nexcellObject = checkUpdate(date);
 
         if (nexcellObject.isEmpty()) {
             updateStatus(false, null);
@@ -190,9 +214,9 @@ public class FragmentAttendance extends DialogFragment {
         }
     }
 
-    private  List<ParseObject> checkUpdate()
+    private  List<ParseObject> checkUpdate(DateTime newDate)
     {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, nextDate, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, newDate, getActivity());
         return nexcellObject;
     }
 
@@ -215,62 +239,64 @@ public class FragmentAttendance extends DialogFragment {
             status.setText("Submitted");
             statusImage.setImageResource(R.drawable.ic_success);
         }
-
     }
 
-    public void uploadConfirmation()
+    public void uploadConfirmation(final boolean override, final DateTime newDate, final String toastMsg)
     {
         UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?",  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                List<ParseObject> nexcellObject = checkUpdate();
-                if (nexcellObject.isEmpty()) {
-                    uploadData();
+                List<ParseObject> nexcellObject = checkUpdate(newDate);
+                if (!override && !nexcellObject.isEmpty()) {
+                    UIDialog.onCreateInvalidDialog(getActivity(), "The attendance has already submitted!");
                 }
                 else {
-                    UIDialog.onCreateInvalidDialog(getActivity(), "The attendance has already submitted!");
+                    uploadData(newDate);
+
+                    Toast.makeText(getActivity(), toastMsg, Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private void uploadData()
-    {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, nextDate, getActivity());
-        List<Integer> data = submitDialog.getData();
+    private void uploadData(final DateTime newDate) {
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, newDate, getActivity());
+        final List<Integer> data = submitDialog.getData();
 
-        if (!nexcellObject.isEmpty())
-        {
+        if (!nexcellObject.isEmpty()) {
             ParseOperation.updateData(nexcellObject.get(0).getObjectId(), data.get(0), data.get(1), data.get(2), data.get(3), userName, getActivity());
-        }
-        else
-        {
-            ParseOperation.saveData(data.get(0), data.get(1), data.get(2), data.get(3), nextDate, userNexcell, userName, getActivity());
+        } else {
+            ParseOperation.saveData(data.get(0), data.get(1), data.get(2), data.get(3), newDate, userNexcell, userName, getActivity());
         }
 
-        updateStatus(true, userName);
+        if (newDate == nextDate) updateStatus(true, userName);
 
-        addCardtoList(new AttendanceItem(data, nextDate,  new View.OnClickListener() {
+        editCardtoList(new AttendanceItem(data, newDate, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                SubmitDialog submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), null);
-                UIDialog.onCreateCustomDialog(getActivity(), "Edit Record - " + nextDate.toString("MMM dd") , submitDialog.getView(), "Modify", "Delete", editAttendanceListener, deleteAttendanceListener);
+                dialogDate = newDate;
+
+                submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), data);
+                UIDialog.onCreateCustomDialog(getActivity(), "Edit Record - " + newDate.toString("MMM dd"), submitDialog.getView(), "Modify", "Delete", editAttendanceListener, deleteAttendanceListener);
             }
         }));
 
         mAttendanceAdapter.notifyDataSetChanged();
+
+        //sendEmail(newDate, data);
+    }
+
+    private void sendEmail(DateTime newDate, List<Integer> data) {
 
         String toRecipients = ParseOperation.getSubmitDataRecipient(userNexcell, getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         DateTime currentTime = new DateTime();
 
-        String dateString = String.format("%d-%d-%d", nextDate.getYear(), nextDate.getMonthOfYear(), nextDate.getDayOfMonth());
+        String dateString = String.format("%d-%d-%d", newDate.getYear(), newDate.getMonthOfYear(), newDate.getDayOfMonth());
 
-        String currentDateTimeString = String.format("%d-%d-%d %s:%s:%s:%s", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth(),
-                currentTime.hourOfDay().getAsString(), currentTime.minuteOfHour().getAsString(), currentTime.secondOfMinute().getAsString(),
-                currentTime.millisOfSecond().getAsString());
+        String currentDateTimeString = currentTime.toString("yyyy-MM-dd HH:mm:ss.SSS");
 
         String emailSubject = "Confirmation for " + userNexcell + " Attendance Submission -- " + dateString;
 
@@ -279,16 +305,32 @@ public class FragmentAttendance extends DialogFragment {
                 userNexcell, dateString, data.get(0), data.get(1), data.get(2), data.get(3), currentDateTimeString, userName);
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
-        //sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, "", "");
-
-        Toast.makeText(getActivity(), "Saved Successfully", Toast.LENGTH_LONG).show();
+        sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, "", "");
     }
-
-
 
     public DateTime getNextUpdateDate()
     {
         return nextDate;
+    }
+
+    public class populateCardsAsync extends AsyncTask<String, Void, Void> {
+
+        protected Void doInBackground(String... info) {
+            populateCards();
+
+            try {
+                Thread.sleep(2000);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void exception) {
+            mAttendanceAdapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 }

@@ -20,6 +20,10 @@
     <color name="buttonPressColor">#ff334896</color>
     <color name="buttonRippleColor">#ff2d3a74</color>
 
+    <color name="refreshColor1">#ff229871</color>
+    <color name="refreshColor2">#ff57a36a</color>
+    <color name="refreshColor3">#ff31ce6d</color>
+
     <color name="selected_gray">#ffdbdbdb</color>
     <color name="white">#ffffff</color>
 </resources>

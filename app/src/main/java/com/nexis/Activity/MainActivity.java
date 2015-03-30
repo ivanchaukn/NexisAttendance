@@ -150,7 +150,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         if (position == 3)
         {
             UIDialog.onCreateActionDialog(this, "Logout", "Are you sure you want to exit?", logoutListener);
-
         }
         else
         {

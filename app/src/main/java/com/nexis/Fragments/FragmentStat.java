@@ -45,10 +45,10 @@ public class FragmentStat extends DialogFragment {
 	
 	public static FragmentStat newInstance() {
 		FragmentStat fragment = new FragmentStat();
-		Bundle args = new Bundle();
-		args.putInt("HData", 2);
-		fragment.setArguments(args);
-		frag = fragment;
+        //Bundle args = new Bundle();
+        //args.putInt("HData", 2);
+        //fragment.setArguments(args);
+        frag = fragment;
 		
 		return fragment;
 	}

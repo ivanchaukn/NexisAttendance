@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginCard"
+    android:layout_width="match_parent"
+    android:layout_height="320dp"
+    card_view:cardElevation="5dp"
+    card_view:cardCornerRadius="7dp"
+    card_view:cardBackgroundColor="#ffffff"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ff2c9669"
+            android:text="Nexis Attendance"
+            android:fontFamily="sans-serif-thin"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginTop="19dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:id="@+id/userPwLogIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_password"
+            android:drawablePadding="10dp"
+            android:background="#ffa8e1b6"
+            android:elevation="2dp"
+            android:ems="10"
+            android:singleLine="true"
+            android:password="true"
+            android:hint="Password"
+            android:textColor="#ff236946"
+            android:textColorHint="#ff2c9669"
+            android:textSize="14dp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_below="@+id/userNameLogIn"
+            android:layout_alignLeft="@+id/userNameLogIn"
+            android:layout_alignStart="@+id/userNameLogIn"
+            android:layout_alignRight="@+id/userNameLogIn"
+            android:layout_alignEnd="@+id/userNameLogIn" />
+
+        <EditText
+            android:id="@+id/userNameLogIn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="#ffa8e1b6"
+            android:ems="10"
+            android:layout_marginTop="22dp"
+            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_user"
+            android:drawablePadding="10dp"
+            android:fontFamily="sans-serif-thin"
+            android:elevation="2dp"
+            android:singleLine="true"
+            android:hint="Username"
+            android:textColor="#ff236946"
+            android:textColorHint="#ff2c9669"
+            android:textSize="14dp"
+            android:layout_below="@+id/textView1"
+            android:layout_centerHorizontal="true">
+
+            <requestFocus />
+        </EditText>
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:background="#ff14b554"
+            android:text="Log In"
+            android:layout_below="@+id/userPwLogIn"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignStart="@+id/textView1"
+            android:layout_alignRight="@+id/textView1"
+            android:layout_alignEnd="@+id/textView1"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/resetPwdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ff2d3a74"
+            android:fontFamily="sans-serif-thin"
+            android:text="Reset Password"
+            android:textSize="15dp"
+            android:layout_below="@+id/loginButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp" />
+
+        <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+            android:id="@+id/progressCircular"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="#ff229871"
+            android:layout_alignTop="@+id/loginButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="17dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

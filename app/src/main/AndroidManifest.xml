@@ -50,11 +50,8 @@
        	</activity>
  
         <!--  Entry for RegisterActivity.class -->
-        <activity android:name=".Activity.RegisterActivity"
-                  android:label="Register New Account">
-        </activity>
-        
-		<service android:name="com.parse.PushService" />
+
+        <service android:name="com.parse.PushService" />
 		
 		<receiver android:name="com.parse.ParseBroadcastReceiver">
 		  <intent-filter>

@@ -218,10 +218,5 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         userInfoText.setText("Nexcell: " + userNexcell);
     }
 
-    public void resetSelectPosition(int pos)
-    {
-
-    }
-
 }
 

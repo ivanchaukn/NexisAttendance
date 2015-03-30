@@ -28,4 +28,10 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
+
+    <array name="swipeRefreshColors">
+        <item name="refreshPrimary">@color/refreshColor1</item>
+        <item name="refreshSecondary">@color/refreshColor2</item>
+        <item name="refreshThird">@color/refreshColor3</item>
+    </array>
 </resources>
