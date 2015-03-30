@@ -26,6 +26,22 @@ public class AttendanceItem {
         buttonListener = listener;
     }
 
+    public Integer getFellowshipValue() {
+        return fInt;
+    }
+
+    public Integer getServiceValue() {
+        return sInt;
+    }
+
+    public Integer getCollegeValue() {
+        return cInt;
+    }
+
+    public Integer getNewComerValue() {
+        return nInt;
+    }
+
     public String getFellowshipText() {
         return Integer.toString(fInt);
     }

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
+import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Constants;
 import com.nexis.R;
 
@@ -24,8 +25,9 @@ public class SubmitDialog extends DialogFragment {
     private View rootView;
     private int fellNum, servNum, collNum, newcNum = 0;
 
-    public static SubmitDialog newInstance(LayoutInflater inflater) {
+    public static SubmitDialog newInstance(LayoutInflater inflater, List<Integer> item) {
         SubmitDialog fragment = new SubmitDialog();
+        if (item != null) fragment.updateValue(item);
         fragment.onCreateView(inflater, null, null);
         return fragment;
     }
@@ -45,7 +47,17 @@ public class SubmitDialog extends DialogFragment {
         initializeNumberPickers(npS);
         initializeNumberPickers(npN);
 
+        setPickerValue();
+
         return rootView;
+    }
+
+    private void updateValue(List<Integer> item)
+    {
+        fellNum = item.get(0);
+        servNum = item.get(1);
+        collNum = item.get(2);
+        newcNum = item.get(3);
     }
 
     private void initializeNumberPickers(NumberPicker np)
@@ -56,6 +68,14 @@ public class SubmitDialog extends DialogFragment {
         np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         setNumberPickerTextColor(np, Color.BLACK);
+    }
+
+    private void setPickerValue()
+    {
+        ((NumberPicker) rootView.findViewById(R.id.fellowshipNumberPicker)).setValue(fellNum);
+        ((NumberPicker) rootView.findViewById(R.id.serviceNumberPicker)).setValue(servNum);
+        ((NumberPicker) rootView.findViewById(R.id.collegeNumberPicker)).setValue(collNum);
+        ((NumberPicker) rootView.findViewById(R.id.newcomerNumberPicker)).setValue(newcNum);
     }
 
     private OnValueChangeListener valueChangeListener = new NumberPicker.OnValueChangeListener() {
