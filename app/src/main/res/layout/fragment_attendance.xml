@@ -39,6 +39,8 @@
         android:src="@drawable/ic_action_new"
         fab:fab_colorNormal="@color/buttonPrimaryColor"
         fab:fab_colorPressed="@color/buttonPressColor"
-        fab:fab_colorRipple="@color/buttonRippleColor" />
+        fab:fab_colorRipple="@color/buttonRippleColor"
+        fab:fab_shadow="true"/>
+
 
 </FrameLayout>

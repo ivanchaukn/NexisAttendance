@@ -91,6 +91,7 @@ public class FragmentAttendance extends DialogFragment {
         checkAndUpdate(nextDate);
 
         FloatingActionButton addButton = (FloatingActionButton)rootView.findViewById(R.id.addButton);
+        addButton.attachToRecyclerView(mRecyclerView);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

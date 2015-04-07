@@ -24,6 +24,8 @@
     <color name="refreshColor2">#ff57a36a</color>
     <color name="refreshColor3">#ff31ce6d</color>
 
+    <color name="loginEditText">#ffd3ffe0</color>
+
     <color name="selected_gray">#ffdbdbdb</color>
     <color name="white">#ffffff</color>
 </resources>

@@ -23,8 +23,7 @@
             android:textColor="#ff2c9669"
             android:text="Nexis Attendance"
             android:fontFamily="sans-serif-thin"
-            android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="24dp"
             android:layout_marginTop="19dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
@@ -37,14 +36,14 @@
             android:padding="5dp"
             android:drawableLeft="@drawable/ic_password"
             android:drawablePadding="10dp"
-            android:background="#ffa8e1b6"
+            android:background="@color/loginEditText"
             android:elevation="2dp"
             android:ems="10"
             android:singleLine="true"
             android:password="true"
             android:hint="Password"
             android:textColor="#ff236946"
-            android:textColorHint="#ff2c9669"
+            android:textColorHint="#ff36be87"
             android:textSize="14dp"
             android:fontFamily="sans-serif-thin"
             android:layout_below="@+id/userNameLogIn"
@@ -57,7 +56,7 @@
             android:id="@+id/userNameLogIn"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:background="#ffa8e1b6"
+            android:background="@color/loginEditText"
             android:ems="10"
             android:layout_marginTop="22dp"
             android:padding="5dp"
@@ -68,7 +67,7 @@
             android:singleLine="true"
             android:hint="Username"
             android:textColor="#ff236946"
-            android:textColorHint="#ff2c9669"
+            android:textColorHint="#ff36be87"
             android:textSize="14dp"
             android:layout_below="@+id/textView1"
             android:layout_centerHorizontal="true">
@@ -97,7 +96,7 @@
             android:textColor="#ff2d3a74"
             android:fontFamily="sans-serif-thin"
             android:text="Reset Password"
-            android:textSize="15dp"
+            android:textSize="16dp"
             android:layout_below="@+id/loginButton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
@@ -107,11 +106,11 @@
             android:id="@+id/progressCircular"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="#ff229871"
+            android:background="#ff14b554"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/loginButton"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="17dp"
-            android:visibility="gone" />
+            android:layout_marginTop="17dp" />
 
     </RelativeLayout>
 
