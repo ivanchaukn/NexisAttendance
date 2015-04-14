@@ -49,6 +49,11 @@
                   android:screenOrientation="portrait" >
        	</activity>
 
+        <activity android:name=".Activity.FellowshipActivity"
+            android:label="Statistics"
+            android:screenOrientation="portrait" >
+        </activity>
+
         <activity android:name=".Activity.SummaryActivity"
             android:label="Statistics"
             android:screenOrientation="portrait" >

@@ -32,7 +32,8 @@ public final class Constants {
 	public static HashMap<String, String> USERID_MAP;
 	
 	public static List<String> NEXCELL_LIST;
-	public static CharSequence[] NEXCELL_CHARLIST;
+    public static ArrayList<String> NEXCELL;
+    public static CharSequence[] NEXCELL_CHARLIST;
 	
 	public static List<String> USER_LEVEL_LIST;
 
@@ -43,9 +44,16 @@ public final class Constants {
 	
 	public static void initializeNexcell(List<ParseObject> nexcellObject)
 	{
+        NEXCELL = new ArrayList<>();
 		NEXCELL_MAP = new HashMap<String, String>();
 		NEXCELL_LIST = new ArrayList<String>();
-		 
+        NEXCELL.add("Ararat");
+        NEXCELL.add("Carmel");
+        NEXCELL.add("Moriah");
+        NEXCELL.add("Nebo");
+        NEXCELL.add("Olivet");
+        NEXCELL.add("Sion");
+        NEXCELL.add("Zion");
 		for(ParseObject x: nexcellObject) 
 		{
 			String name = x.get("Name").toString();

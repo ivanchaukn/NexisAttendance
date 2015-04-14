@@ -1,7 +1,11 @@
 package com.nexis;
 
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.parse.ParseObject;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -16,16 +20,71 @@ public class Data {
         // restrict instantiation
     }
 
-    public static ArrayList<BarEntry> getUserMembers(List<ParseObject> nexcellObject, String dataCol)
+    public static ArrayList<Entry> getUserMembersLine(List<ParseObject> nexcellObject, String dataCol)
     {
-        ArrayList<BarEntry> memberList = new ArrayList<BarEntry>();
+        ArrayList<Entry> memberList = new ArrayList<>();
 
         for(int i = 0;i< nexcellObject.size();i++)
         {
-            BarEntry members = new BarEntry (nexcellObject.get(i).getInt(dataCol),i);
+            Entry members = new Entry (nexcellObject.get(i).getInt(dataCol),i);
             memberList.add(members);
         }
 
+        return memberList;
+    }
+
+    public static ArrayList<BarEntry> getRecentFellowship (List<ParseObject> nexcellObject)
+    {
+        ArrayList<BarEntry> memberList = new ArrayList<>();
+        for ( int i = 0; i< Constants.NEXCELL_LIST.size();i++)
+        {
+            BarEntry member = new BarEntry(0, i);
+            memberList.add(member);
+        }
+
+        DateTime date = new DateTime(nexcellObject.get(nexcellObject.size()-1).get("Date"), DateTimeZone.UTC);
+        DateTime rowDate = new DateTime(nexcellObject.get(nexcellObject.size()-1).get("Date"), DateTimeZone.UTC);
+
+        for(int row = nexcellObject.size()-1; date.equals(rowDate)&&Constants.NEXCELL_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        {
+                int pos = Constants.NEXCELL_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
+                BarEntry member = new BarEntry(nexcellObject.get(row).getInt("Fellowship"), pos);
+                memberList.set(pos, member);
+                rowDate = new DateTime(nexcellObject.get(row - 1).get("Date"), DateTimeZone.UTC);
+        }
+        return memberList;
+    }
+
+    public static ArrayList<BarEntry> getAverageFellowship (List<ParseObject> nexcellObject)
+    {
+        ArrayList<BarEntry> memberList = new ArrayList<>();
+        ArrayList<Integer> data = new ArrayList();
+        ArrayList<Integer> numOfData = new ArrayList();
+        for ( int i = 0; i< Constants.NEXCELL_LIST.size();i++) {
+            data.add(0);
+            numOfData.add(0);
+        }
+
+        for(int row = nexcellObject.size()-1; Constants.NEXCELL_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        {
+            int pos = Constants.NEXCELL_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
+
+            if(nexcellObject.get(row).get("Nexcell").equals("Carmel"))
+                System.out.println(nexcellObject.get(row).getInt("Fellowship"));
+            data.set(pos,data.get(pos)+nexcellObject.get(row).getInt("Fellowship"));
+            numOfData.set(pos,numOfData.get(pos) + 1);
+        }
+
+        for(int grp = 0;grp < data.size();grp++)
+        {
+
+            int average = data.get(grp)/numOfData.get(grp);
+            //System.out.print(data.get(grp)+" ");
+            //System.out.print(numOfData.get(grp)+" ");
+            //System.out.println(average);
+            BarEntry member = new BarEntry(average,grp);
+            memberList.add(grp,member);
+        }
         return memberList;
     }
 
@@ -43,4 +102,76 @@ public class Data {
 
         return dates;
     }
+
+    //    private void getNexisData()
+//    {
+//        hsData.clear();
+//        uniData.clear();
+//        nexisData.clear();
+//
+//        for(int i = 0; i < 3; i++)
+//        {
+//            hsData.add(new ArrayList<Integer>());
+//            uniData.add(new ArrayList<Integer>());
+//            nexisData.add(new ArrayList<Integer>());
+//        }
+//
+//        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, null, getActivity());
+//
+//        int startRow = 0;
+//        List<Integer> hsNum = Arrays.asList(0, 0, 0);
+//        List<Integer> uniNum = Arrays.asList(0, 0, 0);
+//        List<Integer> nexisNum = Arrays.asList(0, 0, 0);
+//        graphDates = new ArrayList<Number>();
+//
+//        while(startRow < nexcellObject.size() && !Constants.NEXCELL_LIST.contains(nexcellObject.get(startRow).get("Nexcell"))) startRow++;
+//
+//        if (startRow == nexcellObject.size()) return;
+//
+//        DateTime rowDate = new DateTime((Date)nexcellObject.get(startRow).get("Date"), DateTimeZone.UTC);
+//
+//        for(int i = startRow; i < nexcellObject.size(); i++)
+//        {
+//            Date d = (Date)nexcellObject.get(i).get("Date");
+//            DateTime currentDate = new DateTime(d, DateTimeZone.UTC);
+//            String currentNexcell = (String)nexcellObject.get(i).get("Nexcell");
+//
+//            if (!Constants.NEXCELL_LIST.contains(currentNexcell)) continue;
+//
+//            if (!currentDate.equals(rowDate))
+//            {
+//                for(int j = 0; j <= 2; j++)
+//                {
+//                    hsData.get(j).add(hsNum.get(j));
+//                    uniData.get(j).add(uniNum.get(j));
+//                    nexisData.get(j).add(nexisNum.get(j));
+//                }
+//
+//                hsNum = Arrays.asList(0,0,0);
+//                uniNum = Arrays.asList(0,0,0);
+//                nexisNum = Arrays.asList(0,0,0);
+//                graphDates.add(rowDate.toDate().getTime());
+//                rowDate = currentDate;
+//            }
+//            for(int j = 0; j <= 2; j++)
+//            {
+//                int num = nexcellObject.get(i).getInt(Constants.CATEGORY_LIST.get(j));
+//
+//                if (Constants.NEXCELL_MAP.get(currentNexcell).equals("HighSchool"))
+//                    hsNum.set(j, hsNum.get(j)+num);
+//                else
+//                    uniNum.set(j, uniNum.get(j)+num);
+//
+//                nexisNum.set(j, nexisNum.get(j)+num);
+//            }
+//        }
+//
+//        for(int j = 0; j <= 2; j++)
+//        {
+//            hsData.get(j).add(hsNum.get(j));
+//            uniData.get(j).add(uniNum.get(j));
+//            nexisData.get(j).add(nexisNum.get(j));
+//        }
+//        graphDates.add(rowDate.toDate().getTime());
+//    }
 }
