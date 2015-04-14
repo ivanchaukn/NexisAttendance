@@ -64,9 +64,9 @@ public class LoginActivity extends Activity {
                             endCurrentActivity();
                             return;
                         } else if (user == null) {
-                            UIDialog.onCreateInvalidDialog(LoginActivity.this, "Invalid Username or password, please try again!");
+                            UIDialog.onCreateInvalidDialog(thisActivity(), "Invalid Username or password, please try again!");
                         } else {
-                            UIDialog.onCreateErrorDialog(LoginActivity.this, "Login Error, please contact administrator!");
+                            UIDialog.onCreateErrorDialog(thisActivity(), "Login Error, please contact administrator!");
                         }
                         showButton(loginButton);
                     }
@@ -133,7 +133,7 @@ public class LoginActivity extends Activity {
         fadeout.setDuration(500);
         fadeout.setFillAfter(true);
 
-        //progressCircle.setVisibility(View.VISIBLE);
+        progressCircle.setVisibility(View.VISIBLE);
     }
 
     private void showButton(ButtonRectangle button)
@@ -141,11 +141,16 @@ public class LoginActivity extends Activity {
         Animation fadein = AnimationUtils.loadAnimation(this, R.anim.abc_fade_in);
         button.startAnimation(fadein);
 
-        //progressCircle.setVisibility(View.GONE);
+        progressCircle.setVisibility(View.INVISIBLE);
     }
     
     private void endCurrentActivity()
     {
     	this.finish();
+    }
+
+    private LoginActivity thisActivity()
+    {
+        return this;
     }
 }

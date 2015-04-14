@@ -23,6 +23,7 @@ import com.nexis.Fragments.FragmentNewComer;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
 import com.nexis.Fragments.FragmentStat;
 import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
+import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
 
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -146,31 +147,40 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public void onNavigationDrawerItemSelected(int position, int prevPosition)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
 
-        if (position == 3)
+        if (currentfrag != null)
         {
-            UIDialog.onCreateActionDialog(this, "Logout", "Are you sure you want to exit?", logoutListener);
+            if (position == prevPosition) return;
+            fragmentManager.beginTransaction().remove(currentfrag).commit();
         }
-        else
+
+        getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
+
+        if (fragments.size() < 3)
         {
-            Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
+            fragments.add(FragmentAttendance.newInstance());
+            fragments.add(FragmentStat.newInstance());
+            fragments.add(FragmentNewComer.newInstance());
+        }
 
-            if (currentfrag != null)
-            {
-                if (position == prevPosition) return;
-                fragmentManager.beginTransaction().remove(currentfrag).commit();
-            }
+        displayFragment(position);
 
-            getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
+    }
 
-            if (fragments.size() < 3)
-            {
-                fragments.add(FragmentAttendance.newInstance());
-                fragments.add(FragmentStat.newInstance());
-                fragments.add(FragmentNewComer.newInstance());
-            }
+    @Override
+    public void onNavigationFooterItemSelected(int position)
+    {
+        switch (position)
+        {
+            case 0:
+                //Intent i = new Intent(getApplicationContext(), SettingClass.class);
+                //startActivity(i);
+                break;
 
-            displayFragment(position);
+            case 1:
+                UIDialog.onCreateActionDialog(this, "Logout", "Are you sure you want to exit?", logoutListener);
+                break;
         }
     }
 

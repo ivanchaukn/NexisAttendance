@@ -82,10 +82,18 @@ public class SplashActivity extends Activity{
 
             try
             {
-                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                 if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED &&
-                         connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) return "NoConnection";
+                NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                if (wifi.getState() != NetworkInfo.State.CONNECTED)
+                {
+                    if (mobile != null && mobile.getState() != NetworkInfo.State.CONNECTED)
+                    {
+                        return "NoConnection";
+                    }
+                }
             }
             catch(Exception e)
             {

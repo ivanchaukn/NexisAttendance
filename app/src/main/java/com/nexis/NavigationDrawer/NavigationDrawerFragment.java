@@ -2,13 +2,11 @@ package com.nexis.NavigationDrawer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.annotation.Nullable;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,12 +25,14 @@ import java.util.List;
 import com.nexis.Constants;
 import com.nexis.R;
 
-public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks {
+public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     private static final String PREFERENCES_FILE = "my_app_settings"; //TODO: change this to your file
     private NavigationDrawerCallbacks mCallbacks;
+    private NavigationFooterCallbacks mFooterCallbacks;
     private RecyclerView mDrawerList;
+    private ListView mFooterList;
     private View mFragmentContainerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
@@ -44,6 +45,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        //Set up for the main recyclerView
         mDrawerList = (RecyclerView) view.findViewById(R.id.drawerList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -55,6 +58,13 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         adapter.setNavigationDrawerCallbacks(this);
         mDrawerList.setAdapter(adapter);
         selectItem(mCurrentSelectedPosition, mCurrentSelectedPosition);
+
+        mFooterList = (ListView) view.findViewById(R.id.footerList);
+        final List<NavigationItem> footerItems = getFooter();
+        NavigationFooterAdapter footerAdapter = new NavigationFooterAdapter(getActivity(), footerItems);
+        footerAdapter.setNavigationFooterCallbacks(this);
+        mFooterList.setAdapter(footerAdapter);
+
         return view;
     }
 
@@ -73,6 +83,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         super.onAttach(activity);
         try {
             mCallbacks = (NavigationDrawerCallbacks) activity;
+            mFooterCallbacks = (NavigationFooterCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -135,6 +146,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
+        mFooterCallbacks = null;
     }
 
     public List<NavigationItem> getMenu() {
@@ -143,6 +155,14 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(2), getResources().getDrawable(R.drawable.ic_newcomer)));
+
+        return items;
+    }
+
+    public List<NavigationItem> getFooter() {
+        List<NavigationItem> items = new ArrayList<NavigationItem>();
+
+        items.add(new NavigationItem("Setting", getResources().getDrawable(R.drawable.ic_setting)));
         items.add(new NavigationItem("Log Out", getResources().getDrawable(R.drawable.ic_exit)));
 
         return items;
@@ -154,8 +174,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
 
-        FragmentManager fragmentManager = getFragmentManager();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -165,6 +183,25 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
                     mCallbacks.onNavigationDrawerItemSelected(position, prevPosition);
                 }
                 ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
+            }
+        }, 400);
+    }
+
+    void selectFooterItem(final int position) {
+
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (mFooterCallbacks != null) {
+
+                    mFooterCallbacks.onNavigationFooterItemSelected(position);
+                }
+                ((NavigationFooterAdapter) mFooterList.getAdapter()).selectPosition(position);
             }
         }, 400);
     }
@@ -187,6 +224,11 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     @Override
     public void onNavigationDrawerItemSelected(int position, int currentPosition) {
         selectItem(position, currentPosition);
+    }
+
+    @Override
+    public void onNavigationFooterItemSelected(int position) {
+        selectFooterItem(position);
     }
 
     public DrawerLayout getDrawerLayout() {
