@@ -41,9 +41,9 @@ public class genWeeklyReport {
     List<String> nexcellList;
     List<ParseObject> nexcellObject;
 
-    List<DateTime> dateList = new ArrayList<DateTime>();
-    List<List<Integer>> mainList = new ArrayList<List<Integer>>();
-    List<List<Integer>> excelDataList = new ArrayList<List<Integer>>();
+    List<DateTime> dateList = new ArrayList<>();
+    List<List<Integer>> mainList = new ArrayList<>();
+    List<List<Integer>> excelDataList = new ArrayList<>();
 
     HSSFWorkbook wb = new HSSFWorkbook();
     Sheet sheet = wb.createSheet();
@@ -67,7 +67,7 @@ public class genWeeklyReport {
 
     private void initialize()
     {
-        nexcellList =  new ArrayList<String>(Constants.NEXCELL_LIST);
+        nexcellList =  new ArrayList<>(Constants.NEXCELL_LIST);
         nexcellList.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
         categoryListSize = Constants.CATEGORY_LIST.size();
@@ -78,7 +78,7 @@ public class genWeeklyReport {
 
     private void parseData()
     {
-        nexcellObject = ParseOperation.getNexcellData(null, null, (Activity)context);
+        nexcellObject = ParseOperation.getNexcellData(null, null, context);
 
         int startRow = 0;
 
@@ -86,9 +86,9 @@ public class genWeeklyReport {
 
         if (startRow == nexcellObject.size()) return;
 
-        DateTime rowDate = new DateTime((Date)nexcellObject.get(startRow).get("Date"), DateTimeZone.UTC);
+        DateTime rowDate = new DateTime(nexcellObject.get(startRow).get("Date"), DateTimeZone.UTC);
 
-        List<Integer> row = new ArrayList<Integer>();
+        List<Integer> row = new ArrayList<>();
         List<Integer> hsData = Arrays.asList(0, 0, 0, 0);
         List<Integer> uniData = Arrays.asList(0, 0, 0, 0);
         List<Integer> nexisData = Arrays.asList(0, 0, 0, 0);
@@ -97,7 +97,7 @@ public class genWeeklyReport {
 
         for(int i = startRow; i < nexcellObject.size(); i++)
         {
-            DateTime currentDate = new DateTime((Date)nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
+            DateTime currentDate = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
             String currentNexcell = (String)nexcellObject.get(i).get("Nexcell");
 
             if (!Constants.NEXCELL_LIST.contains(currentNexcell)) continue;
@@ -121,7 +121,7 @@ public class genWeeklyReport {
 
                 //clear containers and update variable
                 rowDate = currentDate;
-                row = new ArrayList<Integer>();
+                row = new ArrayList<>();
                 hsData = Arrays.asList(0, 0, 0, 0);
                 uniData = Arrays.asList(0, 0, 0, 0);
 
@@ -142,7 +142,7 @@ public class genWeeklyReport {
 
                 List<Integer> tempData;
 
-                if (Constants.NEXCELL_MAP.get(currentNexcell).equals("HighSchool")) tempData = hsData;
+                if (Constants.NEXCELL_STAGE.get(currentNexcell).equals("HighSchool")) tempData = hsData;
                 else tempData = uniData;
 
                 int newTotal = tempData.get(j) + num;
@@ -172,7 +172,7 @@ public class genWeeklyReport {
     {
         for(int i = 0; i < dateList.size(); i++)
         {
-            List<Integer> subDataList = new ArrayList<Integer>();
+            List<Integer> subDataList = new ArrayList<>();
 
             double excelDate = DateUtil.getExcelDate(dateList.get(i).toCalendar(Locale.CANADA), false);
 
@@ -322,7 +322,7 @@ public class genWeeklyReport {
 			Cell titleCell = titleRow.createCell(1);
 			titleCell.setCellStyle(tableTitleStyle);
 
-			titleCell.setCellValue("Nexis Attendence Summary");
+			titleCell.setCellValue("Nexis Attendance Summary");
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, columnsNum));
 
             Row nexcellRow = sheet.createRow(1);

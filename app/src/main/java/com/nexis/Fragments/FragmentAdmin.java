@@ -13,40 +13,42 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.nexis.Activity.StatusActivity;
 import com.nexis.Activity.SummaryActivity;
 import com.nexis.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentStat extends DialogFragment implements AdapterView.OnItemClickListener {
+public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemClickListener {
 
-    public static FragmentStat newInstance() {
-        FragmentStat fragment = new FragmentStat();
+    public static FragmentAdmin newInstance() {
+        FragmentAdmin fragment = new FragmentAdmin();
         Bundle args = new Bundle();
-        args.putInt("Stat", 2);
+        args.putInt("Admin", 4);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public FragmentStat() {
+    public FragmentAdmin() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_stat, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_admin, container, false);
 
         // initialize the utilities
         Utils.init(getResources());
 
-        ArrayList<GraphListItem> objects = new ArrayList<>();
+        ArrayList<AdminListItem> objects = new ArrayList<>();
 
-        objects.add(new GraphListItem("Line Chart", "A simple demonstration of the linechart."));
-        objects.add(new GraphListItem("Bar Chart", "A simple demonstration of the barchart."));
+        objects.add(new AdminListItem("Real-Time Status", "Monitor the attendance status for each nexcell"));
+        objects.add(new AdminListItem("User Management", "Modify user information and access level"));
+        objects.add(new AdminListItem("Nexcell Management", "Nexis group distribution"));
 
         GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
 
-        ListView lv = (ListView) rootView.findViewById(R.id.graphList);
+        ListView lv = (ListView) rootView.findViewById(R.id.adminList);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(this);
@@ -61,35 +63,33 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
 
         switch (pos) {
             case 0:
-                i = new Intent(getActivity(), SummaryActivity.class);
+                i = new Intent(getActivity(), StatusActivity.class);
                 startActivity(i);
                 break;
         }
-
-        getActivity().overridePendingTransition(R.anim.move_right_in_activity, R.anim.move_left_out_activity);
     }
 
 
-    private class GraphListItem {
+    private class AdminListItem {
         String name;
         String desc;
 
-        public GraphListItem(String n, String d) {
+        public AdminListItem(String n, String d) {
             name = n;
             desc = d;
         }
     }
 
-    private class GraphListAdapter extends ArrayAdapter<GraphListItem> {
+    private class GraphListAdapter extends ArrayAdapter<AdminListItem> {
 
-        public GraphListAdapter(Context context, List<GraphListItem> objects) {
+        public GraphListAdapter(Context context, List<AdminListItem> objects) {
             super(context, 0, objects);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            GraphListItem c = getItem(position);
+            AdminListItem c = getItem(position);
 
             ViewHolder holder;
 

@@ -2,10 +2,14 @@ package com.nexis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import com.parse.ParseObject;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public final class Constants {
 	
@@ -28,7 +32,9 @@ public final class Constants {
 	public static final String SENDGRID_USER_NAMAE = "nexisapplication";
 	public static final String SENDGRID_PASSWORD = "(Nexis14!#";
 	
-	public static HashMap<String, String> NEXCELL_MAP;
+	public static HashMap<String, String> NEXCELL_STAGE;
+    public static HashMap<String, String> NEXCELL_PARENT;
+    public static HashMap<String, DateTime> NEXCELL_MERGE_DATE;
 	public static HashMap<String, String> USERID_MAP;
 	
 	public static List<String> NEXCELL_LIST;
@@ -36,23 +42,29 @@ public final class Constants {
 	
 	public static List<String> USER_LEVEL_LIST;
 
-    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form");
+    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form", "System Administration");
 
 	public static List<String> CATEGORY_LIST = Arrays.asList("Fellowship", "Service", "College", "NewComer");
 	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList("HighSchool","University","Nexis");
 	
 	public static void initializeNexcell(List<ParseObject> nexcellObject)
 	{
-		NEXCELL_MAP = new HashMap<String, String>();
-		NEXCELL_LIST = new ArrayList<String>();
+		NEXCELL_STAGE = new HashMap<>();
+        NEXCELL_PARENT = new HashMap<>();
+        NEXCELL_MERGE_DATE = new HashMap<>();
+		NEXCELL_LIST = new ArrayList<>();
 		 
-		for(ParseObject x: nexcellObject) 
+		for(ParseObject x: nexcellObject)
 		{
-			String name = x.get("Name").toString();
+			String nexcell = x.get("Name").toString();
 			String stage = x.get("Stage").toString();
-			
-			NEXCELL_LIST.add(name);
-			NEXCELL_MAP.put(name, stage);
+            String parentGroup = x.get("Stage").toString();
+            DateTime mergeDate = new DateTime(x.get("Merge_Date"), DateTimeZone.UTC);
+
+            NEXCELL_STAGE.put(nexcell, stage);
+            NEXCELL_PARENT.put(nexcell, parentGroup);
+            NEXCELL_MERGE_DATE.put(nexcell, mergeDate);
+            NEXCELL_LIST.add(nexcell);
 		}
 		
 		NEXCELL_CHARLIST = NEXCELL_LIST.toArray(new CharSequence[NEXCELL_LIST.size()]);
@@ -60,7 +72,7 @@ public final class Constants {
 	
 	public static void initializeUserLevel(List<ParseObject> nexcellObject)
 	{
-		USER_LEVEL_LIST = new ArrayList<String>();
+		USER_LEVEL_LIST = new ArrayList<>();
 		 
 		for(ParseObject x: nexcellObject) 
 		{

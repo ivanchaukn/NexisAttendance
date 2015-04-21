@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.annotation.Nullable;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,8 +39,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     private boolean mFromSavedInstanceState;
     private int mCurrentSelectedPosition;
 
-
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
@@ -155,6 +152,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(2), getResources().getDrawable(R.drawable.ic_newcomer)));
+        items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(3), getResources().getDrawable(R.drawable.ic_admin)));
 
         return items;
     }

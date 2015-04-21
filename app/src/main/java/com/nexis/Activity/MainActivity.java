@@ -19,6 +19,7 @@ import android.view.ViewConfiguration;
 import android.widget.Toast;
 import com.nexis.Constants;
 import com.nexis.ExcelReports.genWeeklyReport;
+import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentNewComer;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
 import com.nexis.Fragments.FragmentStat;
@@ -35,6 +36,7 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
 import org.joda.time.DateTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -54,10 +56,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     List<ParseObject> nexcellObject;
 
-    HashMap<String, String> userIdMap = new HashMap<String, String>();
-    List<String> tempUserIDList = new ArrayList<String>();
+    HashMap<String, String> userIdMap = new HashMap<>();
+    List<String> tempUserIDList = new ArrayList<>();
 
-    List<Fragment> fragments = new ArrayList<Fragment>();
+    List<Fragment> fragments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,15 +159,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
 
-        if (fragments.size() < 3)
-        {
-            fragments.add(FragmentAttendance.newInstance());
-            fragments.add(FragmentStat.newInstance());
-            fragments.add(FragmentNewComer.newInstance());
-        }
+        fragments.add(FragmentAttendance.newInstance());
+        fragments.add(FragmentStat.newInstance());
+        fragments.add(FragmentNewComer.newInstance());
+        fragments.add(FragmentAdmin.newInstance());
 
         displayFragment(position);
-
     }
 
     @Override
@@ -174,8 +173,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         switch (position)
         {
             case 0:
-                //Intent i = new Intent(getApplicationContext(), SettingClass.class);
-                //startActivity(i);
+                Intent i = new Intent(getApplicationContext(), SettingActivity.class);
+                startActivity(i);
                 break;
 
             case 1:
@@ -245,8 +244,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     private Dialog changeLevelDialog(List<ParseObject> userObject)
     {
-        final List<String> userList = new ArrayList<String>();
-        for(ParseObject x: userObject) userList.add((String) x.get("username") + " (" +  x.get("level") + ")");
+        final List<String> userList = new ArrayList<>();
+        for(ParseObject x: userObject) userList.add(x.get("username") + " (" +  x.get("level") + ")");
 
         final List<Integer> mSelectedItems = new ArrayList<Integer>();
         final CharSequence[] nList = userList.toArray(new CharSequence[userList.size()]);
@@ -321,8 +320,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, this);
         final CharSequence[] nList = new CharSequence[Constants.NEXCELL_LIST.size()];
 
-        List<String> dataNexcell = new ArrayList<String>();
-        final List<String> missingNexcell = new ArrayList<String>();
+        List<String> dataNexcell = new ArrayList<>();
+        final List<String> missingNexcell = new ArrayList<>();
 
         for (ParseObject x: nexcellObject) dataNexcell.add((String)x.get("Nexcell"));
 
@@ -357,7 +356,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             @Override
            public void onClick(View v)
             {
-                ArrayList<String> channels = new ArrayList<String>();
+                ArrayList<String> channels = new ArrayList<>();
                 for(String nexcell: missingNexcell) channels.add(nexcell);
 
                 ParsePush push = new ParsePush();

@@ -13,7 +13,6 @@ import com.parse.ParseObject;
 
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -58,7 +57,6 @@ public class FragmentAttendance extends DialogFragment {
 	public FragmentAttendance() {
 	}
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_attendance, container, false);
@@ -78,7 +76,7 @@ public class FragmentAttendance extends DialogFragment {
         attendanceList = new ArrayList<>();
 
         nextDate = new DateTime(DateTimeZone.UTC);
-        if (nextDate.getDayOfWeek() < DateTimeConstants.FRIDAY) nextDate = nextDate.minusWeeks(1);
+        if (nextDate.getDayOfWeek() - 1 < DateTimeConstants.FRIDAY) nextDate = nextDate.minusWeeks(1);
         nextDate = nextDate.withDayOfWeek(DateTimeConstants.FRIDAY);
         nextDate = nextDate.withTimeAtStartOfDay();
 
@@ -285,7 +283,7 @@ public class FragmentAttendance extends DialogFragment {
 
         mAttendanceAdapter.notifyDataSetChanged();
 
-        //sendEmail(newDate, data);
+        sendEmail(newDate, data);
     }
 
     private void sendEmail(DateTime newDate, List<Integer> data) {

@@ -53,6 +53,16 @@
             android:label="Statistics"
             android:screenOrientation="portrait" >
         </activity>
+
+        <activity android:name=".Activity.SettingActivity"
+            android:label="Setting"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity android:name=".Activity.StatusActivity"
+            android:label="Real-Time Status"
+            android:screenOrientation="portrait" >
+        </activity>
  
         <!--  Entry for RegisterActivity.class -->
 
@@ -79,10 +89,6 @@
 		  <intent-filter>
 		    <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 		    <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-		 
-		    <!--
-		      IMPORTANT: Change "com.parse.starter" to match your app's package name.
-		    -->
 		    <category android:name="com.nexis" />
 		  </intent-filter>
 		</receiver>
