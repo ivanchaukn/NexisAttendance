@@ -38,7 +38,6 @@ public final class Constants {
 	public static HashMap<String, String> USERID_MAP;
 	
 	public static List<String> NEXCELL_LIST;
-	public static CharSequence[] NEXCELL_CHARLIST;
 	
 	public static List<String> USER_LEVEL_LIST;
 
@@ -66,8 +65,6 @@ public final class Constants {
             NEXCELL_MERGE_DATE.put(nexcell, mergeDate);
             NEXCELL_LIST.add(nexcell);
 		}
-		
-		NEXCELL_CHARLIST = NEXCELL_LIST.toArray(new CharSequence[NEXCELL_LIST.size()]);
 	}
 	
 	public static void initializeUserLevel(List<ParseObject> nexcellObject)

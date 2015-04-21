@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.nexis.Activity.FellowshipActivity;
 import com.nexis.Activity.SummaryActivity;
 import com.nexis.R;
 
@@ -62,6 +63,10 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         switch (pos) {
             case 0:
                 i = new Intent(getActivity(), SummaryActivity.class);
+                startActivity(i);
+                break;
+            case 1:
+                i = new Intent(getActivity(), FellowshipActivity.class);
                 startActivity(i);
                 break;
         }
