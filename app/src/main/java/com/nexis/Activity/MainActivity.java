@@ -138,9 +138,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             case R.id.SendReport:
                 UIDialog.onCreateActionDialog(this, "Send Report", "Are you sure you want to send weekly report?", sendReportListener);
                 break;
-
-            case R.id.checkStatus:
-                checkStatusDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -308,63 +305,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 updateUserLevel(mSelectedItems.get(0));
 
                 Toast.makeText(MainActivity.this, "Authorized Level Changed", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void checkStatusDialog()
-    {
-        FragmentAttendance uploadFrag = (FragmentAttendance) fragments.get(0);
-        DateTime date = uploadFrag.getNextUpdateDate();
-
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, this);
-        final CharSequence[] nList = new CharSequence[Constants.NEXCELL_LIST.size()];
-
-        List<String> dataNexcell = new ArrayList<>();
-        final List<String> missingNexcell = new ArrayList<>();
-
-        for (ParseObject x: nexcellObject) dataNexcell.add((String)x.get("Nexcell"));
-
-        for (int i = 0; i < Constants.NEXCELL_LIST.size(); i++)
-        {
-            String nexcell = Constants.NEXCELL_LIST.get(i);
-
-            if (dataNexcell.contains(nexcell)) nList[i] = nexcell + " : Submitted";
-            else
-            {
-                nList[i] = nexcell + " : Missing";
-                missingNexcell.add(nexcell);
-            }
-        }
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Attendance Status: " + date.getYear() + "-" + date.getMonthOfYear() + "-" + date.getDayOfMonth());
-        builder.setItems(nList, null);
-
-        builder.setNegativeButton("Send Reminder", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-
-        AlertDialog d =  builder.create();
-        d.show();
-
-        d.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-           public void onClick(View v)
-            {
-                ArrayList<String> channels = new ArrayList<>();
-                for(String nexcell: missingNexcell) channels.add(nexcell);
-
-                ParsePush push = new ParsePush();
-                push.setChannels(channels); // Notice we use setChannels not setChannel
-                push.setMessage("*REMINDER*: We have not receive your submission. Please submit attendance asap!");
-                push.sendInBackground();
-
-                Toast.makeText(MainActivity.this, "Notification is sent to " + channels.size() + " groups", Toast.LENGTH_SHORT).show();
             }
         });
     }

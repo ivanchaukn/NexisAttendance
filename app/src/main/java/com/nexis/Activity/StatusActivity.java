@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,7 @@ import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class StatusActivity extends ActionBarActivity {
@@ -57,6 +59,24 @@ public class StatusActivity extends ActionBarActivity {
         statusList = new ArrayList<>();
 
         setupNexcell();
+
+        mToolbar.setTitle("Real-Time Status " + date.toString("yyyy-mm-dd"));
+
+        final List<String> missingList = new ArrayList<>();
+
+        for(int i = 0; i < statusList.size(); i++)
+        {
+            if (statusList.get(i) == 0) missingList.add(nexcellList.get(i));
+        }
+
+        ButtonRectangle pushallButton = (ButtonRectangle)findViewById(R.id.pushAllButton);
+        pushallButton.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   sendPush(missingList);
+               }
+           }
+        );
 
         List<StatusListItem> sList = new ArrayList<>();
 
@@ -84,11 +104,43 @@ public class StatusActivity extends ActionBarActivity {
         {
             String nexcell = Constants.NEXCELL_LIST.get(i);
 
-            nexcellList.add(nexcell);
+            if (Constants.NEXCELL_PARENT.get(nexcell).equals(""))
+            {
+                nexcellList.add(nexcell);
 
-            if (dataNexcell.contains(nexcell)) statusList.add(1);
-            else statusList.add(0);
+                if (dataNexcell.contains(nexcell)) statusList.add(1);
+                else statusList.add(0);
+            }
         }
+    }
+
+    private void sendEmail(final String nexcell)
+    {
+        UIDialog.onCreateActionDialog(this, "Confirm", "Are you sure to send email notification to nexcell " + nexcell + "?", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                SendMailAsync sendMail = new SendMailAsync(getApplicationContext());
+
+                String toRecipients = ParseOperation.getSubmitDataRecipient(nexcell, getApplicationContext());
+                String ccRecipients = Constants.SYSTEM_GMAIL;
+
+                sendMail.execute("SUBMIT ATTENDANCE ASAP", "Please submit the attendance for " + date.toString("YYYY-MM-dd"), toRecipients, ccRecipients, "");
+            }
+        });
+    }
+
+    private void sendPush (List<String> nexcell)
+    {
+        ParsePush push = new ParsePush();
+
+        ParseQuery pushQuery = ParseInstallation.getQuery();
+        pushQuery.whereContainedIn("channels", nexcell);
+        push.setQuery(pushQuery);
+
+        push.setMessage("Your nexcell is still missing attendance. Please submit attendance asap!");
+        push.sendInBackground();
+
+        Toast.makeText(this, "Notification is sent to " + nexcell.size() + " nexcells", Toast.LENGTH_SHORT).show();
     }
 
     private class StatusListItem {
@@ -142,17 +194,7 @@ public class StatusActivity extends ActionBarActivity {
             holder.emailButton.setOnClickListener(new View.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-                      UIDialog.onCreateActionDialog(getContext(), "Confirm", "Are you sure to send email notification to nexcell " + c.name + "?", new DialogInterface.OnClickListener() {
-                          @Override
-                          public void onClick(DialogInterface dialog, int id) {
-                              SendMailAsync sendMail = new SendMailAsync(getApplicationContext());
-
-                              String toRecipients = ParseOperation.getSubmitDataRecipient(c.name, getContext());
-                              String ccRecipients = Constants.SYSTEM_GMAIL;
-
-                              sendMail.execute("SUBMIT ATTENDANCE ASAP", "Please submit the attendance for " + date.toString("YYYY-MM-dd"), toRecipients, ccRecipients, "");
-                          }
-                      });
+                      sendEmail(c.name);
                   }
               }
             );
@@ -160,24 +202,7 @@ public class StatusActivity extends ActionBarActivity {
             holder.pushButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ParsePush push = new ParsePush();
-
-                        ParseQuery pushQuery = ParseInstallation.getQuery();
-                        pushQuery.whereEqualTo("channels", c.name);
-                        push.setQuery(pushQuery);
-
-                        //push.setChannels(Arrays.asList(c.name));
-
-                        push.setMessage(c.name + "is still missing attendance. Please submit attendance asap!");
-                        push.sendInBackground(new SendCallback() {
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    UIDialog.onCreateErrorDialog(getApplicationContext(), e.toString());
-                                }
-                            }
-                        });
-
-                        Toast.makeText(getContext(), "Notification is sent to nexcell " + c.name, Toast.LENGTH_SHORT).show();
+                        sendPush(Arrays.asList(c.name));
                     }
                 }
             );

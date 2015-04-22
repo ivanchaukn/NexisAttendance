@@ -57,7 +57,7 @@ public final class Constants {
 		{
 			String nexcell = x.get("Name").toString();
 			String stage = x.get("Stage").toString();
-            String parentGroup = x.get("Stage").toString();
+            String parentGroup = x.get("Parent").toString();
             DateTime mergeDate = new DateTime(x.get("Merge_Date"), DateTimeZone.UTC);
 
             NEXCELL_STAGE.put(nexcell, stage);
