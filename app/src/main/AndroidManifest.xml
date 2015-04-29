@@ -49,7 +49,7 @@
                   android:screenOrientation="portrait" >
        	</activity>
 
-        <activity android:name=".Activity.FellowshipActivity"
+        <activity android:name=".Activity.BarChartActivity"
             android:label="Statistics"
             android:screenOrientation="portrait" >
         </activity>

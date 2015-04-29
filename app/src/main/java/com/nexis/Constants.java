@@ -36,23 +36,25 @@ public final class Constants {
     public static HashMap<String, String> NEXCELL_PARENT;
     public static HashMap<String, DateTime> NEXCELL_MERGE_DATE;
 	public static HashMap<String, String> USERID_MAP;
-	
+
 	public static List<String> NEXCELL_LIST;
-	
+    public static List<String> NEXCELL_ACTIVE_LIST;
+
 	public static List<String> USER_LEVEL_LIST;
 
     public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form", "System Administration");
 
 	public static List<String> CATEGORY_LIST = Arrays.asList("Fellowship", "Service", "College", "NewComer");
 	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList("HighSchool","University","Nexis");
-	
+
 	public static void initializeNexcell(List<ParseObject> nexcellObject)
 	{
 		NEXCELL_STAGE = new HashMap<>();
         NEXCELL_PARENT = new HashMap<>();
         NEXCELL_MERGE_DATE = new HashMap<>();
 		NEXCELL_LIST = new ArrayList<>();
-		 
+        NEXCELL_ACTIVE_LIST = new ArrayList<>();
+
 		for(ParseObject x: nexcellObject)
 		{
 			String nexcell = x.get("Name").toString();
@@ -64,6 +66,8 @@ public final class Constants {
             NEXCELL_PARENT.put(nexcell, parentGroup);
             NEXCELL_MERGE_DATE.put(nexcell, mergeDate);
             NEXCELL_LIST.add(nexcell);
+
+            if (parentGroup.equals("")) NEXCELL_ACTIVE_LIST.add(nexcell);
 		}
 	}
 	

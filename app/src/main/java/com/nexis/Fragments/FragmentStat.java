@@ -13,14 +13,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.utils.Utils;
-import com.nexis.Activity.FellowshipActivity;
+import com.nexis.Activity.BarChartActivity;
 import com.nexis.Activity.SummaryActivity;
+import com.nexis.Data;
+import com.nexis.ParseOperation;
 import com.nexis.R;
+import com.parse.ParseObject;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentStat extends DialogFragment implements AdapterView.OnItemClickListener {
+
+    private DateTime recentDate;
+    private List<ParseObject> nexcellObject;
 
     public static FragmentStat newInstance() {
         FragmentStat fragment = new FragmentStat();
@@ -37,13 +47,22 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stat, container, false);
 
+        nexcellObject = ParseOperation.getNexcellData(null, null, getActivity());
+
+        recentDate = new DateTime(DateTimeZone.UTC);
+        if (recentDate.getDayOfWeek() - 1 < DateTimeConstants.FRIDAY) recentDate = recentDate.minusWeeks(1);
+        recentDate = recentDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+        recentDate = recentDate.withTimeAtStartOfDay();
+
         // initialize the utilities
         Utils.init(getResources());
 
         ArrayList<GraphListItem> objects = new ArrayList<>();
 
-        objects.add(new GraphListItem("Line Chart", "A simple demonstration of the linechart."));
-        objects.add(new GraphListItem("Bar Chart", "A simple demonstration of the barchart."));
+        objects.add(new GraphListItem("Fellowship Attendance Chart", "Display fellowship attendance record"));
+        objects.add(new GraphListItem("Service Statistic Chart", "Display the weekly service attendance"));
+        objects.add(new GraphListItem("College Statistic Chart", "Display the weekly college attendance"));
+        objects.add(new GraphListItem("Pie Chart Distribution", ""));
 
         GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
 
@@ -62,11 +81,13 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
 
         switch (pos) {
             case 0:
-                i = new Intent(getActivity(), SummaryActivity.class);
-                startActivity(i);
-                break;
-            case 1:
-                i = new Intent(getActivity(), FellowshipActivity.class);
+                i = new Intent(getActivity(), BarChartActivity.class);
+                Bundle b = new Bundle();
+                b.putString("desc1", "Real-Time");
+                b.putString("desc2", "Average");
+                b.putIntegerArrayList("data1", Data.getRecentFellowshipData(nexcellObject));
+                b.putIntegerArrayList("data2", Data.getAverageFellowshipData(nexcellObject));
+                i.putExtras(b);
                 startActivity(i);
                 break;
         }
