@@ -49,8 +49,7 @@
                   android:screenOrientation="portrait" >
        	</activity>
 
-        <activity android:name=".Activity.BarChartActivity"
-            android:label="Statistics"
+        <activity android:name=".Activity.BarChartListActivity"
             android:screenOrientation="portrait" >
         </activity>
 

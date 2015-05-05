@@ -1,6 +1,5 @@
 package com.nexis.Activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,13 +19,16 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ValueFormatter;
+import com.nexis.Formats.DeciFormat;
 import com.nexis.Constants;
+import com.nexis.Formats.PercentFormat;
 import com.nexis.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BarChartActivity extends ActionBarActivity {
+public class BarChartListActivity extends ActionBarActivity {
 
     private Toolbar mToolbar;
     private Bundle bun;
@@ -36,7 +38,7 @@ public class BarChartActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.barchart_activity);
+        setContentView(R.layout.barchartlist_activity);
 
         ListView lv = (ListView) findViewById(R.id.barChartListView);
 
@@ -45,7 +47,7 @@ public class BarChartActivity extends ActionBarActivity {
         bun = getIntent().getExtras();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        mToolbar.setTitle("Fellowship Attendance");
+        mToolbar.setTitle(bun.getString("title"));
 
         int i = 1;
 
@@ -80,6 +82,7 @@ public class BarChartActivity extends ActionBarActivity {
 
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_barchart, null);
                 holder.chart = (BarChart) convertView.findViewById(R.id.barChart);
+                holder.chart.getLayoutParams().height = 800;
 
                 convertView.setTag(holder);
 
@@ -87,10 +90,15 @@ public class BarChartActivity extends ActionBarActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            // apply styling
+            ValueFormatter form;
+            String formatString = bun.getString("format" + (position + 1));
+            if (formatString.equals("P")) form = new PercentFormat();
+            else form = new DeciFormat();
+
             holder.chart.setDescription(bun.getString("desc" + (position + 1)));
             holder.chart.setDrawGridBackground(false);
             data.setValueTextColor(Color.BLACK);
+            data.setValueFormatter(form);
 
             XAxis xAxis = holder.chart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -98,9 +106,12 @@ public class BarChartActivity extends ActionBarActivity {
             xAxis.setSpaceBetweenLabels(0);
 
             YAxis leftAxis = holder.chart.getAxisLeft();
-            leftAxis.setDrawGridLines(false);
             leftAxis.setLabelCount(5);
             leftAxis.setSpaceTop(15f);
+            leftAxis.setValueFormatter(form);
+
+            YAxis rightAxis = holder.chart.getAxisRight();
+            rightAxis.setEnabled(false);
 
             holder.chart.setData(data);
             holder.chart.animateY(700);

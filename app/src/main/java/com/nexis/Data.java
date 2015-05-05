@@ -33,13 +33,12 @@ public class Data {
         return memberList;
     }
 
-    public static ArrayList<Integer> getRecentFellowshipData (List<ParseObject> nexcellObject)
+    public static ArrayList<Integer> getRecentFellowshipData (List<ParseObject> nexcellObject, DateTime date)
     {
         ArrayList<Integer> memberList = new ArrayList<>();
 
         for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size();i++) memberList.add(0);
 
-        DateTime date = new DateTime(nexcellObject.get(nexcellObject.size() - 1).get("Date"), DateTimeZone.UTC);
         DateTime rowDate = date;
 
         int n = 0;
@@ -53,7 +52,7 @@ public class Data {
         return memberList;
     }
 
-    public static ArrayList<Integer> getAverageFellowshipData (List<ParseObject> nexcellObject)
+    public static ArrayList<Integer> getAverageData (List<ParseObject> nexcellObject, String type)
     {
         ArrayList<Integer> memberList = new ArrayList<>();
         ArrayList<Integer> data = new ArrayList();
@@ -67,7 +66,7 @@ public class Data {
         {
             int pos = Constants.NEXCELL_ACTIVE_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
 
-            data.set(pos, data.get(pos) + nexcellObject.get(row).getInt("Fellowship"));
+            data.set(pos, data.get(pos) + nexcellObject.get(row).getInt(type));
             numOfData.set(pos,numOfData.get(pos) + 1);
         }
 
@@ -77,6 +76,21 @@ public class Data {
             memberList.add(average);
         }
         return memberList;
+    }
+
+    public static ArrayList<Integer> getRelativeData (List<ParseObject> nexcellObject, String type1, String type2)
+    {
+        ArrayList<Integer> data1 = getAverageData(nexcellObject, type1);
+        ArrayList<Integer> data2 = getAverageData(nexcellObject, type2);
+
+        ArrayList<Integer> newData = new ArrayList<>();
+        for (int i = 0; i < data1.size(); i++)
+        {
+            double percent = (double)data1.get(i).intValue() / (double)data2.get(i).intValue();
+            newData.add(((Double)(percent * 100)).intValue());
+        }
+
+        return newData;
     }
 
     public static ArrayList<String> getEpochDates(List<ParseObject> nexcellObject, int dataPoints)
