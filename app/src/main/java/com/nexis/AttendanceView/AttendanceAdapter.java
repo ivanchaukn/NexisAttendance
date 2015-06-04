@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.nexis.NexisApplication;
 import com.nexis.R;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
     private List<AttendanceItem> mData;
     private int mSelectedPosition;
     private int mTouchedPosition = -1;
+
+    public boolean devVal = NexisApplication.getDev();
+    public boolean commiVal = NexisApplication.getCommi();
 
     public AttendanceAdapter(List<AttendanceItem> data) {
         mData = data;
@@ -38,7 +42,11 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
         viewHolder.dateText.setText(mData.get(i).getDateText());
         viewHolder.yearText.setText(mData.get(i).getYearText());
 
-        viewHolder.editButton.setOnClickListener(mData.get(i).getListener());
+        if(devVal||commiVal) {
+            viewHolder.editButton.setOnClickListener(mData.get(i).getListener());
+        }else {
+            viewHolder.editButton.setBackgroundResource(R.drawable.ic_action_edit_disabled);
+        }
         viewHolder.editButton.setOnTouchListener(new View.OnTouchListener() {
                                                      @Override
                                                      public boolean onTouch(View v, MotionEvent event) {

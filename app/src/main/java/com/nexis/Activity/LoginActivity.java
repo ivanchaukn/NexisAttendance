@@ -2,6 +2,7 @@ package com.nexis.Activity;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.nexis.NavigationDrawer.NavigationDrawerAdapter;
+import com.nexis.NexisApplication;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.parse.LogInCallback;
@@ -23,6 +24,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,33 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 final EditText username = (EditText) findViewById(R.id.userNameLogIn);
                 final EditText password = (EditText) findViewById(R.id.userPwLogIn);
+
+                //################################################################
+                // TO BE REPLACED WITH PARSE INPUT
+                final CheckBox devCheck = (CheckBox) findViewById(R.id.devChk);
+                final CheckBox counsCheck = (CheckBox) findViewById(R.id.counsChk);
+                final CheckBox commiCheck = (CheckBox) findViewById(R.id.commiChk);
+                final CheckBox ESMCheck = (CheckBox) findViewById(R.id.ESMChk);
+                if (devCheck.isChecked())
+                    NexisApplication.setDev(true);
+                else
+                    NexisApplication.setDev(false);
+
+                if (counsCheck.isChecked())
+                    NexisApplication.setCouns(true);
+                else
+                    NexisApplication.setCouns(false);
+
+                if (commiCheck.isChecked())
+                    NexisApplication.setCommi(true);
+                else
+                    NexisApplication.setCommi(false);
+
+                if (ESMCheck.isChecked())
+                    NexisApplication.setESM(true);
+                else
+                    NexisApplication.setESM(false);
+                //################################################################
 
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
