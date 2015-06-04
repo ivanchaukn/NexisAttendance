@@ -33,59 +33,64 @@ public class Data {
         return memberList;
     }
 
-    public static ArrayList<BarEntry> getRecentFellowship (List<ParseObject> nexcellObject)
+    public static ArrayList<Integer> getRecentFellowshipData (List<ParseObject> nexcellObject, DateTime date)
     {
-        ArrayList<BarEntry> memberList = new ArrayList<>();
-        for ( int i = 0; i< Constants.NEXCELL_LIST.size();i++)
-        {
-            BarEntry member = new BarEntry(0, i);
-            memberList.add(member);
-        }
+        ArrayList<Integer> memberList = new ArrayList<>();
 
-        DateTime date = new DateTime(nexcellObject.get(nexcellObject.size()-1).get("Date"), DateTimeZone.UTC);
-        DateTime rowDate = new DateTime(nexcellObject.get(nexcellObject.size()-1).get("Date"), DateTimeZone.UTC);
+        for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size();i++) memberList.add(0);
 
-        for(int row = nexcellObject.size()-1; date.equals(rowDate)&&Constants.NEXCELL_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        DateTime rowDate = date;
+
+        int n = 0;
+
+        for(int row = nexcellObject.size() - 1; date.equals(rowDate) && Constants.NEXCELL_ACTIVE_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
         {
-                int pos = Constants.NEXCELL_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
-                BarEntry member = new BarEntry(nexcellObject.get(row).getInt("Fellowship"), pos);
-                memberList.set(pos, member);
-                rowDate = new DateTime(nexcellObject.get(row - 1).get("Date"), DateTimeZone.UTC);
+            memberList.set(n, nexcellObject.get(row).getInt("Fellowship"));
+            rowDate = new DateTime(nexcellObject.get(row - 1).get("Date"), DateTimeZone.UTC);
+            n++;
         }
         return memberList;
     }
 
-    public static ArrayList<BarEntry> getAverageFellowship (List<ParseObject> nexcellObject)
+    public static ArrayList<Integer> getAverageData (List<ParseObject> nexcellObject, String type)
     {
-        ArrayList<BarEntry> memberList = new ArrayList<>();
+        ArrayList<Integer> memberList = new ArrayList<>();
         ArrayList<Integer> data = new ArrayList();
         ArrayList<Integer> numOfData = new ArrayList();
-        for ( int i = 0; i< Constants.NEXCELL_LIST.size();i++) {
+        for ( int i = 0; i< Constants.NEXCELL_ACTIVE_LIST.size();i++) {
             data.add(0);
             numOfData.add(0);
         }
 
-        for(int row = nexcellObject.size()-1; Constants.NEXCELL_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        for(int row = nexcellObject.size()-1; Constants.NEXCELL_ACTIVE_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
         {
-            int pos = Constants.NEXCELL_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
+            int pos = Constants.NEXCELL_ACTIVE_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
 
-            if(nexcellObject.get(row).get("Nexcell").equals("Carmel"))
-                System.out.println(nexcellObject.get(row).getInt("Fellowship"));
-            data.set(pos,data.get(pos)+nexcellObject.get(row).getInt("Fellowship"));
+            data.set(pos, data.get(pos) + nexcellObject.get(row).getInt(type));
             numOfData.set(pos,numOfData.get(pos) + 1);
         }
 
-        for(int grp = 0;grp < data.size();grp++)
+        for(int grp = 0; grp < data.size(); grp++)
         {
-
             int average = data.get(grp)/numOfData.get(grp);
-            //System.out.print(data.get(grp)+" ");
-            //System.out.print(numOfData.get(grp)+" ");
-            //System.out.println(average);
-            BarEntry member = new BarEntry(average,grp);
-            memberList.add(grp,member);
+            memberList.add(average);
         }
         return memberList;
+    }
+
+    public static ArrayList<Integer> getRelativeData (List<ParseObject> nexcellObject, String type1, String type2)
+    {
+        ArrayList<Integer> data1 = getAverageData(nexcellObject, type1);
+        ArrayList<Integer> data2 = getAverageData(nexcellObject, type2);
+
+        ArrayList<Integer> newData = new ArrayList<>();
+        for (int i = 0; i < data1.size(); i++)
+        {
+            double percent = (double)data1.get(i).intValue() / (double)data2.get(i).intValue();
+            newData.add(((Double)(percent * 100)).intValue());
+        }
+
+        return newData;
     }
 
     public static ArrayList<String> getEpochDates(List<ParseObject> nexcellObject, int dataPoints)

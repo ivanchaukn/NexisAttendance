@@ -2,9 +2,7 @@ package com.nexis.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.nexis.Constants;
 import com.nexis.NexisApplication;
@@ -24,12 +21,10 @@ import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
 import com.nexis.UIDialog;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.parse.SendCallback;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -37,7 +32,6 @@ import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class StatusActivity extends ActionBarActivity {
@@ -56,15 +50,13 @@ public class StatusActivity extends ActionBarActivity {
         setContentView(R.layout.activity_status);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         nexcellList = new ArrayList<>();
         statusList = new ArrayList<>();
 
         setupNexcell();
 
-        mToolbar.setTitle("Real-Time Status " + date.toString("yyyy-mm-dd"));
+        mToolbar.setTitle("Real-Time Status " + date.toString("MMM-dd"));
 
         final List<String> missingList = new ArrayList<>();
 
@@ -104,17 +96,14 @@ public class StatusActivity extends ActionBarActivity {
 
         for (ParseObject x: nexcellObject) dataNexcell.add((String)x.get("Nexcell"));
 
-        for (int i = 0; i < Constants.NEXCELL_LIST.size(); i++)
+        for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size(); i++)
         {
-            String nexcell = Constants.NEXCELL_LIST.get(i);
+            String nexcell = Constants.NEXCELL_ACTIVE_LIST.get(i);
 
-            if (Constants.NEXCELL_PARENT.get(nexcell).equals(""))
-            {
-                nexcellList.add(nexcell);
+            nexcellList.add(nexcell);
 
-                if (dataNexcell.contains(nexcell)) statusList.add(1);
-                else statusList.add(0);
-            }
+            if (dataNexcell.contains(nexcell)) statusList.add(1);
+            else statusList.add(0);
         }
     }
 
@@ -210,7 +199,18 @@ public class StatusActivity extends ActionBarActivity {
             holder.pushButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        sendPush(Arrays.asList(c.name));
+                        if (c.status != 1) sendPush(Arrays.asList(c.name));
+                        else
+                        {
+                            UIDialog.onCreateActionDialog(getContext(), "Confirm",
+                                    "Nexcell " + c.name + " has already submitted attendance, are you sure to send push notification?", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            sendPush(Arrays.asList(c.name));
+                                        }
+                                    }
+                            );
+                        }
                     }
                 }
             );
