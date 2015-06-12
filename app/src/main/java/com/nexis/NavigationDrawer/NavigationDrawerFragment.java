@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nexis.Constants;
+import com.nexis.NexisApplication;
 import com.nexis.R;
 
 public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
@@ -149,11 +150,16 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
 
+        boolean devVal = NexisApplication.getDev();
+        boolean commiVal = NexisApplication.getCommi();
+
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(2), getResources().getDrawable(R.drawable.ic_newcomer)));
-        items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(3), getResources().getDrawable(R.drawable.ic_admin)));
 
+        if(devVal||commiVal)
+            items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(3), getResources().getDrawable(R.drawable.ic_admin)));
+        
         return items;
     }
 

@@ -26,6 +26,7 @@ import com.nexis.Fragments.FragmentStat;
 import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
+import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -47,6 +48,9 @@ import java.util.regex.Pattern;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
+    boolean devVal = NexisApplication.getDev();
+    boolean commiVal = NexisApplication.getCommi();
+    boolean counsVal = NexisApplication.getCouns();
 
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -127,12 +131,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         switch (id)
         {
             case R.id.ChangeAuthorLevel:
-                List<ParseObject> nexcellObject = ParseOperation.getUserLevelList(1, this);
+                if(devVal) {
+                    List<ParseObject> nexcellObject = ParseOperation.getUserLevelList(1, this);
 
-                for(ParseObject x: nexcellObject) userIdMap.put(x.get("username").toString(), x.getObjectId());
-                d = changeLevelDialog(nexcellObject);
+                    for (ParseObject x : nexcellObject)
+                        userIdMap.put(x.get("username").toString(), x.getObjectId());
+                    d = changeLevelDialog(nexcellObject);
 
-                d.show();
+                    d.show();
+                }else
+                    Toast.makeText(MainActivity.this, "You are not a developer.", Toast.LENGTH_LONG).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -160,13 +160,14 @@
         </RelativeLayout>
 
         <ImageButton
-            android:layout_width="40dp"
+            android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_action_edit"
+            android:layout_marginRight="16dp"
             android:scaleType="fitStart"
-            android:background="@android:color/transparent"
+            android:background="@drawable/ic_action_edit"
             android:id="@+id/cardEditButton"
-            android:layout_gravity="center_vertical">
+            android:layout_gravity="center_vertical"
+            android:visibility="visible">
 
         </ImageButton>
 

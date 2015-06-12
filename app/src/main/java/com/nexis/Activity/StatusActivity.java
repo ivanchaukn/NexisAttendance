@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.nexis.Constants;
+import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -36,10 +37,13 @@ import java.util.List;
 public class StatusActivity extends ActionBarActivity {
 
     private Toolbar mToolbar;
-
     private DateTime date;
     private List<String> nexcellList;
     private List<Integer> statusList;
+
+    boolean counsVal = NexisApplication.getCouns();
+    boolean ESMVal = NexisApplication.getESM();
+    boolean devVal = NexisApplication.getDev();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +109,10 @@ public class StatusActivity extends ActionBarActivity {
 
     private void sendEmail(final String nexcell)
     {
+        if (!(ESMVal||counsVal||devVal)){
+            Toast.makeText(StatusActivity.this, "Invalid access level.", Toast.LENGTH_LONG).show();
+            return;
+        }
         UIDialog.onCreateActionDialog(this, "Confirm", "Are you sure to send email notification to nexcell " + nexcell + "?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
