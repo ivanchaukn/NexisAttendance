@@ -2,6 +2,7 @@ package com.nexis.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.utils.Utils;
 import com.nexis.Activity.BarChartListActivity;
+import com.nexis.Activity.PieChartActivity;
+import com.nexis.Constants;
 import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -24,6 +27,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FragmentStat extends DialogFragment implements AdapterView.OnItemClickListener {
@@ -61,7 +65,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         objects.add(new GraphListItem("Fellowship Attendance Chart", "Display fellowship attendance record"));
         objects.add(new GraphListItem("Service Statistic Chart", "Display the weekly service attendance"));
         objects.add(new GraphListItem("College Statistic Chart", "Display the weekly college attendance"));
-        objects.add(new GraphListItem("Pie Chart Distribution", ""));
+        objects.add(new GraphListItem("Pie Chart Distribution", "Display nexcell distribution"));
 
         GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
 
@@ -101,9 +105,11 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
                 b = new Bundle();
                 b.putString("title", "Service Statistics");
 
+                b.putString("desc1", "(Average in Number)");
                 b.putIntegerArrayList("data1", Data.getAverageData(nexcellObject, "Service"));
                 b.putString("format1", "D");
 
+                b.putString("desc2", "(Average in %)");
                 b.putIntegerArrayList("data2", Data.getRelativeData(nexcellObject, "Service", "Fellowship"));
                 b.putString("format2", "P");
 
@@ -115,11 +121,57 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
                 b = new Bundle();
                 b.putString("title", "College Statistics");
 
+                b.putString("desc1", "(Average in Number)");
                 b.putIntegerArrayList("data1", Data.getAverageData(nexcellObject, "College"));
                 b.putString("format1", "D");
 
+                b.putString("desc2", "(Average in %)");
                 b.putIntegerArrayList("data2", Data.getRelativeData(nexcellObject, "College", "Fellowship"));
                 b.putString("format2", "P");
+
+                i.putExtras(b);
+                startActivity(i);
+                break;
+            case 3:
+                i = new Intent(getActivity(), PieChartActivity.class);
+                b = new Bundle();
+                b.putString("title", "Nexis Distribution");
+                b.putString("desc1", "(Average in Number)");
+
+                ArrayList <Integer> color = new ArrayList<>();
+                ArrayList <String> hsLabel = new ArrayList<>();
+                ArrayList <String> uniLabel = new ArrayList<>();
+
+                ArrayList <Integer> hsData = new ArrayList<>();
+                ArrayList <Integer> uniData = new ArrayList<>();
+                ArrayList<Integer> rawData = Data.getAverageData(nexcellObject, "Fellowship");
+
+                int c1 = 0;
+                int c2 = 0;
+
+                for (int j = 0; j < Constants.NEXCELL_ACTIVE_LIST.size(); j++)
+                {
+                    String nName = Constants.NEXCELL_ACTIVE_LIST.get(j);
+                    if (Constants.NEXCELL_STAGE.get(nName).equals(Constants.HS_STRING)) {
+                        hsData.add(rawData.get(j));
+                        hsLabel.add(nName);
+                        c1++;
+                    }
+                    else {
+                        uniData.add(rawData.get(j));
+                        uniLabel.add(nName);
+                        c2++;
+                    }
+                }
+
+                hsData.addAll(uniData);
+                hsLabel.addAll(uniLabel);
+                color.addAll(Constants.BLUE_COLOR_TEMPLATE.subList(0, c1));
+                color.addAll(Constants.GREEN_COLOR_TEMPLATE.subList(0, c2));
+
+                b.putIntegerArrayList("data1", hsData);
+                b.putStringArrayList("label1", hsLabel);
+                b.putIntegerArrayList("color1", color);
 
                 i.putExtras(b);
                 startActivity(i);

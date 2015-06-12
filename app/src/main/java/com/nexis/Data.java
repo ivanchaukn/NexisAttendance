@@ -37,17 +37,20 @@ public class Data {
     {
         ArrayList<Integer> memberList = new ArrayList<>();
 
-        for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size();i++) memberList.add(0);
+        for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size(); i++) memberList.add(0);
 
         DateTime rowDate = date;
 
-        int n = 0;
-
-        for(int row = nexcellObject.size() - 1; date.equals(rowDate) && Constants.NEXCELL_ACTIVE_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        for(int row = nexcellObject.size() - 1; date.equals(rowDate); row--)
         {
+            int n = 0;
+
+            if (!date.equals(rowDate)) break;
+
+            while(!nexcellObject.get(row).get("Nexcell").equals(Constants.NEXCELL_ACTIVE_LIST.get(n))) n++;
+
             memberList.set(n, nexcellObject.get(row).getInt("Fellowship"));
             rowDate = new DateTime(nexcellObject.get(row - 1).get("Date"), DateTimeZone.UTC);
-            n++;
         }
         return memberList;
     }
@@ -57,17 +60,17 @@ public class Data {
         ArrayList<Integer> memberList = new ArrayList<>();
         ArrayList<Integer> data = new ArrayList();
         ArrayList<Integer> numOfData = new ArrayList();
-        for ( int i = 0; i< Constants.NEXCELL_ACTIVE_LIST.size();i++) {
+        for (int i = 0; i< Constants.NEXCELL_ACTIVE_LIST.size();i++) {
             data.add(0);
             numOfData.add(0);
         }
 
-        for(int row = nexcellObject.size()-1; Constants.NEXCELL_ACTIVE_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
+        for(int row = nexcellObject.size() - 1; Constants.NEXCELL_ACTIVE_LIST.contains(nexcellObject.get(row).get("Nexcell")); row--)
         {
             int pos = Constants.NEXCELL_ACTIVE_LIST.indexOf(nexcellObject.get(row).get("Nexcell"));
 
             data.set(pos, data.get(pos) + nexcellObject.get(row).getInt(type));
-            numOfData.set(pos,numOfData.get(pos) + 1);
+            numOfData.set(pos, numOfData.get(pos) + 1);
         }
 
         for(int grp = 0; grp < data.size(); grp++)
@@ -87,6 +90,23 @@ public class Data {
         for (int i = 0; i < data1.size(); i++)
         {
             double percent = (double)data1.get(i).intValue() / (double)data2.get(i).intValue();
+            newData.add(((Double)(percent * 100)).intValue());
+        }
+
+        return newData;
+    }
+
+    public static ArrayList<Integer> getDistributionData (List<ParseObject> nexcellObject, String type1)
+    {
+        double sum = 0;
+        ArrayList<Integer> data1 = getAverageData(nexcellObject, type1);
+
+        for(Integer x : data1) sum = sum + (double) x;
+
+        ArrayList<Integer> newData = new ArrayList<>();
+        for (int i = 0; i < data1.size(); i++)
+        {
+            double percent = (double)data1.get(i).intValue() / sum;
             newData.add(((Double)(percent * 100)).intValue());
         }
 

@@ -134,10 +134,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
                 d.show();
                 break;
-
-            case R.id.SendReport:
-                UIDialog.onCreateActionDialog(this, "Send Report", "Are you sure you want to send weekly report?", sendReportListener);
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -231,14 +227,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     }
 
-    private DialogInterface.OnClickListener sendReportListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            sendWeeklyReport();
-        }
-    };
-
     private Dialog changeLevelDialog(List<ParseObject> userObject)
     {
         final List<String> userList = new ArrayList<>();
@@ -323,25 +311,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         {
             ParseOperation.updateUser(x, level, this);
         }
-    }
-
-    private void sendWeeklyReport()
-    {
-        String today = new DateTime().toString("yyyy-MM-dd");
-
-        String filePath = this.getFilesDir().getPath().toString() +  "/Nexis Attendance " + today + ".xls";
-
-        String toRecipients = ParseOperation.getWeeklyReportRecipient(this);
-        String ccRecipients = Constants.SYSTEM_GMAIL;
-
-        List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
-        nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
-
-        genWeeklyReport report = new genWeeklyReport(this, filePath);
-        report.genReport();
-
-        SendMailAsync sendMail = new SendMailAsync(this);
-        sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , toRecipients, ccRecipients, filePath);
     }
 
     public void setToolbarElevation(int elevation)

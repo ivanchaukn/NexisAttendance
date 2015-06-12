@@ -1,5 +1,7 @@
 package com.nexis;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +33,10 @@ public final class Constants {
     public static final String SYSTEM_GMAIL = "nexisapplication@gmail.com";
 	public static final String SENDGRID_USER_NAMAE = "nexisapplication";
 	public static final String SENDGRID_PASSWORD = "(Nexis14!#";
+
+	public static final String HS_STRING = "HighSchool";
+	public static final String UNI_STRING = "University";
+	public static final String NEXIS_STRING = "Nexis";
 	
 	public static HashMap<String, String> NEXCELL_STAGE;
     public static HashMap<String, String> NEXCELL_PARENT;
@@ -45,7 +51,11 @@ public final class Constants {
     public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form", "System Administration");
 
 	public static List<String> CATEGORY_LIST = Arrays.asList("Fellowship", "Service", "College", "NewComer");
-	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList("HighSchool","University","Nexis");
+	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList(HS_STRING, UNI_STRING, NEXIS_STRING);
+
+	public static List<Integer> BLUE_COLOR_TEMPLATE = Arrays.asList(Color.rgb(0, 67, 87), Color.rgb(118, 174, 175), Color.rgb(136, 180, 187), Color.rgb(148, 212, 212), Color.rgb(159, 249, 249));
+	public static List<Integer> GREEN_COLOR_TEMPLATE = Arrays.asList(Color.rgb(48, 111, 44), Color.rgb(55, 146, 49), Color.rgb(115, 175, 111), Color.rgb(129, 161, 127), Color.rgb(165, 218, 161));
+	public static List<Integer> RED_COLOR_TEMPLATE = Arrays.asList(Color.rgb(208, 44, 44), Color.rgb(210, 63, 63), Color.rgb(213, 95, 95), Color.rgb(222, 127, 127), Color.rgb(240, 156, 156));
 
 	public static void initializeNexcell(List<ParseObject> nexcellObject)
 	{
