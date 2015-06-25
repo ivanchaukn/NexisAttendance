@@ -47,6 +47,7 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
         }else {
             viewHolder.editButton.setBackgroundResource(R.drawable.ic_action_edit_disabled);
         }
+
         viewHolder.editButton.setOnTouchListener(new View.OnTouchListener() {
                                                      @Override
                                                      public boolean onTouch(View v, MotionEvent event) {

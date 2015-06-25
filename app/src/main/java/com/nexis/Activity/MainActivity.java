@@ -68,6 +68,29 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ParseUser user = ParseUser.getCurrentUser();
+        userName = user.getUsername();
+        userFirstName = (String)user.get("firstName");
+        userLastName = (String)user.get("lastName");
+        userEmail = (String)user.get("email");
+        userNexcell = (String)user.get("Nexcell");
+
+        if(user != null) {
+            try {
+                ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
+                userQuery.whereEqualTo("username", user.getUsername());
+                List<ParseObject> obj = userQuery.find();
+
+                NexisApplication.setDev(obj.get(0).getBoolean("developer"));
+                NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
+                NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+                NexisApplication.setESM(obj.get(0).getBoolean("esm"));
+
+            } catch (ParseException e) {
+            }
+        }
+
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
@@ -76,28 +99,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_drawer);
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
-
-        //Current user info
-        ParseUser user = ParseUser.getCurrentUser();
-        userName = user.getUsername();
-        userFirstName = (String)user.get("firstName");
-        userLastName = (String)user.get("lastName");
-        userEmail = (String)user.get("email");
-        userNexcell = (String)user.get("Nexcell");
-
         mNavigationDrawerFragment.updateProfile(userFirstName + " " + userLastName, userNexcell);
 
-        try
-        {
-            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("UserLevelMap");
-            userQuery.whereEqualTo("username", userName);
-            List<ParseObject> obj = userQuery.find();
-
-            userAuthLevel = obj.get(0).getInt("level");
-        }
-        catch (ParseException e)
-        {
-        }
+        devVal = NexisApplication.getDev();
+        commiVal = NexisApplication.getCommi();
+        counsVal = NexisApplication.getCouns();
 
         nexcellObject = ParseOperation.getNexcellList(false, this);
         Constants.initializeNexcell(nexcellObject);

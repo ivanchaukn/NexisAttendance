@@ -24,6 +24,10 @@ import java.util.List;
 import com.nexis.Constants;
 import com.nexis.NexisApplication;
 import com.nexis.R;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
@@ -149,7 +153,24 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
+        /*
+        ParseUser user = ParseUser.getCurrentUser();
+        try
+        {
+            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
+            userQuery.whereEqualTo("username", user.getUsername());
+            List<ParseObject> obj = userQuery.find();
 
+            NexisApplication.setDev(obj.get(0).getBoolean("developer"));
+            NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
+            NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+            NexisApplication.setESM(obj.get(0).getBoolean("esm"));
+
+        }
+        catch (ParseException e)
+        {
+        }
+        */
         boolean devVal = NexisApplication.getDev();
         boolean commiVal = NexisApplication.getCommi();
 

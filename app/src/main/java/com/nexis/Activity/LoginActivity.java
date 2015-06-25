@@ -28,7 +28,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
- 
+
 public class LoginActivity extends Activity {
 
     ProgressBarCircularIndeterminate progressCircle;
@@ -50,7 +50,7 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 final EditText username = (EditText) findViewById(R.id.userNameLogIn);
                 final EditText password = (EditText) findViewById(R.id.userPwLogIn);
-
+                /*
                 //################################################################
                 // TO BE REPLACED WITH PARSE INPUT
                 final CheckBox devCheck = (CheckBox) findViewById(R.id.devChk);
@@ -77,7 +77,7 @@ public class LoginActivity extends Activity {
                 else
                     NexisApplication.setESM(false);
                 //################################################################
-
+                */
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
 

@@ -1,16 +1,22 @@
 package com.nexis;
 
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.app.Application;
 import android.content.Context;
 
+import java.util.List;
+
 public class NexisApplication extends Application {
 
-    private static boolean dev_;
-    private static boolean commi_;
-    private static boolean couns_;
-    private static boolean ESM_;
+    private static boolean dev_ = false;
+    private static boolean commi_ = false;
+    private static boolean couns_ = false;
+    private static boolean ESM_ = false;
 
 
     private static NexisApplication instance = new NexisApplication();
@@ -61,5 +67,23 @@ public class NexisApplication extends Application {
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "n4gVHiC7PcB6fAvCkfMKSsAEyUODifl7JL33w3xT", "sag1RtZfVIVqJFhDbLTiHACtDPPCmBQbmdmOv670");
+        /*
+        ParseUser user = ParseUser.getCurrentUser();
+        if(user != null) {
+            try {
+                ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
+                userQuery.whereEqualTo("username", user.getUsername());
+                List<ParseObject> obj = userQuery.find();
+
+                NexisApplication.setDev(obj.get(0).getBoolean("developer"));
+                NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
+                NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+                NexisApplication.setESM(obj.get(0).getBoolean("esm"));
+
+            } catch (ParseException e) {
+            }
+        }
+        */
+
     }
 }
