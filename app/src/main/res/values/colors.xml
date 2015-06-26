@@ -10,15 +10,25 @@
 
     <color name="myPrimaryColor">#46C28A</color>
     <color name="myPrimaryDarkColor">#3F926D</color>
+    <color name="myPrimaryDark2Color">#ff018e61</color>
+    <color name="myPrimaryDark3Color">#ff017248</color>
     <color name="myAccentColor">#3F51B5</color>
     <color name="myDrawerBackground">#F2F2F2</color>
     <color name="myWindowBackground">#DEDEDE</color>
     <color name="myTextPrimaryColor">#FFFFFF</color>
     <color name="myNavigationColor">#000000</color>
 
-    <color name="buttonPrimaryColor">#ff356ac2</color>
-    <color name="buttonPressColor">#ff334896</color>
-    <color name="buttonRippleColor">#ff2d3a74</color>
+    <color name="bluebuttonPrimaryColor">#ff356ac2</color>
+    <color name="bluebuttonPressColor">#ff3f55dd</color>
+    <color name="bluebuttonRippleColor">#ff3d529c</color>
+
+    <color name="yellowbuttonPrimaryColor">#ffcfd40e</color>
+    <color name="yellowbuttonPressColor">#ffbfc40e</color>
+    <color name="yellowbuttonRippleColor">#ffaeb30e</color>
+
+    <color name="redbuttonPrimaryColor">#ffcb0004</color>
+    <color name="redbuttonPressColor">#ffae001b</color>
+    <color name="redbuttonRippleColor">#ff97001a</color>
 
     <color name="refreshColor1">#ff229871</color>
     <color name="refreshColor2">#ff57a36a</color>
@@ -27,5 +37,9 @@
     <color name="loginEditText">#ffd3ffe0</color>
 
     <color name="selected_gray">#ffdbdbdb</color>
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="half_black">#808080</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="dark_gray">#ff272727</color>
     <color name="white">#ffffff</color>
 </resources>

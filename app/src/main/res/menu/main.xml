@@ -10,16 +10,6 @@
 			android:showAsAction="ifRoom"
 	        android:title="Modify User Level"/>
 
-	    <item
-	        android:id="@+id/checkStatus"
-			android:showAsAction="ifRoom"
-	        android:title="Check Status"/>
-
-	    <item
-	        android:id="@+id/SendReport"
-			android:showAsAction="ifRoom"
-	        android:title="Send Report"/>
-
     </group>
 
 </menu>

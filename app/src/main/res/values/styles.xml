@@ -22,6 +22,11 @@
     <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <array name="swipeRefreshColors">
         <item name="refreshPrimary">@color/refreshColor1</item>
         <item name="refreshSecondary">@color/refreshColor2</item>

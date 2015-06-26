@@ -3,6 +3,8 @@ package com.nexis.Fragments;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.nexis.Constants;
 import com.nexis.Activity.MainActivity;
 import com.nexis.ExcelReports.genNewComerForm;
@@ -14,6 +16,7 @@ import com.nexis.SendMailAsync;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
@@ -21,13 +24,16 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +59,7 @@ public class FragmentNewComer extends DialogFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_newcomer, container, false);
+		final View rootView = inflater.inflate(R.layout.fragment_newcomer, container, false);
 		
 		filePath = getActivity().getFilesDir().getPath().toString() +  "/NewComer.xls";
 		
@@ -70,22 +76,33 @@ public class FragmentNewComer extends DialogFragment {
 			}
 		});
 
-		//Submit button
-		Button submitButton = (Button) rootView.findViewById(R.id.newComerSubmitButton);
+        ScrollView sView = (ScrollView) rootView.findViewById(R.id.newComerScroll);
+        sView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideKeyboard(rootView);
+                return false;
+            }
+        });
+
+        //Submit button
+        FloatingActionButton submitButton = (FloatingActionButton) rootView.findViewById(R.id.menu_item_1);
 		
 		submitButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                hideKeyboard(rootView);
 				UIDialog.onCreateActionDialog(getActivity(), "Submit", "Are you sure you want to submit?", submitInfoListener);
 			}
 		});
-		
-		Button clearButton = (Button) rootView.findViewById(R.id.newComerClearButton);
+
+        FloatingActionButton clearButton = (FloatingActionButton) rootView.findViewById(R.id.menu_item_2);
 		
 		clearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				UIDialog.onCreateActionDialog(getActivity(), "Clear Data", "Are you sure you want to clear all data?", clearDataListener);
+                hideKeyboard(rootView);
+				UIDialog.onCreateActionDialog(getActivity(), "New Form", "Are you sure you want to start a new form?", clearDataListener);
 			}
 		});
 		
@@ -93,6 +110,15 @@ public class FragmentNewComer extends DialogFragment {
 		
 		return rootView;
 	}
+
+    private void hideKeyboard(View view) {
+        // TODO Auto-generated method stub
+        FloatingActionMenu fabMenu = (FloatingActionMenu) view.findViewById(R.id.fab);
+        if (fabMenu.isOpened()) fabMenu.close(true);
+
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
 	private void sendEmailInfo(View view)
     {

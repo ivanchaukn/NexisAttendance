@@ -28,7 +28,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+ 
 public class LoginActivity extends Activity {
 
     ProgressBarCircularIndeterminate progressCircle;
@@ -37,6 +37,17 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         // setting default screen to login.xml
         setContentView(R.layout.activity_login);
+
+        // for future debug
+        final CheckBox devCheck = (CheckBox) findViewById(R.id.devChk);
+        final CheckBox counsCheck = (CheckBox) findViewById(R.id.counsChk);
+        final CheckBox commiCheck = (CheckBox) findViewById(R.id.commiChk);
+        final CheckBox ESMCheck = (CheckBox) findViewById(R.id.ESMChk);
+
+        devCheck.setVisibility(View.GONE);
+        counsCheck.setVisibility(View.GONE);
+        commiCheck.setVisibility(View.GONE);
+        ESMCheck.setVisibility(View.GONE);
 
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -50,13 +61,10 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 final EditText username = (EditText) findViewById(R.id.userNameLogIn);
                 final EditText password = (EditText) findViewById(R.id.userPwLogIn);
-                /*
+
                 //################################################################
                 // TO BE REPLACED WITH PARSE INPUT
-                final CheckBox devCheck = (CheckBox) findViewById(R.id.devChk);
-                final CheckBox counsCheck = (CheckBox) findViewById(R.id.counsChk);
-                final CheckBox commiCheck = (CheckBox) findViewById(R.id.commiChk);
-                final CheckBox ESMCheck = (CheckBox) findViewById(R.id.ESMChk);
+                /*
                 if (devCheck.isChecked())
                     NexisApplication.setDev(true);
                 else
@@ -75,9 +83,9 @@ public class LoginActivity extends Activity {
                 if (ESMCheck.isChecked())
                     NexisApplication.setESM(true);
                 else
-                    NexisApplication.setESM(false);
+                    NexisApplication.setESM(false);*/
                 //################################################################
-                */
+
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
 

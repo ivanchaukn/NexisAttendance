@@ -1,471 +1,565 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".FragmentNewComer" >
 
-    <TableLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:shrinkColumns="*"
-        android:stretchColumns="*" >
+        tools:context=".FragmentNewComer"
+        android:background="#ffffff"
+        android:id="@+id/newComerScroll">
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/generalTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="2"
-                android:text="General Information"
-                android:textSize="14sp"
-                android:textStyle="bold|normal|italic" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow2"
+            <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            android:padding="20dp">
 
-            <TextView
-                android:id="@+id/textView01"
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/generalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:text="General Information"
+                    android:textSize="15dp"
+                    android:textStyle="normal|bold" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="First Name*:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textSize="14dp"
+                    android:textColor="@color/dark_gray" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="First Name*:"
-                android:textSize="13sp" />
+                android:layout_marginTop="5dp">
 
-            <EditText
-                android:id="@+id/newComerFirstName"
+                <TextView
+                    android:id="@+id/textView02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last Name*: "
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerLastName"
+                    android:layout_width="264dp"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="textPersonName"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="textPersonName" />
-        </TableRow>
+                android:layout_marginTop="5dp">
 
-        <TableRow
-            android:id="@+id/tableRow3"
+                <TextView
+                    android:id="@+id/textView03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Gender:* "
+                    android:textSize="13dp" />
+
+                <info.hoang8f.android.segmented.SegmentedGroup
+                    xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/segmented0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal"
+                    segmentedgroup:border_width="2dp"
+                    segmentedgroup:corner_radius="10dp"
+                    segmentedgroup:tint_color="@color/myPrimaryDarkColor" >
+
+                    <RadioButton
+                        android:id="@+id/maleRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male"
+                        android:textSize="12sp"
+                        style="@style/RadioButton"/>
+
+                    <RadioButton
+                        android:id="@+id/femaleRadios"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female"
+                        android:textSize="12sp"
+                        style="@style/RadioButton"/>
+
+                </info.hoang8f.android.segmented.SegmentedGroup>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Birthday*:"
+                    android:textSize="13dp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/newComerBirthdayButton"
+                    android:text="Tap to select..." />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cell Phone*:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerCellPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="phone"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView06"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home Phone:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerHomePhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="phone"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email*:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="textEmailAddress"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView07"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Address:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Postal Code:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerPostalCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView09"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="City:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/academicTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:paddingTop="20dp"
+                    android:text="Academic Information"
+                    android:textSize="15dp"
+                    android:textStyle="normal|bold" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="School*:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerSchool"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grade/Year*:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerGradeYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/spiritualTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:paddingTop="20dp"
+                    android:text="Spiritual Information"
+                    android:textSize="15dp"
+                    android:textStyle="normal|bold" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Are you a Christian?*"
+                    android:textSize="13dp" />
+
+                <info.hoang8f.android.segmented.SegmentedGroup
+                    xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/segmented1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal"
+                    segmentedgroup:border_width="2dp"
+                    segmentedgroup:corner_radius="10dp"
+                    segmentedgroup:tint_color="@color/myPrimaryDarkColor" >
+
+                    <RadioButton
+                        android:id="@+id/yesChristianRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes"
+                        android:textSize="12sp"
+                        style="@style/RadioButton"/>
+
+                    <RadioButton
+                        android:id="@+id/noChristianRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:textSize="12sp"
+                        style="@style/RadioButton"/>
+
+                </info.hoang8f.android.segmented.SegmentedGroup>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Year Accepted:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerYearChristian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="number"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                >
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Are you Baptized?*"
+                    android:textSize="13dp" />
+
+                <info.hoang8f.android.segmented.SegmentedGroup
+                    xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/segmented2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal"
+                    segmentedgroup:border_width="2dp"
+                    segmentedgroup:corner_radius="10dp"
+                    segmentedgroup:tint_color="@color/myPrimaryDarkColor" >
+
+                    <RadioButton
+                        android:id="@+id/yesBaptizedRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes"
+                        style="@style/RadioButton"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/noBaptizedRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        style="@style/RadioButton"
+                        android:textSize="12sp" />
+
+                </info.hoang8f.android.segmented.SegmentedGroup>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Year Baptized:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerYearBaptized"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="number"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_action_new"
+        fab:menu_colorNormal="@color/myPrimaryDarkColor"
+        fab:menu_colorPressed="@color/myPrimaryDark2Color"
+        fab:menu_colorRipple="@color/myPrimaryDark3Color">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item_1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            fab:fab_size="normal"
+            fab:fab_label="Send"
+            android:src="@drawable/ic_action_send_now"
+            fab:fab_colorNormal="@color/redbuttonPrimaryColor"
+            fab:fab_colorPressed="@color/redbuttonPressColor"
+            fab:fab_colorRipple="@color/redbuttonRippleColor"/>
 
-            <TextView
-                android:id="@+id/textView02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Last Name*: "
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerLastName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="textPersonName" />
-        </TableRow>
-        
-         <TableRow
-            android:id="@+id/tableRow4"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item_2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            fab:fab_size="normal"
+            fab:fab_label="New Form"
+            android:src="@drawable/ic_action_edit"
+            fab:fab_colorNormal="@color/yellowbuttonPrimaryColor"
+            fab:fab_colorPressed="@color/yellowbuttonPressColor"
+            fab:fab_colorRipple="@color/yellowbuttonRippleColor"/>
 
-            <TextView
-                android:id="@+id/textView03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Gender:* "
-                android:textSize="13sp" />
+    </com.github.clans.fab.FloatingActionMenu>
 
-            <RadioGroup
-	        android:id="@+id/radioGender"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal" >
-	        
-	            <RadioButton
-	                android:id="@+id/maleRadio"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="Male"
-	                android:textSize="12sp" />
-	
-	            <RadioButton
-	                android:id="@+id/femaleRadios"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="Female"
-	                android:textSize="12sp" />
-	            
-            </RadioGroup>
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView04"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Birthday*:"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/newComerBirthdayButton"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="36dp"
-                android:text="Please select date" />
-            
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView05"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cell Phone*:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerCellPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="phone" />
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView06"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home Phone:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerHomePhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="phone" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email*:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="textEmailAddress" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView07"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"/>
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView08"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Postal Code:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerPostalCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView09"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="City:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerCity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9" />
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/academicTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="2"
-                android:paddingTop="20dp"
-                android:text="Academic Information"
-                android:textSize="14sp"
-                android:textStyle="bold|normal|italic" />
-
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="School*:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerSchool"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9" />
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Grade/Year*:"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/newComerGradeYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9" />
-        </TableRow>
-        
-        
-        
-        
-        <TableRow
-            android:id="@+id/tableRow15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/spiritualTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="2"
-                android:paddingTop="20dp"
-                android:text="Spiritual Information"
-                android:textSize="14sp"
-                android:textStyle="bold|normal|italic" />
-
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Are you a Christian?*"
-                android:textSize="12sp" />
-
-            <RadioGroup
-	        android:id="@+id/radioChristian"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal" >
-	        
-	            <RadioButton
-	                android:id="@+id/yesChristianRadio"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="Yes"
-	                android:textSize="12sp" />
-	
-	            <RadioButton
-	                android:id="@+id/noChristianRadio"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="No"
-	                android:textSize="12sp" />
-	            
-            </RadioGroup>
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Year Accepted:"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/newComerYearChristian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="number" />
-
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRow18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Are you Baptized?*"
-                android:textSize="12sp" />
-
-            <RadioGroup
-	        android:id="@+id/radioBaptized"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal" >
-	        
-	            <RadioButton
-	                android:id="@+id/yesBaptizedRadio"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="Yes"
-	                android:textSize="12sp" />
-	
-	            <RadioButton
-	                android:id="@+id/noBaptizedRadio"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="No"
-	                android:textSize="12sp" />
-	            
-            </RadioGroup>
-        </TableRow>
-        
-       <TableRow
-            android:id="@+id/tableRow19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/textView15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Year Baptized:"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/newComerYearBaptized"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="9"
-                android:inputType="number" />
-
-        </TableRow>
-        
-        <TableRow
-            android:id="@+id/tableRowClear"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/newComerClearButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:text="Clear All"
-                android:textSize="15sp" />
-
-        </TableRow>
-      
-        <TableRow
-            android:id="@+id/tableRowSubmit"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/newComerSubmitButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:text="Submit"
-                android:textSize="15sp" />
-
-        </TableRow>
-    </TableLayout>
-
-</ScrollView>
+</FrameLayout>

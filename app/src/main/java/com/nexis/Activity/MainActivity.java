@@ -14,11 +14,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 import com.nexis.Constants;
-import com.nexis.ExcelReports.genWeeklyReport;
 import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentNewComer;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
@@ -29,7 +27,6 @@ import com.nexis.NavigationDrawer.NavigationDrawerFragment;
 import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
-import com.nexis.SendMailAsync;
 import com.nexis.UIDialog;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -37,8 +34,6 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.joda.time.DateTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Current user info
         ParseUser user = ParseUser.getCurrentUser();
         userName = user.getUsername();
         userFirstName = (String)user.get("firstName");
@@ -76,21 +72,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         userEmail = (String)user.get("email");
         userNexcell = (String)user.get("Nexcell");
 
-        if(user != null) {
-            try {
-                ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
-                userQuery.whereEqualTo("username", user.getUsername());
-                List<ParseObject> obj = userQuery.find();
-
-                NexisApplication.setDev(obj.get(0).getBoolean("developer"));
-                NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
-                NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
-                NexisApplication.setESM(obj.get(0).getBoolean("esm"));
-
-            } catch (ParseException e) {
-            }
+        try
+        {
+            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
+            userQuery.whereEqualTo("username", userName);
+            List<ParseObject> obj = userQuery.find();
+            NexisApplication.setESM(obj.get(0).getBoolean("esm"));
+            NexisApplication.setDev(obj.get(0).getBoolean("developer"));
+            NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
+            NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+                userAuthLevel = obj.get(0).getInt("level");
         }
-
+        catch (ParseException e)
+        {
+        }
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
@@ -100,10 +95,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
         mNavigationDrawerFragment.updateProfile(userFirstName + " " + userLastName, userNexcell);
-
-        devVal = NexisApplication.getDev();
-        commiVal = NexisApplication.getCommi();
-        counsVal = NexisApplication.getCouns();
 
         nexcellObject = ParseOperation.getNexcellList(false, this);
         Constants.initializeNexcell(nexcellObject);
@@ -149,14 +140,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 }else
                     Toast.makeText(MainActivity.this, "You are not a developer.", Toast.LENGTH_LONG).show();
                 break;
-
-            case R.id.SendReport:
-                if (devVal||counsVal||commiVal)
-                    UIDialog.onCreateActionDialog(this, "Send Report", "Are you sure you want to send weekly report?", sendReportListener);
-                else
-                    Toast.makeText(MainActivity.this, "Invalid access level.", Toast.LENGTH_LONG).show();
-                break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -250,14 +233,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     }
 
-    private DialogInterface.OnClickListener sendReportListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            sendWeeklyReport();
-        }
-    };
-
     private Dialog changeLevelDialog(List<ParseObject> userObject)
     {
         final List<String> userList = new ArrayList<>();
@@ -304,7 +279,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     private void userLevel(AlertDialog.Builder builder, List<String> userLevelList)
     {
-
         final List<Integer> mSelectedItems = Arrays.asList(1);
 
         final CharSequence[] nList = userLevelList.toArray(new CharSequence[userLevelList.size()]);
@@ -343,26 +317,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         {
             ParseOperation.updateUser(x, level, this);
         }
-    }
-
-    private void sendWeeklyReport()
-    {
-
-        String today = new DateTime().toString("yyyy-MM-dd");
-
-        String filePath = this.getFilesDir().getPath().toString() +  "/Nexis Attendance " + today + ".xls";
-
-        String toRecipients = ParseOperation.getWeeklyReportRecipient(this);
-        String ccRecipients = Constants.SYSTEM_GMAIL;
-
-        List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
-        nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
-
-        genWeeklyReport report = new genWeeklyReport(this, filePath);
-        report.genReport();
-
-        SendMailAsync sendMail = new SendMailAsync(this);
-        sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , toRecipients, ccRecipients, filePath);
     }
 
     public void setToolbarElevation(int elevation)

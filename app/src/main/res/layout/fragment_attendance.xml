@@ -30,17 +30,18 @@
 
     </LinearLayout>
 
-    <com.melnykov.fab.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        fab:fab_size="normal"
         android:src="@drawable/ic_action_new"
-        fab:fab_colorNormal="@color/buttonPrimaryColor"
-        fab:fab_colorPressed="@color/buttonPressColor"
-        fab:fab_colorRipple="@color/buttonRippleColor"
-        fab:fab_shadow="true"/>
+        fab:fab_colorNormal="@color/bluebuttonPrimaryColor"
+        fab:fab_colorPressed="@color/bluebuttonPressColor"
+        fab:fab_colorRipple="@color/bluebuttonRippleColor"/>
 
 
 </FrameLayout>

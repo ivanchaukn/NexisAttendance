@@ -1,6 +1,6 @@
 package com.nexis.Fragments.AttendancePackage;
 
-import com.github.sendgrid.SendGrid;
+import com.github.clans.fab.FloatingActionButton;
 import com.nexis.AttendanceView.AttendanceAdapter;
 import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Activity.MainActivity;
@@ -29,7 +29,6 @@ import android.widget.Toast;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
-import com.melnykov.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +47,8 @@ public class FragmentAttendance extends DialogFragment {
     private LinearLayoutManager mLinearLayoutManager;
     private AttendanceAdapter mAttendanceAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private int mScrollOffset = 4;
 
 	public static FragmentAttendance newInstance() {
 		FragmentAttendance fragment = new FragmentAttendance();
@@ -88,13 +89,27 @@ public class FragmentAttendance extends DialogFragment {
 
         checkAndUpdate(nextDate);
 
-        FloatingActionButton addButton = (FloatingActionButton)rootView.findViewById(R.id.addButton);
-        addButton.attachToRecyclerView(mRecyclerView);
+        final FloatingActionButton addButton = (FloatingActionButton)rootView.findViewById(R.id.addButton);
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submitDialog = SubmitDialog.newInstance(getActivity().getLayoutInflater(), null);
                 UIDialog.onCreateCustomDialog(getActivity(), "New Record - " + nextDate.toString("MMM dd"), submitDialog.getView(), "Submit", "Change Date", submitAttendanceListener, null);
+            }
+        });
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Math.abs(dy) > mScrollOffset) {
+                    if (dy > 0) {
+                        addButton.hide(true);
+                    } else {
+                        addButton.show(true);
+                    }
+                }
             }
         });
 

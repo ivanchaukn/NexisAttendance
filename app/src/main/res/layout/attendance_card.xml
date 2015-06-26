@@ -167,7 +167,8 @@
             android:background="@drawable/ic_action_edit"
             android:id="@+id/cardEditButton"
             android:layout_gravity="center_vertical"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:backgroundTint="#ff464646">
 
         </ImageButton>
 
