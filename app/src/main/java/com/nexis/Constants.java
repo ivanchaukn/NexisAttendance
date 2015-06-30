@@ -41,12 +41,11 @@ public final class Constants {
 	public static HashMap<String, String> NEXCELL_STAGE;
     public static HashMap<String, String> NEXCELL_PARENT;
     public static HashMap<String, DateTime> NEXCELL_MERGE_DATE;
-	public static HashMap<String, String> USERID_MAP;
 
 	public static List<String> NEXCELL_LIST;
     public static List<String> NEXCELL_ACTIVE_LIST;
 
-	public static List<String> USER_LEVEL_LIST;
+	public static List<String> USER_LEVEL_LIST = Arrays.asList("esm", "committee", "counsellor", "developer");
 
     public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form", "System Administration");
 
@@ -78,17 +77,6 @@ public final class Constants {
             NEXCELL_LIST.add(nexcell);
 
             if (parentGroup.equals("")) NEXCELL_ACTIVE_LIST.add(nexcell);
-		}
-	}
-	
-	public static void initializeUserLevel(List<ParseObject> nexcellObject)
-	{
-		USER_LEVEL_LIST = new ArrayList<>();
-		 
-		for(ParseObject x: nexcellObject) 
-		{
-			String level = x.get("levelName").toString();
-			USER_LEVEL_LIST.add(level);
 		}
 	}
 }

@@ -5,11 +5,6 @@
 
     <group android:id="@+id/groupAdmin">
 
-        <item
-	        android:id="@+id/ChangeAuthorLevel"
-			android:showAsAction="ifRoom"
-	        android:title="Modify User Level"/>
-
     </group>
 
 </menu>

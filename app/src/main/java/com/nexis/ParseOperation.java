@@ -1,5 +1,6 @@
 package com.nexis;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,7 +15,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import android.app.Activity;
 import android.content.Context;
 
 public class ParseOperation {
@@ -40,126 +40,78 @@ public class ParseOperation {
 	}
 	
 	
-	static public List<ParseUser> getUserList(String nexcell, int lowerLevel, int upperLevel, Context actv)
+	static public List<ParseObject> getUserList(String nexcell, List<Boolean> levels, Context actv)
 	{
-		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
-		List<ParseUser> userObject = new ArrayList<ParseUser>();
-		List<String> userNameList = new ArrayList<String>();
+		List<ParseObject> nexcellObject = new ArrayList<>();
 		
 		try
         {
-        	ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
+            List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
-        	query.whereGreaterThanOrEqualTo("level", lowerLevel);
-            query.whereLessThanOrEqualTo("level", upperLevel);
-        	
-        	nexcellObject = query.find();
-        	
-        	for(ParseObject x: nexcellObject) userNameList.add((String) x.get("username"));
-        	
-        	ParseQuery<ParseUser> userquery = ParseUser.getQuery();
-        	userquery.whereContainedIn("username", userNameList);
-        	
-        	if(nexcell != null) userquery.whereEqualTo("Nexcell", nexcell);
-        	
-        	userquery.orderByAscending("username");
-        	
-        	userObject = userquery.find();
-        	
+            for (int i = 0; i < levels.size(); i++)
+            {
+                if (levels.get(i))
+                {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+                    query.whereEqualTo(Constants.USER_LEVEL_LIST.get(i), true);
+                    queries.add(query);
+                }
+            }
+
+            ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+
+            if(nexcell != null) mainQuery.whereEqualTo("Nexcell", nexcell);
+
+            mainQuery.orderByAscending("username");
+
+            nexcellObject = mainQuery.find();
+
         }
         catch (ParseException e)
         {
         	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
 
-    	return userObject;
+    	return nexcellObject;
 	}
 
     static public String getSubmitDataRecipient(String nexcell, Context actv)
     {
-        List<String> emails = new ArrayList<String>();
-        List<ParseUser> users = getUserList(nexcell, Constants.MEMBER_LEVEL, Constants.MASTER_LEVEL, actv);
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(true, false, true, false), actv);
 
-        for(ParseUser x: users) emails.add(x.get("email").toString());
-
-        String recipients = StringUtils.join(emails, ", ");
-
-        return recipients;
+        return extractEmail(users);
     }
 
     static public String getWeeklyReportRecipient(Context actv)
     {
-        List<String> emails = new ArrayList<String>();
-        List<ParseUser> users = getUserList(null, Constants.COUS_LEVEL, Constants.COMM_LEVEL, actv);
+        List<ParseObject> users = getUserList(null, Arrays.asList(false, true, true, false), actv);
 
-        for(ParseUser x: users) emails.add(x.get("email").toString());
-
-        String recipients = StringUtils.join(emails, ", ");
-
-        return recipients;
+        return extractEmail(users);
     }
 
     static public String getNewComerFormRecipient(String nexcell, Context actv)
     {
-        List<String> emails = new ArrayList<String>();
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(true, true, true, true), actv);
+        List<ParseObject> commi = getUserList(null, Arrays.asList(false, true, false, false), actv);
+        users.addAll(commi);
 
-        List<ParseUser> users = getUserList(nexcell, Constants.ESM_LEVEL, Constants.MASTER_LEVEL, actv);
-        List<ParseUser> admin = getUserList(null, Constants.ADMIN_LEVEL, Constants.ADMIN_LEVEL, actv);
-        users.addAll(admin);
+        return extractEmail(users);
+    }
 
-        for(ParseUser x: users) emails.add(x.get("email").toString());
+    static private String extractEmail(List<ParseObject> list)
+    {
+        List<String> emails = new ArrayList<>();
+
+        for(ParseObject x: list) emails.add(x.get("email").toString());
 
         String recipients = StringUtils.join(emails, ", ");
 
         return recipients;
     }
 
-    static public List<ParseObject> getUserLevelList(int level, Context actv)
-    {
-        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
-
-        try
-        {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
-            query.whereGreaterThanOrEqualTo("level", level);
-            query.orderByAscending("level");
-            query.addAscendingOrder("username");
-
-            nexcellObject = query.find();
-
-        }
-        catch(ParseException e)
-        {
-            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-        }
-
-        return nexcellObject;
-    }
-
-
-    static public List<ParseObject> getAuthorLevel(Context actv)
-	{
-		List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
-		
-		try
-        {
-        	ParseQuery<ParseObject> query = ParseQuery.getQuery("AuthorizedLevel");
-        	query.orderByAscending("level");
-        	query.selectKeys(Arrays.asList("levelName"));
-        			
-        	nexcellObject = query.find();
-        }
-        catch (ParseException e)
-        {
-        	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-        }
-		
-		return nexcellObject;
-	}
-
 	static public List<ParseObject> getNexcellList(boolean nameOnly, Context actv) {
 		
-        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
+        List<ParseObject> nexcellObject = new ArrayList<>();
         
         try
         {
@@ -181,7 +133,7 @@ public class ParseOperation {
 	
 	static public List<ParseObject> getNexcellData(String nexcell, DateTime date, Context actv) {
 		
-        List<ParseObject> nexcellObject = new ArrayList<ParseObject>();
+        List<ParseObject> nexcellObject = new ArrayList<>();
         
         try
         {
@@ -205,17 +157,7 @@ public class ParseOperation {
 	}
 	
 	static public void updateUser(String objectID, final int level, final Context actv) {
-		
-    	ParseQuery<ParseObject> query = ParseQuery.getQuery("UserLevelMap");
-    	
-    	query.getInBackground(objectID, new GetCallback<ParseObject>() {
-  		  public void done(ParseObject userData, ParseException e) {
-  		    if (e == null) {
-  		    	userData.put("level", level);
-  		    	userData.saveInBackground();
-  		    }
-  		  }
-    	}); 
+        //TODO: user cloud codee to update user levels
 	}
 	
 	static public void updateData(String objectID, final int f, final int s, final int c, final int n, final String userName, Context actv) {

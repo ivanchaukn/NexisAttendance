@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:id="@+id/graphList"
     android:layout_gravity="center_horizontal|top"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"/>
 
 

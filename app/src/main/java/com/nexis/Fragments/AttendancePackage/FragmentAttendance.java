@@ -32,7 +32,6 @@ import org.joda.time.DateTimeZone;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FragmentAttendance extends DialogFragment {
 
     private View rootView;
@@ -137,7 +136,7 @@ public class FragmentAttendance extends DialogFragment {
         attendanceList.clear();
 
         for (int i = nexcellObject.size() - 1; i >= 0; i--) {
-            final List<Integer> rowData = new ArrayList<Integer>();
+            final List<Integer> rowData = new ArrayList<>();
             final DateTime rowDt = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
 
             for (int j = 0; j < Constants.CATEGORY_LIST.size(); j++) {
@@ -246,25 +245,21 @@ public class FragmentAttendance extends DialogFragment {
             lastUpdated.setText("N/A");
             status.setText("Missing");
             statusImage.setImageResource(R.drawable.ic_missing);
-        }
-        else
-        {
+        } else {
             lastUpdated.setText(userName);
             status.setText("Submitted");
             statusImage.setImageResource(R.drawable.ic_success);
         }
     }
 
-    public void uploadConfirmation(final boolean override, final DateTime newDate, final String toastMsg)
-    {
-        UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?",  new DialogInterface.OnClickListener() {
+    public void uploadConfirmation(final boolean override, final DateTime newDate, final String toastMsg) {
+        UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 List<ParseObject> nexcellObject = checkUpdate(newDate);
                 if (!override && !nexcellObject.isEmpty()) {
                     UIDialog.onCreateInvalidDialog(getActivity(), "The attendance has already submitted!");
-                }
-                else {
+                } else {
                     uploadData(newDate);
 
                     Toast.makeText(getActivity(), toastMsg, Toast.LENGTH_LONG).show();
@@ -320,11 +315,6 @@ public class FragmentAttendance extends DialogFragment {
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
         sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, "", "");
-    }
-
-    public DateTime getNextUpdateDate()
-    {
-        return nextDate;
     }
 
     public class populateCardsAsync extends AsyncTask<String, Void, Void> {

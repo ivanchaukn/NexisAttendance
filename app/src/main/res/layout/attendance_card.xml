@@ -168,7 +168,7 @@
             android:id="@+id/cardEditButton"
             android:layout_gravity="center_vertical"
             android:visibility="visible"
-            android:backgroundTint="#ff464646">
+            android:backgroundTint="#ff626262">
 
         </ImageButton>
 

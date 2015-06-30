@@ -10,6 +10,11 @@ import android.widget.TextView;
 
 import com.nexis.NexisApplication;
 import com.nexis.R;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
+
 import java.util.List;
 
 public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.ViewHolder> {
@@ -42,11 +47,16 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
         viewHolder.dateText.setText(mData.get(i).getDateText());
         viewHolder.yearText.setText(mData.get(i).getYearText());
 
-        if(devVal||commiVal) {
+        DateTime nextDate = new DateTime(DateTimeZone.UTC);
+        nextDate = nextDate.minusWeeks(1).withTimeAtStartOfDay();
+
+        if (devVal||commiVal||mData.get(i).getDate().isAfter(nextDate)) {
+            viewHolder.editButton.setBackgroundResource(R.drawable.ic_action_edit);
             viewHolder.editButton.setOnClickListener(mData.get(i).getListener());
-        }else {
+        } else {
             viewHolder.editButton.setBackgroundResource(R.drawable.ic_action_edit_disabled);
         }
+
         viewHolder.editButton.setOnTouchListener(new View.OnTouchListener() {
                                                      @Override
                                                      public boolean onTouch(View v, MotionEvent event) {
@@ -55,7 +65,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
                                                      }
                                                  }
         );
-
 
         viewHolder.itemView.setOnTouchListener(new View.OnTouchListener() {
                                                    @Override
