@@ -1,6 +1,5 @@
 package com.nexis;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,7 +12,6 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import android.content.Context;
 
@@ -185,33 +183,16 @@ public class ParseOperation {
     }
 	
 	static public void saveData(int f, int s, int c, int n, DateTime date, String nexcell, String userName, Context actv) {
-		
-		DateTime lastWeek = date.minusWeeks(1);
-		
-		List<ParseObject> nexcellObject;
-		
-		try
-		{
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
-			query.whereEqualTo("Nexcell", nexcell);
-			query.whereEqualTo("Date", lastWeek.toDate());
-		
-			nexcellObject = query.find();
-		}
-		catch(ParseException e)
-		{
-			UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-		}
 
-		ParseObject data = new ParseObject("Attendance");
-		data.put("Fellowship", f);
-		data.put("Service", s);
-		data.put("College", c);
-		data.put("NewComer", n);
-		data.put("Date", date.toDate());
-		data.put("Nexcell", nexcell); 
-		data.put("saveBy", userName);
-		
-		data.saveInBackground();
+            ParseObject data = new ParseObject("Attendance");
+            data.put("Fellowship", f);
+            data.put("Service", s);
+            data.put("College", c);
+            data.put("NewComer", n);
+            data.put("Date", date.toDate());
+            data.put("Nexcell", nexcell);
+            data.put("saveBy", userName);
+
+            data.saveInBackground();
 	}
 }

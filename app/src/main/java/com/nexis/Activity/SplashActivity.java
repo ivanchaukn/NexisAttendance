@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class SplashActivity extends Activity{
 	
@@ -22,10 +23,9 @@ public class SplashActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
-		
+
 		loadBackgroundData loadData = new loadBackgroundData();
 		loadData.execute();
-		
 	}
 	
 	private DialogInterface.OnClickListener googlePlayListener = new DialogInterface.OnClickListener() {
@@ -47,22 +47,28 @@ public class SplashActivity extends Activity{
 
 	private void checkCurrentUser()
 	{
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		
-    	if (currentUser != null) {
-    		//Switch to Main Activity
-		    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(i);
-            
-            endActivity();
-    	}
-    	else {
-    		//Switch to Login Activity
-		    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(i);
-            
-            endActivity();
-    	}
+		final ParseUser currentUser = ParseUser.getCurrentUser();
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+
+                if (currentUser != null) {
+                    //Switch to Main Activity
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+
+                    endActivity();
+                }
+                else {
+                    //Switch to Login Activity
+                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(i);
+
+                    endActivity();
+                }
+            }
+        }, 2000);
 	}
 	
 	private void endActivity()
@@ -107,7 +113,7 @@ public class SplashActivity extends Activity{
     			PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
     			int versionNumber = pinfo.versionCode;
 
-                if (mostRecentCode != versionNumber) return "Update";
+                if (mostRecentCode > versionNumber) return "Update";
     			else return "Success";
     		}
     		catch(Exception e)

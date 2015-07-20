@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.github.sendgrid.SendGrid;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -18,26 +17,26 @@ public class SendMailAsync extends AsyncTask<String, Void, String> {
 		this.context = context;
 	}
 
-	protected void onPreExecute() {
-		
-		sender = new SendGrid(Constants.SENDGRID_USER_NAMAE, Constants.SENDGRID_PASSWORD);
-    }
-	
-    protected String doInBackground(String... info) {
-		try
-		{
-			String[] toRep = info[2].split(",");
-			
-			for(String rep: toRep)
-				sender.addTo(rep);
-			
-			if (info[3] != null)
+		protected void onPreExecute() {
+
+			sender = new SendGrid(Constants.SENDGRID_USER_NAMAE, Constants.SENDGRID_PASSWORD);
+		}
+
+		protected String doInBackground(String... info) {
+			try
 			{
-				String[] ccRep = info[3].split(",");
-				
-				for(String rep: ccRep)
+				String[] toRep = info[2].split(",");
+
+				for(String rep: toRep)
 					sender.addTo(rep);
-			}
+
+				if (info[3] != null)
+				{
+					String[] ccRep = info[3].split(",");
+
+					for(String rep: ccRep)
+						sender.addTo(rep);
+				}
 			
 			sender.setFrom(Constants.SYSTEM_GMAIL);
 			sender.setSubject(info[0]);
@@ -76,6 +75,6 @@ public class SendMailAsync extends AsyncTask<String, Void, String> {
 	    	return;
 		}
 
-		Toast.makeText(context, "Email Send Successfully" , Toast.LENGTH_LONG).show();
+		Toast.makeText(context, "Email Sent" , Toast.LENGTH_LONG).show();
     }
 }

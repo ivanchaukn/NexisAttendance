@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.utils.Utils;
 import com.nexis.Activity.StatusActivity;
-import com.nexis.Activity.SummaryActivity;
 import com.nexis.Constants;
-import com.nexis.ExcelReports.genWeeklyReport;
+import com.nexis.ExcelReports.WeeklyReport;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -151,7 +150,7 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
         nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
-        genWeeklyReport report = new genWeeklyReport(getActivity(), filePath);
+        WeeklyReport report = new WeeklyReport(getActivity(), filePath);
         report.genReport();
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());

@@ -76,8 +76,11 @@ public class FragmentAttendance extends DialogFragment {
         attendanceList = new ArrayList<>();
 
         nextDate = new DateTime(DateTimeZone.UTC);
-        if (nextDate.getDayOfWeek() - 1 < DateTimeConstants.FRIDAY) nextDate = nextDate.minusWeeks(1);
-        nextDate = nextDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+        DateTime friday = nextDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+
+        if (nextDate.isBefore(friday)) nextDate = friday.minusWeeks(1);
+        else nextDate = friday;
+
         nextDate = nextDate.withTimeAtStartOfDay();
 
         TextView dateText = (TextView) rootView.findViewById(R.id.attendanceDate);
@@ -334,6 +337,7 @@ public class FragmentAttendance extends DialogFragment {
         protected void onPostExecute(Void exception) {
             mAttendanceAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
+            checkAndUpdate(nextDate);
         }
     }
 

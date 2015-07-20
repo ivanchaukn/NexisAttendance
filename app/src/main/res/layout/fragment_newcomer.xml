@@ -24,7 +24,8 @@
             <TableRow
                 android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/generalTitle"
@@ -32,8 +33,9 @@
                     android:layout_height="wrap_content"
                     android:layout_span="2"
                     android:text="General Information"
-                    android:textSize="15dp"
-                    android:textStyle="normal|bold" />
+                    android:textSize="12dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/myPrimaryDark2Color"/>
             </TableRow>
 
             <TableRow
@@ -146,7 +148,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/newComerBirthdayButton"
-                    android:text="Tap to select..." />
+                    android:background="@color/white_pressed"
+                    android:text="Tap to select..."
+                    android:textColor="@color/myPrimaryDarkColor"/>
 
             </TableRow>
 
@@ -301,7 +305,8 @@
                 android:id="@+id/tableRow12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/academicTitle"
@@ -310,8 +315,9 @@
                     android:layout_span="2"
                     android:paddingTop="20dp"
                     android:text="Academic Information"
-                    android:textSize="15dp"
-                    android:textStyle="normal|bold" />
+                    android:textSize="12dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/myPrimaryDark2Color"/>
 
             </TableRow>
 
@@ -376,8 +382,9 @@
                     android:layout_span="2"
                     android:paddingTop="20dp"
                     android:text="Spiritual Information"
-                    android:textSize="15dp"
-                    android:textStyle="normal|bold" />
+                    android:textSize="12dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/myPrimaryDark2Color"/>
 
             </TableRow>
 
@@ -385,7 +392,8 @@
                 android:id="@+id/tableRow16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/textView12"

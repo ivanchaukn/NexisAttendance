@@ -143,8 +143,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         switch (position)
         {
             case 0:
-                Intent i = new Intent(getApplicationContext(), SettingActivity.class);
-                startActivity(i);
+                UIDialog.onCreateMsgDialog(this, "Not Available", "Setting tab is currently not available");
+                //Intent i = new Intent(getApplicationContext(), SettingActivity.class);
+                //startActivity(i);
                 break;
 
             case 1:

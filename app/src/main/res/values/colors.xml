@@ -27,6 +27,7 @@
     <color name="yellowbuttonRippleColor">#ffaeb30e</color>
 
     <color name="redbuttonPrimaryColor">#ffcb0004</color>
+
     <color name="redbuttonPressColor">#ffae001b</color>
     <color name="redbuttonRippleColor">#ff97001a</color>
 
@@ -34,12 +35,12 @@
     <color name="refreshColor2">#ff57a36a</color>
     <color name="refreshColor3">#ff31ce6d</color>
 
-    <color name="loginEditText">#ffd3ffe0</color>
+    <color name="loginEditText">#FFE7F0EB</color>
 
     <color name="selected_gray">#ffdbdbdb</color>
     <color name="black_semi_transparent">#B2000000</color>
+    <color name="dark_gray">#ff272727</color>
     <color name="half_black">#808080</color>
     <color name="white_pressed">#f1f1f1</color>
-    <color name="dark_gray">#ff272727</color>
     <color name="white">#ffffff</color>
 </resources>

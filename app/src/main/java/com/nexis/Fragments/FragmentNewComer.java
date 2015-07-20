@@ -7,7 +7,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.nexis.Constants;
 import com.nexis.Activity.MainActivity;
-import com.nexis.ExcelReports.genNewComerForm;
+import com.nexis.ExcelReports.NewComerForm;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -22,7 +22,6 @@ import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,8 +42,8 @@ public class FragmentNewComer extends DialogFragment {
 	private DateTime newComerBirthday, defaultDate;
 	private Button dateButton;
 
-    private List<String> labelList = new ArrayList<String>();
-    private List<String> infoList = new ArrayList<String>();
+    private List<String> labelList = new ArrayList<>();
+    private List<String> infoList = new ArrayList<>();
 	
 	public static FragmentNewComer newInstance() {
 		FragmentNewComer fragment = new FragmentNewComer();
@@ -85,7 +84,6 @@ public class FragmentNewComer extends DialogFragment {
             }
         });
 
-        //Submit button
         FloatingActionButton submitButton = (FloatingActionButton) rootView.findViewById(R.id.menu_item_1);
 		
 		submitButton.setOnClickListener(new View.OnClickListener() {
@@ -106,8 +104,6 @@ public class FragmentNewComer extends DialogFragment {
 			}
 		});
 		
-		underlineTitles(rootView);
-		
 		return rootView;
 	}
 
@@ -120,19 +116,18 @@ public class FragmentNewComer extends DialogFragment {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-	private void sendEmailInfo(View view)
+	private void sendEmailInfo()
     {
         nexcell = ((MainActivity)getActivity()).getUserNexcell();
 
-        genNewComerForm report = new genNewComerForm(getActivity(), filePath, labelList, infoList);
+        NewComerForm report = new NewComerForm(getActivity(), filePath, labelList, infoList);
         report.genReport();
 
-        //TODO Email should send to committee and ESMs
         String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
-        sendMail.execute(nexcell + " New Comer Detail", "Please refer to the attachment for details" , toRecipients, ccRecipients, filePath);
+        sendMail.execute("**TESTING " + nexcell + " New Comer Detail", "Please refer to the attachment for details" , toRecipients, ccRecipients, filePath);
 
         Toast.makeText(getActivity(), "Saved Successfully" , Toast.LENGTH_LONG).show();
     }
@@ -155,7 +150,7 @@ public class FragmentNewComer extends DialogFragment {
                 ((RadioGroup)v).clearCheck();
             }
             else if(v instanceof ViewGroup && (((ViewGroup)v).getChildCount() > 0)) {
-                clearInfo((ViewGroup)v);
+                clearInfo(v);
             }
         }
     }
@@ -189,7 +184,7 @@ public class FragmentNewComer extends DialogFragment {
                     ioList.add(radioButtonString);
                 }
             }
-            else if(v instanceof ViewGroup && (((ViewGroup)v).getChildCount() > 0)) {
+            else if(!(v instanceof FloatingActionMenu) && v instanceof ViewGroup && (((ViewGroup)v).getChildCount() > 0)) {
                 retrieiveInfo(v, lbList, ioList);
             }
         }
@@ -208,18 +203,6 @@ public class FragmentNewComer extends DialogFragment {
         return false;
     }
 
-	private void underlineTitles(View view)
-	{
-		TextView generalTitle = (TextView) view.findViewById(R.id.generalTitle);
-		generalTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-		
-		TextView academicTitle = (TextView) view.findViewById(R.id.academicTitle);
-		academicTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-		
-		TextView spiritualTitle = (TextView) view.findViewById(R.id.spiritualTitle);
-		spiritualTitle.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-	}
-	
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
 		@Override
@@ -243,7 +226,7 @@ public class FragmentNewComer extends DialogFragment {
 
             if (checkMissingField()) return;
 
-            sendEmailInfo(getFragmentView());
+            sendEmailInfo();
 		}
 	};
 	

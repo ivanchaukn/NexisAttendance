@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +66,7 @@ public class StatusActivity extends ActionBarActivity {
             if (statusList.get(i) == 0) missingList.add(nexcellList.get(i));
         }
 
-        ButtonRectangle pushallButton = (ButtonRectangle)findViewById(R.id.pushAllButton);
+        Button pushallButton = (Button)findViewById(R.id.pushAllButton);
         pushallButton.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {

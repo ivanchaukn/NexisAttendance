@@ -1,15 +1,12 @@
 package com.nexis.Activity;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
-import com.nexis.NavigationDrawer.NavigationDrawerAdapter;
-import com.nexis.NexisApplication;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.parse.LogInCallback;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.RequestPasswordResetCallback;
-import com.gc.materialdesign.views.ButtonRectangle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +21,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -52,7 +50,7 @@ public class LoginActivity extends Activity {
         //Hide the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        final ButtonRectangle loginButton = (ButtonRectangle) findViewById(R.id.loginButton);
+        final Button loginButton = (Button) findViewById(R.id.loginButton);
 
         progressCircle = (ProgressBarCircularIndeterminate) findViewById(R.id.progressCircular);
 
@@ -91,15 +89,30 @@ public class LoginActivity extends Activity {
 
                 fadeOutButton(loginButton);
 
+                if (username.getText().toString().equals("") || password.getText().toString().equals(""))
+                {
+                    UIDialog.onCreateInvalidDialog(thisActivity(), "Username or password is missing, please try again!");
+                    showButton(loginButton);
+                    return;
+                }
+
                 ParseUser.logInInBackground(username.getText().toString(), password.getText().toString(), new LogInCallback() {
 
                     @Override
                     public void done(ParseUser user, ParseException e) {
                         if (e == null && user != null) {
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(i);
-                            endCurrentActivity();
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(i);
+                                    endCurrentActivity();
+                                }
+                            }, 1000);
+
                             return;
+
                         } else if (user == null) {
                             UIDialog.onCreateInvalidDialog(thisActivity(), "Invalid Username or password, please try again!");
                         } else {
@@ -163,20 +176,24 @@ public class LoginActivity extends Activity {
 	    return builder.create();		
 	}
 
-    private void fadeOutButton(ButtonRectangle button)
+    private void fadeOutButton(Button button)
     {
         Animation fadeout = AnimationUtils.loadAnimation(this, R.anim.abc_fade_out);
         button.startAnimation(fadeout);
         fadeout.setDuration(500);
         fadeout.setFillAfter(true);
 
+        button.setEnabled(false);
+
         progressCircle.setVisibility(View.VISIBLE);
     }
 
-    private void showButton(ButtonRectangle button)
+    private void showButton(Button button)
     {
         Animation fadein = AnimationUtils.loadAnimation(this, R.anim.abc_fade_in);
         button.startAnimation(fadein);
+
+        button.setEnabled(true);
 
         progressCircle.setVisibility(View.INVISIBLE);
     }

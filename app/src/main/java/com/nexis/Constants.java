@@ -19,14 +19,6 @@ public final class Constants {
         // restrict instantiation
 	}
 
-    public static final int MASTER_LEVEL = 7;
-	public static final int DEV_LEVEL = 6;
-	public static final int ADMIN_LEVEL = 5;
-    public static final int COMM_LEVEL = 4;
-	public static final int COUS_LEVEL = 3;
-    public static final int ESM_LEVEL = 2;
-	public static final int MEMBER_LEVEL = 1;
-
     public static final int NUMBERPICKER_MAX = 50;
     public static final int NUMBERPICKER_MIN = 0;
 
@@ -76,7 +68,7 @@ public final class Constants {
             NEXCELL_MERGE_DATE.put(nexcell, mergeDate);
             NEXCELL_LIST.add(nexcell);
 
-            if (parentGroup.equals("")) NEXCELL_ACTIVE_LIST.add(nexcell);
+            if (parentGroup.equals("") || mergeDate.isAfter(new DateTime())) NEXCELL_ACTIVE_LIST.add(nexcell);
 		}
 	}
 }
