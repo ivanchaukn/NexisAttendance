@@ -3,6 +3,7 @@ package com.nexis.ExcelReports;
 import android.content.Context;
 
 import com.nexis.Constants;
+import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.UIDialog;
 import com.parse.ParseObject;
@@ -65,7 +66,7 @@ public class WeeklyReport {
 
     private void initialize()
     {
-        nexcellList =  new ArrayList<>(Constants.NEXCELL_LIST);
+        nexcellList =  new ArrayList<>(Data.NEXCELL_LIST);
         nexcellList.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
         categoryListSize = Constants.CATEGORY_LIST.size();
@@ -80,7 +81,7 @@ public class WeeklyReport {
 
         int startRow = 0;
 
-        while(startRow < nexcellObject.size() && !Constants.NEXCELL_LIST.contains(nexcellObject.get(startRow).get("Nexcell"))) startRow++;
+        while(startRow < nexcellObject.size() && !Data.NEXCELL_LIST.contains(nexcellObject.get(startRow).get("Nexcell"))) startRow++;
 
         if (startRow == nexcellObject.size()) return;
 
@@ -98,11 +99,11 @@ public class WeeklyReport {
             DateTime currentDate = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
             String currentNexcell = (String)nexcellObject.get(i).get("Nexcell");
 
-            if (!Constants.NEXCELL_LIST.contains(currentNexcell)) continue;
+            if (!Data.NEXCELL_LIST.contains(currentNexcell)) continue;
 
             if (!currentDate.equals(rowDate))
             {
-                while (nexcellCount != Constants.NEXCELL_LIST.size())
+                while (nexcellCount != Data.NEXCELL_LIST.size())
                 {
                     row.addAll(Arrays.asList(0, 0, 0, 0));
                     nexcellCount++;
@@ -110,7 +111,7 @@ public class WeeklyReport {
 
                 for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
 
-                //Add data to the main list
+                //Add data to the stat_menu list
                 dateList.add(rowDate);
                 row.addAll(hsData);
                 row.addAll(uniData);
@@ -126,7 +127,7 @@ public class WeeklyReport {
                 nexcellCount = 0;
             }
 
-            while (!currentNexcell.equals(Constants.NEXCELL_LIST.get(nexcellCount)))
+            while (!currentNexcell.equals(Data.NEXCELL_LIST.get(nexcellCount)))
             {
                 row.addAll(Arrays.asList(0, 0, 0, 0));
                 nexcellCount++;
@@ -134,13 +135,12 @@ public class WeeklyReport {
 
             for(int j = 0; j < categoryListSize; j++)
             {
-                int num = nexcellObject.get(i).getInt(Constants.CATEGORY_LIST.get(j));
-
-                row.add(num);
-
                 List<Integer> tempData;
 
-                if (Constants.NEXCELL_STAGE.get(currentNexcell).equals("HighSchool")) tempData = hsData;
+                int num = nexcellObject.get(i).getInt(Constants.CATEGORY_LIST.get(j));
+                row.add(num);
+
+                if (Data.getNexcellStage(currentNexcell).equals("HighSchool")) tempData = hsData;
                 else tempData = uniData;
 
                 int newTotal = tempData.get(j) + num;
@@ -150,7 +150,7 @@ public class WeeklyReport {
             nexcellCount++;
         }
 
-        while (nexcellCount != Constants.NEXCELL_LIST.size())
+        while (nexcellCount != Data.NEXCELL_LIST.size())
         {
             row.addAll(Arrays.asList(0, 0, 0, 0));
             nexcellCount++;
@@ -158,7 +158,7 @@ public class WeeklyReport {
 
         for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
 
-        //Add the last row to the main list
+        //Add the last row to the stat_menu list
         dateList.add(rowDate);
         row.addAll(hsData);
         row.addAll(uniData);

@@ -8,14 +8,18 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.content.Context;
+import android.support.v4.util.ArrayMap;
 
 public class ParseOperation {
+
+    private static final String ATD_LABEL = "attendance";
+    private static final String OLDATD_LABEL = "OLDattendance";
 
 	static public int getMostRecentVersionCode(Context actv)
 	{
@@ -36,12 +40,52 @@ public class ParseOperation {
 		
 		return -1;
 	}
+
+    static public void saveYearDate(Context actv)
+    {
+        List<ParseObject> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Nexcell");
+            query.orderByDescending("End_Date");
+
+            nexcellObject = query.find();
+
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        Constants.NEXIS_START_DATE = nexcellObject.get(0).getDate("Start_Date");
+        Constants.NEXIS_END_DATE = nexcellObject.get(0).getDate("End_Date");
+    }
+
+    static public ParseUser getUserByUserName(String username, Context actv)
+    {
+        List<ParseUser> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("username", username);
+            nexcellObject = query.find();
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        if (!nexcellObject.isEmpty()) return nexcellObject.get(0);
+        else return null;
+    }
 	
 	
 	static public List<ParseObject> getUserList(String nexcell, List<Boolean> levels, Context actv)
 	{
-		List<ParseObject> nexcellObject = new ArrayList<>();
-		
+        List<ParseObject> nexcellObject = new ArrayList<>();
+
 		try
         {
             List<ParseQuery<ParseObject>> queries = new ArrayList<>();
@@ -75,23 +119,31 @@ public class ParseOperation {
 
     static public String getSubmitDataRecipient(String nexcell, Context actv)
     {
-        List<ParseObject> users = getUserList(nexcell, Arrays.asList(true, false, true, false), actv);
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
 
         return extractEmail(users);
     }
 
     static public String getWeeklyReportRecipient(Context actv)
     {
-        List<ParseObject> users = getUserList(null, Arrays.asList(false, true, true, false), actv);
+        List<ParseObject> users = getUserList(null, Arrays.asList(false, false, true, true, false), actv);
 
         return extractEmail(users);
     }
 
     static public String getNewComerFormRecipient(String nexcell, Context actv)
     {
-        List<ParseObject> users = getUserList(nexcell, Arrays.asList(true, true, true, true), actv);
-        List<ParseObject> commi = getUserList(null, Arrays.asList(false, true, false, false), actv);
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, false, true, true, true), actv);
+        List<ParseObject> commi = getUserList(null, Arrays.asList(false, false, true, false, false), actv);
         users.addAll(commi);
+
+        return extractEmail(users);
+    }
+
+    static public String getNexcellLeadersRecipient(String nexcell, Context actv)
+    {
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
+
 
         return extractEmail(users);
     }
@@ -130,69 +182,166 @@ public class ParseOperation {
 	}
 	
 	static public List<ParseObject> getNexcellData(String nexcell, DateTime date, Context actv) {
-		
+
         List<ParseObject> nexcellObject = new ArrayList<>();
-        
+
         try
         {
-        	ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
-        	
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
+            query.fromLocalDatastore();
+            query.fromPin(OLDATD_LABEL);
+
             if (nexcell != null) query.whereEqualTo("Nexcell", nexcell);
             if (date != null) query.whereEqualTo("Date", date.toDate());
-            
+
             query.orderByAscending("Date");
             query.addAscendingOrder("Nexcell");
             query.setLimit(1000);
-            
-        	nexcellObject = query.find();
+
+            nexcellObject = query.find();
         }
         catch (ParseException e)
         {
-        	UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
 
-    	return nexcellObject;
-	}
+        return nexcellObject;
+    }
+
+    static public List<ParseObject> getNexcellData1(String nexcell, DateTime date, Context actv) {
+
+        List<ParseObject> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            int limit = 1000;
+            int skip = 0;
+
+            while (true)
+            {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("UserAttendance");
+                query.fromLocalDatastore();
+                query.fromPin(ATD_LABEL);
+
+                if (nexcell != null) query.whereEqualTo("nexcell", nexcell);
+                if (date != null) query.whereEqualTo("date", date.toDate());
+
+                query.orderByAscending("date");
+                query.addAscendingOrder("nexcell");
+                query.setSkip(skip);
+                query.setLimit(limit);
+
+                List<ParseObject> temp = query.find();
+                nexcellObject.addAll(temp);
+
+                if (temp.size() > limit) skip = skip + limit;
+                else break;
+            }
+
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        return nexcellObject;
+    }
+
+    static public void refreshAttendanceLocalData1(Context actv) {
+
+        List<ParseObject> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            ParseObject.unpinAllInBackground(ATD_LABEL);
+
+            int limit = 1000;
+            int skip = 0;
+
+            while (true)
+            {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("UserAttendance");
+
+                query.whereGreaterThanOrEqualTo("date", Constants.NEXIS_START_DATE);
+                query.whereLessThanOrEqualTo("date", Constants.NEXIS_END_DATE);
+                query.setSkip(skip);
+                query.setLimit(limit);
+
+                List<ParseObject> temp = query.find();
+                nexcellObject.addAll(temp);
+
+                if (temp.size() > limit) skip = skip + limit;
+                else break;
+            }
+
+            ParseObject.pinAllInBackground(ATD_LABEL, nexcellObject);
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+    }
+
+    static public void refreshAttendanceLocalData(Context actv) {
+
+        List<ParseObject> nexcellObject;
+
+        try
+        {
+            ParseObject.unpinAllInBackground(OLDATD_LABEL);
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
+
+            query.whereGreaterThanOrEqualTo("Date", Constants.NEXIS_START_DATE);
+            query.whereLessThanOrEqualTo("Date", Constants.NEXIS_END_DATE);
+            query.setLimit(1000);
+
+            nexcellObject = query.find();
+
+            ParseObject.pinAllInBackground(OLDATD_LABEL, nexcellObject);
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+    }
 	
 	static public void updateUser(String objectID, final int level, final Context actv) {
-        //TODO: user cloud codee to update user levels
-	}
-	
-	static public void updateData(String objectID, final int f, final int s, final int c, final int n, final String userName, Context actv) {
-		
-    	ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
-    	
-    	query.getInBackground(objectID, new GetCallback<ParseObject>() {
-  		  public void done(ParseObject nexcellData, ParseException e) {
-  		    if (e == null) {
-  		    	nexcellData.put("Fellowship", f);
-  		    	nexcellData.put("Service", s);
-  		    	nexcellData.put("College", c);
-  		    	nexcellData.put("NewComer", n);
-  		    	nexcellData.put("saveBy", userName);
-  		    	nexcellData.saveInBackground();
-  		    }
-  		  }
-    	});
+        //TODO: user cloud code to update user levels
 	}
 
     static public void deleteData(String nexcell, DateTime date, Context actv) {
 
-        ParseObject obj = getNexcellData(nexcell, date, actv).get(0);
-        obj.deleteInBackground();
+        List<ParseObject> obj = getNexcellData1(nexcell, date, actv);
+
+        if (!obj.isEmpty()) ParseObject.deleteAllInBackground(obj);
     }
-	
-	static public void saveData(int f, int s, int c, int n, DateTime date, String nexcell, String userName, Context actv) {
 
-            ParseObject data = new ParseObject("Attendance");
-            data.put("Fellowship", f);
-            data.put("Service", s);
-            data.put("College", c);
-            data.put("NewComer", n);
-            data.put("Date", date.toDate());
-            data.put("Nexcell", nexcell);
-            data.put("saveBy", userName);
+    static public void saveUserAttendance(ArrayMap<String, List<String>> dataMap, DateTime date, String nexcell, String userName, Context actv) {
 
-            data.saveInBackground();
-	}
+        deleteData(nexcell, date, actv);
+
+        List<ParseObject> users = new ArrayList<>();
+
+        for (int i = 0; i < dataMap.size(); i++)
+        {
+            String cat = Constants.CATEGORY_LIST.get(i);
+            for(String nameString : dataMap.valueAt(i))
+            {
+                int start = nameString.indexOf("(");
+                String name = nameString.substring(start + 1, nameString.length());
+
+                ParseObject data = new ParseObject("UserAttendance");
+                data.put("date", date.toDate());
+                data.put("nexcell", nexcell);
+                data.put("userName", name);
+                data.put("category", cat);
+                data.put("saveBy", userName);
+                users.add(data);
+            }
+        }
+
+        ParseObject.pinAllInBackground(users);
+        ParseObject.saveAllInBackground(users);
+    }
 }

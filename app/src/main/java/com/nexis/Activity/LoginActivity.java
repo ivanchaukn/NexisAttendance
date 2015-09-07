@@ -1,6 +1,8 @@
 package com.nexis.Activity;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.nexis.Constants;
+import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.parse.LogInCallback;
@@ -54,76 +56,6 @@ public class LoginActivity extends Activity {
 
         progressCircle = (ProgressBarCircularIndeterminate) findViewById(R.id.progressCircular);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                final EditText username = (EditText) findViewById(R.id.userNameLogIn);
-                final EditText password = (EditText) findViewById(R.id.userPwLogIn);
-
-                //################################################################
-                // TO BE REPLACED WITH PARSE INPUT
-                /*
-                if (devCheck.isChecked())
-                    NexisApplication.setDev(true);
-                else
-                    NexisApplication.setDev(false);
-
-                if (counsCheck.isChecked())
-                    NexisApplication.setCouns(true);
-                else
-                    NexisApplication.setCouns(false);
-
-                if (commiCheck.isChecked())
-                    NexisApplication.setCommi(true);
-                else
-                    NexisApplication.setCommi(false);
-
-                if (ESMCheck.isChecked())
-                    NexisApplication.setESM(true);
-                else
-                    NexisApplication.setESM(false);*/
-                //################################################################
-
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
-
-                fadeOutButton(loginButton);
-
-                if (username.getText().toString().equals("") || password.getText().toString().equals(""))
-                {
-                    UIDialog.onCreateInvalidDialog(thisActivity(), "Username or password is missing, please try again!");
-                    showButton(loginButton);
-                    return;
-                }
-
-                ParseUser.logInInBackground(username.getText().toString(), password.getText().toString(), new LogInCallback() {
-
-                    @Override
-                    public void done(ParseUser user, ParseException e) {
-                        if (e == null && user != null) {
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(i);
-                                    endCurrentActivity();
-                                }
-                            }, 1000);
-
-                            return;
-
-                        } else if (user == null) {
-                            UIDialog.onCreateInvalidDialog(thisActivity(), "Invalid Username or password, please try again!");
-                        } else {
-                            UIDialog.onCreateErrorDialog(thisActivity(), "Login Error, please contact administrator!");
-                        }
-                        showButton(loginButton);
-                    }
-                });
-            }
-        });
-
         TextView resetPasswordText = (TextView) findViewById(R.id.resetPwdText);
         resetPasswordText.setOnClickListener(new View.OnClickListener() {
 
@@ -131,8 +63,76 @@ public class LoginActivity extends Activity {
                 pwdResetDialog();
             }
         });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                final EditText username = (EditText) findViewById(R.id.userNameLogIn);
+                final EditText password = (EditText) findViewById(R.id.userPwLogIn);
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(password.getWindowToken(), 0);
+
+                if (username.getText().toString().equals("") || password.getText().toString().equals(""))
+                {
+                    UIDialog.onCreateInvalidDialog(thisActivity(), "Username or password is missing, please try again!");
+                    showButton(loginButton, username, password);
+                    return;
+                }
+
+                ParseUser user =  ParseOperation.getUserByUserName(username.getText().toString(), getApplicationContext());
+                if (user != null)
+                {
+                    boolean login = false;
+
+                    for (String x : Constants.USER_LEVEL_LIST)
+                    {
+                        if ((Boolean)user.get(x) == false) continue;
+                        else
+                        {
+                            login = true;
+                            hideButton(loginButton, username, password);
+
+                            ParseUser.logInInBackground(username.getText().toString(), password.getText().toString(), new LogInCallback() {
+
+                                @Override
+                                public void done(ParseUser user, ParseException e) {
+                                    if (e == null && user != null) {
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                                startActivity(i);
+                                                endCurrentActivity();
+                                            }
+                                        }, 1000);
+
+                                        return;
+
+                                    } else if (user == null) {
+                                        UIDialog.onCreateInvalidDialog(thisActivity(), "Invalid Username or password, please try again!");
+                                    } else {
+                                        UIDialog.onCreateErrorDialog(thisActivity(), "Login Error, please contact administrator!");
+                                    }
+                                    showButton(loginButton, username, password);
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                    if (login == false) UIDialog.onCreateMsgDialog(thisActivity(), "Permission Denied", "You are not permitted to access the attendance page, please request permission from your nexcell leader");
+
+                }
+                else
+                {
+                    UIDialog.onCreateInvalidDialog(thisActivity(), "Invalid Username, please try again!");
+                }
+            }
+        });
     }
- 
+
     protected void pwdResetDialog() {
     	Dialog d = passwordResetDialog();
     	d.show();
@@ -141,12 +141,12 @@ public class LoginActivity extends Activity {
     private AlertDialog passwordResetDialog()
 	{
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    
-	    LayoutInflater inflater = this.getLayoutInflater();
 
-	    // Inflate and set the text for the dialog
-	    // Pass null as the parent view because its going in the dialog text
-	    final View Viewlayout = inflater.inflate(R.layout.pwdresetdialog, null);
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        // Inflate and set the text for the dialog
+        // Pass null as the parent view because its going in the dialog text
+        final View Viewlayout = inflater.inflate(R.layout.pwdresetdialog, null);
 	    builder.setView(Viewlayout);
 	    
 	    builder.setTitle("Reset Password");
@@ -167,16 +167,16 @@ public class LoginActivity extends Activity {
 							}
 	            	   });
 	               }
-	           })
-	           .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	               public void onClick(DialogInterface dialog, int id) {		          
+        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 	               }
 	    });
 	    
 	    return builder.create();		
 	}
 
-    private void fadeOutButton(Button button)
+    private void hideButton(Button button, EditText uName, EditText pwd)
     {
         Animation fadeout = AnimationUtils.loadAnimation(this, R.anim.abc_fade_out);
         button.startAnimation(fadeout);
@@ -184,18 +184,24 @@ public class LoginActivity extends Activity {
         fadeout.setFillAfter(true);
 
         button.setEnabled(false);
+        uName.setEnabled(false);
+        pwd.setEnabled(false);
 
         progressCircle.setVisibility(View.VISIBLE);
+        progressCircle.setActivated(true);
     }
 
-    private void showButton(Button button)
+    private void showButton(Button button, EditText uName, EditText pwd)
     {
         Animation fadein = AnimationUtils.loadAnimation(this, R.anim.abc_fade_in);
         button.startAnimation(fadein);
 
         button.setEnabled(true);
+        uName.setEnabled(true);
+        pwd.setEnabled(true);
 
-        progressCircle.setVisibility(View.INVISIBLE);
+        progressCircle.setVisibility(View.GONE);
+        progressCircle.setActivated(false);
     }
     
     private void endCurrentActivity()

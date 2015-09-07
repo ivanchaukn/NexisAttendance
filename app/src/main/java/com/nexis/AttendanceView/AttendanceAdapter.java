@@ -21,14 +21,14 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
 
     private View v;
 
-    private List<AttendanceItem> mData;
+    private List<AttendanceItem1> mData;
     private int mSelectedPosition;
     private int mTouchedPosition = -1;
 
     public boolean devVal = NexisApplication.getDev();
     public boolean commiVal = NexisApplication.getCommi();
 
-    public AttendanceAdapter(List<AttendanceItem> data) {
+    public AttendanceAdapter(List<AttendanceItem1> data) {
         mData = data;
     }
 

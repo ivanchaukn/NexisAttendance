@@ -6,16 +6,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.Utils;
 import com.nexis.Activity.StatusActivity;
 import com.nexis.Constants;
+import com.nexis.Data;
 import com.nexis.ExcelReports.WeeklyReport;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -64,7 +69,6 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         return rootView;
     }
 
-    @Override
     public void onItemClick(AdapterView<?> av, View v, int pos, long arg3) {
 
         Intent i;
@@ -79,7 +83,6 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                 break;
         }
     }
-
 
     private class AdminListItem {
         String name;
@@ -134,6 +137,7 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
 
         @Override
         public void onClick(DialogInterface dialog, int id) {
+            ParseOperation.refreshAttendanceLocalData(getActivity());
             sendWeeklyReport();
         }
     };
@@ -142,12 +146,12 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
     {
         String today = new DateTime().toString("yyyy-MM-dd");
 
-        String filePath = getActivity().getFilesDir().getPath().toString() +  "/Nexis Attendance " + today + ".xls";
+        String filePath = getActivity().getFilesDir().getPath() +  "/Nexis Attendance " + today + ".xls";
 
         String toRecipients = ParseOperation.getWeeklyReportRecipient(getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
-        List<String> nexcellTitles = new ArrayList<String>(Constants.NEXCELL_LIST);
+        List<String> nexcellTitles = new ArrayList<>(Data.NEXCELL_LIST);
         nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
         WeeklyReport report = new WeeklyReport(getActivity(), filePath);

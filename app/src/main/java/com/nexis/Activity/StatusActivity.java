@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.nexis.Constants;
+import com.nexis.Data;
 import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -49,6 +50,8 @@ public class StatusActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
+
+        ParseOperation.refreshAttendanceLocalData(this);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
 
@@ -97,9 +100,9 @@ public class StatusActivity extends ActionBarActivity {
 
         for (ParseObject x: nexcellObject) dataNexcell.add((String)x.get("Nexcell"));
 
-        for (int i = 0; i < Constants.NEXCELL_ACTIVE_LIST.size(); i++)
+        for (int i = 0; i < Data.NEXCELL_ACTIVE_LIST.size(); i++)
         {
-            String nexcell = Constants.NEXCELL_ACTIVE_LIST.get(i);
+            String nexcell = Data.NEXCELL_ACTIVE_LIST.get(i);
 
             nexcellList.add(nexcell);
 

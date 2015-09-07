@@ -2,16 +2,19 @@ package com.nexis.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.Utils;
 import com.nexis.Activity.BarChartListActivity;
@@ -27,7 +30,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FragmentStat extends DialogFragment implements AdapterView.OnItemClickListener {
@@ -49,8 +52,6 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stat, container, false);
-
-        nexcellObject = ParseOperation.getNexcellData(null, null, getActivity());
 
         recentDate = new DateTime(DateTimeZone.UTC);
         if (recentDate.getDayOfWeek() - 1 < DateTimeConstants.FRIDAY) recentDate = recentDate.minusWeeks(1);
@@ -74,7 +75,30 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
 
         lv.setOnItemClickListener(this);
 
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.stat_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh_menu:
+                ParseOperation.refreshAttendanceLocalData(getActivity());
+                Toast.makeText(getActivity(), "Data Updated", Toast.LENGTH_LONG).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -82,6 +106,8 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
 
         Intent i;
         Bundle b;
+
+        nexcellObject = ParseOperation.getNexcellData(null, null, getActivity());
 
         switch (pos) {
             case 0:
@@ -149,17 +175,18 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
                 int c1 = 0;
                 int c2 = 0;
 
-                for (int j = 0; j < Constants.NEXCELL_ACTIVE_LIST.size(); j++)
+                for (int j = 0; j < Data.NEXCELL_ACTIVE_LIST.size(); j++)
                 {
-                    String nName = Constants.NEXCELL_ACTIVE_LIST.get(j);
-                    if (Constants.NEXCELL_STAGE.get(nName).equals(Constants.HS_STRING)) {
+                    String nName = Data.NEXCELL_ACTIVE_LIST.get(j);
+
+                    if (Data.getNexcellStage(nName).equals(Constants.HS_STRING)) {
                         hsData.add(rawData.get(j));
-                        hsLabel.add(nName);
+                        hsLabel.add(Data.getNexcellLabel(nName));
                         c1++;
                     }
                     else {
                         uniData.add(rawData.get(j));
-                        uniLabel.add(nName);
+                        uniLabel.add(Data.getNexcellLabel(nName));
                         c2++;
                     }
                 }
@@ -180,7 +207,6 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
 
         getActivity().overridePendingTransition(R.anim.move_right_in_activity, R.anim.move_left_out_activity);
     }
-
 
     private class GraphListItem {
         String name;

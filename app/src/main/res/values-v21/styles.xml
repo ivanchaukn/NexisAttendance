@@ -44,4 +44,9 @@
         <item name="refreshSecondary">@color/refreshColor2</item>
         <item name="refreshThird">@color/refreshColor3</item>
     </array>
+
+    <style name="dialog_animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_left_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_right_out</item>
+    </style>
 </resources>

@@ -94,6 +94,31 @@
                 android:layout_marginTop="5dp">
 
                 <TextView
+                    android:id="@+id/textView02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Initial:"
+                    android:textSize="13dp" />
+
+                <EditText
+                    android:id="@+id/newComerLastName"
+                    android:layout_width="264dp"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:inputType="textPersonName"
+                    android:hint="Tap to enter..."
+                    android:textColorHint="@color/selected_gray"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="14dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <TextView
                     android:id="@+id/textView03"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -132,7 +157,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow5"
+                android:id="@+id/tableRow6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -155,7 +180,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow6"
+                android:id="@+id/tableRow7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -180,7 +205,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow7"
+                android:id="@+id/tableRow8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -205,7 +230,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow8"
+                android:id="@+id/tableRow9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -230,7 +255,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow9"
+                android:id="@+id/tableRow10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -254,7 +279,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow10"
+                android:id="@+id/tableRow11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -278,7 +303,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow11"
+                android:id="@+id/tableRow12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -302,7 +327,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow12"
+                android:id="@+id/tableRow13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -322,7 +347,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow13"
+                android:id="@+id/tableRow14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -346,7 +371,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow14"
+                android:id="@+id/tableRow15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -370,7 +395,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow15"
+                android:id="@+id/tableRow16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -389,7 +414,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow16"
+                android:id="@+id/tableRow17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -434,7 +459,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow17"
+                android:id="@+id/tableRow18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -460,7 +485,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow18"
+                android:id="@+id/tableRow19"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -505,7 +530,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow19"
+                android:id="@+id/tableRow20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
@@ -527,6 +552,29 @@
                     android:textColorHint="@color/selected_gray"
                     android:textColor="@color/dark_gray"
                     android:textSize="14dp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:id="@+id/userType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Register Type:"
+                    android:textSize="12dp"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/myPrimaryDark3Color"/>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/RegisTypespinner"
+                    android:spinnerMode="dropdown"/>
 
             </TableRow>
 

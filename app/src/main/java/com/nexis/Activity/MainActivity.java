@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
 import com.nexis.Constants;
+import com.nexis.Data;
 import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentNewComer;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
@@ -22,7 +23,6 @@ import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
 import com.nexis.NexisApplication;
-import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.parse.ParseException;
@@ -40,9 +40,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private static String userName, userFirstName, userLastName, userNexcell, userEmail;
+    private static String userName, userFirstName, userLastName, userInitial, userNexcell, fullName;
 
-    List<ParseObject> nexcellObject;
     List<Fragment> fragments = new ArrayList<>();
 
     @Override
@@ -51,22 +50,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         try
         {
-            //Current user info
-            ParseUser user = ParseUser.getCurrentUser();
-            userName = user.getUsername();
-            userFirstName = (String)user.get("firstName");
-            userLastName = (String)user.get("lastName");
-            userEmail = (String)user.get("email");
-            userNexcell = (String)user.get("Nexcell");
-
-            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
-            userQuery.whereEqualTo("username", userName);
-            List<ParseObject> obj = userQuery.find();
-
-            NexisApplication.setESM(obj.get(0).getBoolean("esm"));
-            NexisApplication.setDev(obj.get(0).getBoolean("developer"));
-            NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
-            NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+            setupUser();
 
             setContentView(R.layout.activity_main);
             mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -76,10 +60,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_drawer);
             mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
-            mNavigationDrawerFragment.updateProfile(userFirstName + " " + userLastName, userNexcell);
+            if (userInitial.equals("")) fullName = userFirstName + " " + userLastName;
+            else fullName = userFirstName + " " + userInitial + " " + userLastName;
 
-            nexcellObject = ParseOperation.getNexcellList(false, this);
-            Constants.initializeNexcell(nexcellObject);
+            mNavigationDrawerFragment.updateProfile(fullName, Data.getNexcellLabel(userNexcell));
 
             // Subscribe the Broadcast push channel
             ParsePush.subscribeInBackground("");
@@ -90,7 +74,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
             getOverflowMenu();
         }
-        catch (ParseException e)
+        catch (Exception e)
         {
             UIDialog.onCreateMsgDialog(this, "Error", "MainActivity error");
         }
@@ -98,7 +82,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.stat_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -221,9 +205,40 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     };
 
+    private void setupUser()
+    {
+        try {
+            ParseUser user = ParseUser.getCurrentUser();
+            userName = user.getUsername();
+            userFirstName = (String) user.get("firstName");
+            userLastName = (String) user.get("lastName");
+            userInitial = (String) user.get("initial");
+            userNexcell = (String) user.get("Nexcell");
+
+            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
+            userQuery.whereEqualTo("username", userName);
+            List<ParseObject> obj = userQuery.find();
+
+            NexisApplication.setMember(obj.get(0).getBoolean("member"));
+            NexisApplication.setESM(obj.get(0).getBoolean("esm"));
+            NexisApplication.setDev(obj.get(0).getBoolean("developer"));
+            NexisApplication.setCommi(obj.get(0).getBoolean("committee"));
+            NexisApplication.setCouns(obj.get(0).getBoolean("counsellor"));
+        }
+        catch(ParseException e)
+        {
+            UIDialog.onCreateMsgDialog(this, "Error", "User set up error");
+        }
+    }
+
     public String getUserNexcell()
     {
         return userNexcell;
+    }
+
+    public String getUserNexcellLabel()
+    {
+        return Data.getNexcellLabel(userNexcell);
     }
 
     public String getUserName()

@@ -45,9 +45,8 @@ public class UIDialog {
         builder.setMessage(String.format("%s", msg));
         builder.setTitle(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-             public void onClick(DialogInterface dialog, int id) 
-             {
-             }
+            public void onClick(DialogInterface dialog, int id) {
+            }
         });
         
         AlertDialog d = builder.create();
@@ -82,22 +81,26 @@ public class UIDialog {
         d.show();
 	}
 	
-	static public void onCreateListDialog(Context actv, String title, List<String> list, DialogInterface.OnClickListener clickListener)
-	{
-		AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+	static public void onCreateMultiChoiceListDialog(Context actv, String title, List<String> list, boolean[] blList, DialogInterface.OnMultiChoiceClickListener clickListener,
+                                                      String posButton, String negButton, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
         builder.setTitle(title);
-	    
-	    if (list != null)
-	    {
-	    	final CharSequence[] nList = list.toArray(new CharSequence[list.size()]);
-	    	builder.setItems(nList, clickListener);
-	    }
-	    
-	    AlertDialog d = builder.create();
-        d.show();
-	}
 
-    static public void onCreateCustomDialog(Context actv, String title, View Viewlayout, String posButton, String negaButton, DialogInterface.OnClickListener positiveButtonListener, DialogInterface.OnClickListener negativeButtonListener)
+        final CharSequence[] nList = list.toArray(new CharSequence[list.size()]);
+        boolean bl[] = blList;
+        builder.setMultiChoiceItems(nList, bl, clickListener);
+
+        if (posButton != null) builder.setPositiveButton(posButton, positiveListener);
+        if (negButton != null) builder.setNegativeButton(negButton, negativeListener);
+
+        AlertDialog d = builder.create();
+        d.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        d.show();
+    }
+
+    static public void onCreateCustomDialog(Context actv, String title, View Viewlayout, String posButton, String negaButton,
+                                            DialogInterface.OnClickListener positiveButtonListener, DialogInterface.OnClickListener negativeButtonListener)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(actv);
 

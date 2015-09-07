@@ -18,7 +18,7 @@ public class SendMailAsync extends AsyncTask<String, Void, String> {
 	}
 
 		protected void onPreExecute() {
-
+			Toast.makeText(context, "Sending..." , Toast.LENGTH_LONG).show();
 			sender = new SendGrid(Constants.SENDGRID_USER_NAMAE, Constants.SENDGRID_PASSWORD);
 		}
 
@@ -74,7 +74,6 @@ public class SendMailAsync extends AsyncTask<String, Void, String> {
 			UIDialog.onCreateErrorDialog(context, exception);
 	    	return;
 		}
-
 		Toast.makeText(context, "Email Sent" , Toast.LENGTH_LONG).show();
     }
 }

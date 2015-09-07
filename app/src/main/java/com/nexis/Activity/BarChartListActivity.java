@@ -20,8 +20,8 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ValueFormatter;
+import com.nexis.Data;
 import com.nexis.Formats.DeciFormat;
-import com.nexis.Constants;
 import com.nexis.Formats.PercentFormat;
 import com.nexis.R;
 
@@ -54,7 +54,7 @@ public class BarChartListActivity extends ActionBarActivity {
         while (bun.getIntegerArrayList("data" + i) != null)
         {
             ArrayList<Integer> current  = bun.getIntegerArrayList("data" + i);
-            BarData bData = generateBarData(current, Constants.NEXCELL_ACTIVE_LIST);
+            BarData bData = generateBarData(current, Data.getLabels(Data.NEXCELL_ACTIVE_LIST));
             dataList.add(bData);
             i++;
         }
