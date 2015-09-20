@@ -33,6 +33,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.0.7'
     compile 'info.hoang8f:android-segmented:1.0.5'
+    compile 'se.simbio.encryption:library:1.2.0'
     compile 'com.github.clans:fab:1.5.2'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')

@@ -11,7 +11,6 @@ import com.parse.ParseException;
 import com.parse.RequestPasswordResetCallback;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -134,46 +133,26 @@ public class LoginActivity extends Activity {
     }
 
     protected void pwdResetDialog() {
-    	Dialog d = passwordResetDialog();
-    	d.show();
-	}
-    
-    private AlertDialog passwordResetDialog()
-	{
-	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
         LayoutInflater inflater = this.getLayoutInflater();
+        final View Viewlayout = inflater.inflate(R.layout.textviewdialog, null);
 
-        // Inflate and set the text for the dialog
-        // Pass null as the parent view because its going in the dialog text
-        final View Viewlayout = inflater.inflate(R.layout.pwdresetdialog, null);
-	    builder.setView(Viewlayout);
-	    
-	    builder.setTitle("Reset Password");
-	    
-	    builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-	               @Override
-	               public void onClick(DialogInterface dialog, int id) {
-	                  
-	            	   EditText userEmail = (EditText) Viewlayout.findViewById(R.id.resetPwdEmail);
-	            	   
-	            	   ParseUser.requestPasswordResetInBackground(userEmail.getText().toString(), new RequestPasswordResetCallback() {
-							public void done(ParseException e) {
-								if (e == null) {
-									Toast.makeText(LoginActivity.this, "Email Sent", Toast.LENGTH_LONG).show();
-								} else {
-									Toast.makeText(LoginActivity.this, "Invalid Email, Please check again", Toast.LENGTH_LONG).show();
-								}
-							}
-	            	   });
-	               }
-        })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-	               }
-	    });
-	    
-	    return builder.create();		
+        UIDialog.onCreateTextDialog(this, Viewlayout, "Reset Password", "Please enter your email:", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+
+                EditText userEmail = (EditText) Viewlayout.findViewById(R.id.inputText);
+
+                ParseUser.requestPasswordResetInBackground(userEmail.getText().toString(), new RequestPasswordResetCallback() {
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Toast.makeText(LoginActivity.this, "Email Sent", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Invalid Email, Please check again", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
 	}
 
     private void hideButton(Button button, EditText uName, EditText pwd)

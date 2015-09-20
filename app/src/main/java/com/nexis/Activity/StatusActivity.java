@@ -95,10 +95,14 @@ public class StatusActivity extends ActionBarActivity {
         date = date.withDayOfWeek(DateTimeConstants.FRIDAY);
         date = date.withTimeAtStartOfDay();
 
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, this);
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, true, this);
         List<String> dataNexcell = new ArrayList<>();
 
-        for (ParseObject x: nexcellObject) dataNexcell.add((String)x.get("Nexcell"));
+        for (ParseObject x: nexcellObject)
+        {
+            String nexcell = (String)x.get("nexcell");
+            if (!dataNexcell.contains(nexcell)) dataNexcell.add(nexcell);
+        }
 
         for (int i = 0; i < Data.NEXCELL_ACTIVE_LIST.size(); i++)
         {

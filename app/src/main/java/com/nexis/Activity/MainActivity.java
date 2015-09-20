@@ -2,19 +2,23 @@ package com.nexis.Activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewConfiguration;
+import android.widget.Toast;
+
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.ExcelReports.ContactForm;
 import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentNewComer;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
@@ -23,7 +27,9 @@ import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
 import com.nexis.NexisApplication;
+import com.nexis.ParseOperation;
 import com.nexis.R;
+import com.nexis.SendMailAsync;
 import com.nexis.UIDialog;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -31,8 +37,10 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import java.lang.reflect.Field;
+
+import org.joda.time.DateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
@@ -41,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private static String userName, userFirstName, userLastName, userInitial, userNexcell, fullName;
+
+    private ArrayMap<String, String> usernameMap;
 
     List<Fragment> fragments = new ArrayList<>();
 
@@ -51,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         try
         {
             setupUser();
+            usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
 
             setContentView(R.layout.activity_main);
             mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -71,18 +82,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
             ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
             ParseInstallation.getCurrentInstallation().saveInBackground();
-
-            getOverflowMenu();
         }
         catch (Exception e)
         {
-            UIDialog.onCreateMsgDialog(this, "Error", "MainActivity error");
+            UIDialog.onCreateErrorDialog(this, "MainActivity error");
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.stat_menu, menu);
+        List<Integer> levs = NexisApplication.getLevels();
+        for (Integer x : levs) {
+            if (x > 0) {
+                getMenuInflater().inflate(R.menu.main_menu, menu);
+                break;
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -94,10 +110,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         int id = item.getItemId();
         switch (id) {
-
+            case R.id.gen_contact:
+                UIDialog.onCreateActionDialog(this, "Download Contact List", "Are you sure you want to send nexcell contact list?", sendContactListListener);
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private DialogInterface.OnClickListener sendContactListListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+            String toRep = ParseOperation.getNexcellLeadersRecipient(userNexcell, getApplicationContext());
+            contactReportAsync crp = new contactReportAsync();
+            crp.execute(userNexcell, toRep);
+        }
+    };
+
 
     @Override
     public void onNavigationDrawerItemSelected(int position, int prevPosition)
@@ -165,25 +193,41 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             super.onBackPressed();
     }
 
-    private void getOverflowMenu() {
-
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setToolbarElevation(int elevation)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             mToolbar.setElevation(elevation);
+        }
+    }
+
+    public void genContactReport(String nexcell, String toRep)
+    {
+        contactReportAsync crp = new contactReportAsync();
+        crp.execute(nexcell, toRep);
+    }
+
+    public class contactReportAsync extends AsyncTask<String, Void, String[]>
+    {
+        String filePath;
+
+        protected void onPreExecute () {
+            filePath = getApplication().getFilesDir().getPath() +  "/New Comer" + ".xls";
+        }
+
+        protected String[] doInBackground(String... info) {
+
+            List<ParseObject> userList = ParseOperation.getUserList(info[0], Arrays.asList(false, false, false, false, false), getApplication());
+
+            ContactForm form = new ContactForm(getApplication(), filePath, userList);
+            form.genReport();
+
+            return info;
+        }
+
+        protected void onPostExecute(String[] info) {
+            sendEmail(filePath, info[0], info[1]);
+            Toast.makeText(getApplication(), "Contact List Sent", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -205,6 +249,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     };
 
+    private void sendEmail(String filePath, String nexcell, String recipients)
+    {
+        String toRecipients = recipients;
+        String ccRecipients = Constants.SYSTEM_GMAIL;
+
+        DateTime currentTime = new DateTime();
+        String currentDateTimeString = currentTime.toString("yyyy-MM-dd HH:mm:ss.SSS");
+
+        String emailSubject = "Contact List for " + nexcell;
+        if (nexcell == null) emailSubject = "Nexis Master Contact List";
+
+        String emailBody = String.format("Attached file is the contact list as of %s", currentDateTimeString);
+
+        SendMailAsync sendMail = new SendMailAsync(this);
+        sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, filePath);
+    }
+
     private void setupUser()
     {
         try {
@@ -213,7 +274,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             userFirstName = (String) user.get("firstName");
             userLastName = (String) user.get("lastName");
             userInitial = (String) user.get("initial");
-            userNexcell = (String) user.get("Nexcell");
+            userNexcell = (String) user.get("nexcell");
 
             ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
             userQuery.whereEqualTo("username", userName);
@@ -244,6 +305,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public String getUserName()
     {
         return userName;
+    }
+
+    public void refreshUserMap()
+    {
+        usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
+    }
+
+    public ArrayMap<String, String> getNexcellUserMap()
+    {
+        return usernameMap;
+    }
+
+    public void setNexcellUserMap(ArrayMap<String, String> map)
+    {
+        usernameMap = map;
     }
 
     private void endCurrentActivity()

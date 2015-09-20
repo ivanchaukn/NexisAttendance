@@ -30,7 +30,6 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FragmentStat extends DialogFragment implements AdapterView.OnItemClickListener {
@@ -107,7 +106,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         Intent i;
         Bundle b;
 
-        nexcellObject = ParseOperation.getNexcellData(null, null, getActivity());
+        nexcellObject = ParseOperation.getNexcellData(null, null, true, getActivity());
 
         switch (pos) {
             case 0:

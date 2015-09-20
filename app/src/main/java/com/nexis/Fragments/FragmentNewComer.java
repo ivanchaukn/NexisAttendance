@@ -1,6 +1,10 @@
 package com.nexis.Fragments;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,20 +12,21 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.nexis.Constants;
 import com.nexis.Activity.MainActivity;
-import com.nexis.ExcelReports.NewComerForm;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
 import com.nexis.SendMailAsync;
 import com.parse.FunctionCallback;
-import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,11 +35,14 @@ import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.support.v4.util.ArrayMap;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -48,15 +56,22 @@ import android.widget.Toast;
 
 public class FragmentNewComer extends DialogFragment {
 
-	private String nexcell, nexcellLabel, filePath, newusername;
-	private DateTime newComerBirthday, defaultDate;
+	private String nexcell, nexcellLabel, filePath;
+	private DateTime newComerBirthday, defaultDate, nextDate;
 	private Button dateButton;
+
+    private Spinner s, s2, s3;
+    private ArrayAdapter<String> adapter, adapter2, adapter3;
 
     ProgressDialog pDialog;
 
     private List<String> labelList = new ArrayList<>();
     private List<String> infoList = new ArrayList<>();
-	
+
+    private List<String> schoolSpinner = new ArrayList<>();
+    private List<String> yearSpinner = new ArrayList<>();
+    private List<String> regisSpinner = Arrays.asList("New Comer", "Existing member");
+
 	public static FragmentNewComer newInstance() {
 		FragmentNewComer fragment = new FragmentNewComer();
 		Bundle args = new Bundle();
@@ -72,17 +87,20 @@ public class FragmentNewComer extends DialogFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_newcomer, container, false);
 
+        setupDate();
+
+        filePath = getActivity().getFilesDir().getPath().toString() + "/NewComer.xls";
+
         nexcell = ((MainActivity)getActivity()).getUserNexcell();
         nexcellLabel = ((MainActivity)getActivity()).getUserNexcellLabel();
 		
 		defaultDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
 		newComerBirthday = defaultDate;
 
-        String[] arraySpinner = new String[] {"New Comer", "Existing member"};
+        EditText cPhoneText = (EditText) rootView.findViewById(R.id.newComerCellPhone);
+        cPhoneText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
-        Spinner s = (Spinner) rootView.findViewById(R.id.RegisTypespinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arraySpinner);
-        s.setAdapter(adapter);
+        setupSpinners(rootView);
 		
 		dateButton = (Button) rootView.findViewById(R.id.newComerBirthdayButton);
 		
@@ -119,12 +137,102 @@ public class FragmentNewComer extends DialogFragment {
             @Override
             public void onClick(View v) {
                 hideKeyboard(rootView);
-                UIDialog.onCreateActionDialog(getActivity(), "New Form", "Are you sure you want to start a new form?", clearDataListener);
+                UIDialog.onCreateActionDialog(getActivity(), "New Form", "Are you sure you want to start a new form?", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        clearInfo(getFragmentView());
+                    }
+                });
             }
         });
 		
 		return rootView;
 	}
+
+    private void setupDate()
+    {
+        nextDate = new DateTime(DateTimeZone.UTC);
+        DateTime friday = nextDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+        if (nextDate.isBefore(friday)) nextDate = friday.minusWeeks(1);
+        else nextDate = friday;
+
+        nextDate = nextDate.withTimeAtStartOfDay();
+    }
+
+    private void setupSpinners(View rootView)
+    {
+        setupSpinnerValues();
+
+        s = (Spinner) rootView.findViewById(R.id.RegisTypespinner);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, regisSpinner);
+        s.setAdapter(adapter);
+
+        s2 = (Spinner) rootView.findViewById(R.id.schoolSpinner);
+        adapter2 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, schoolSpinner);
+        s2.setAdapter(adapter2);
+
+        s3 = (Spinner) rootView.findViewById(R.id.schoolYearSpinner);
+        adapter3 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, yearSpinner);
+        s3.setAdapter(adapter3);
+
+        s2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String items = s2.getSelectedItem().toString();
+                if (items.equals("*Working"))
+                {
+                    s3.setEnabled(false);
+                    adapter3.add("N/A");
+                    adapter3.notifyDataSetChanged();
+                    s3.setSelection(adapter3.getPosition("N/A"), true);
+                }
+                else
+                {
+                    s3.setEnabled(true);
+                    adapter3.remove("N/A");
+                    adapter3.notifyDataSetChanged();
+                    if (items.equals("Others...")) schoolDialog();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+    }
+
+    protected void schoolDialog() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View Viewlayout = inflater.inflate(R.layout.textviewdialog, null);
+
+        UIDialog.onCreateTextDialog(getActivity(), Viewlayout, "New School", "Please enter your school:", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                EditText school = (EditText) Viewlayout.findViewById(R.id.inputText);
+                adapter2.add(school.getText().toString());
+                adapter2.notifyDataSetChanged();
+                s2.setSelection(adapter2.getPosition(school.getText().toString()), true);
+            }
+        });
+    }
+
+    private void setupSpinnerValues()
+    {
+        List<String> years = Arrays.asList("Grade 8", "Grade 9", "Grade 10", "Grade 11",
+                                           "Grade 12", "Year 1", "Year 2", "Year 3", "Year 4");
+
+        yearSpinner.addAll(years);
+
+        List<ParseUser> nexcellObject = ParseOperation.getSchools(getActivity());
+
+        for(ParseObject x : nexcellObject)
+        {
+            String school = (String)x.get("school");
+            if (!(schoolSpinner.contains(school))) schoolSpinner.add((String)x.get("school"));
+        }
+        schoolSpinner.add("Others...");
+    }
 
     private void hideKeyboard(View view) {
         // TODO Auto-generated method stub
@@ -133,19 +241,6 @@ public class FragmentNewComer extends DialogFragment {
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-	private void sendEmailInfo()
-    {
-        NewComerForm report = new NewComerForm(getActivity(), filePath, labelList, infoList);
-        report.genReport();
-
-        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity());
-        String ccRecipients = Constants.SYSTEM_GMAIL;
-
-        SendMailAsync sendMail = new SendMailAsync(getActivity());
-        sendMail.execute("New Comer for Nexcell " + nexcellLabel, "Let's welcome " + findValue("First Name") + "to Nexis. For more information, " +
-                        "you can export member's information from Nexis android app!" , toRecipients, ccRecipients, "");
     }
 	
 	private void clearInfo(View view)
@@ -183,6 +278,9 @@ public class FragmentNewComer extends DialogFragment {
             if (v instanceof Button) {
                 if (((Button)v).getText().equals("Please select date")) ioList.add("");
                 else ioList.add(newComerBirthday.toString("YYYY/MM/dd"));
+            }
+            else if (v instanceof Spinner) {
+                ioList.add(((Spinner) v).getSelectedItem().toString());
             }
             else if (v instanceof EditText) {
                 ioList.add(((EditText) v).getText().toString());
@@ -223,19 +321,41 @@ public class FragmentNewComer extends DialogFragment {
     {
         for (int i = 0; i < labelList.size(); i++)
         {
-            if (labelList.get(i).contains(field)) return infoList.get(i);
+            if (labelList.get(i).contains(field)) return infoList.get(i).trim();
         }
         return "";
     }
 
-    private void signupUser()
+    private String formatName(String name)
     {
-        final String firstname = findValue("First Name");
-        final String lastname = findValue("Last Name");
+        String fLetter = name.substring(0, 1);
+        String rWord = name.substring(1, name.length());
+
+        return fLetter.toUpperCase() + rWord.toLowerCase();
+    }
+
+    private void signupUser(View view)
+    {
+        final String firstname = formatName(findValue("First Name"));
+        final String lastname = formatName(findValue("Last Name"));
         final String initial = findValue("Initial");
         final String email = findValue("Email");
+        final String gender = findValue("Gender");
+        final String phone = findValue("Cell Phone");
 
-        Toast.makeText(getActivity(), "Creating New User...", Toast.LENGTH_LONG).show();
+        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy/MM/dd");
+        DateTime birthdayDate = f.parseDateTime(findValue("Birthday"));
+        birthdayDate = birthdayDate.withZone(DateTimeZone.UTC).withTimeAtStartOfDay();
+        final Date birthday = birthdayDate.toDate();
+
+        final String school = findValue("School");
+        final String schoolYear = findValue("Grade/Year");
+        final String christian = findValue("Are you a Christian");
+        final String baptized = findValue("Are you Baptized");
+        final String yearAccepted = findValue("Year Accepted");
+        final String yearBaptized = findValue("Year Baptized");
+
+        final EditText init = (EditText)view.findViewById(R.id.newComerInitial);
 
         pDialog = ProgressDialog.show(getActivity(), "Please wait ...", "Signing up new account ...", true);
         pDialog.setCancelable(false);
@@ -249,6 +369,19 @@ public class FragmentNewComer extends DialogFragment {
                     params.put("initial", initial);
                     params.put("nexcell", nexcell);
                     params.put("email", email);
+                    params.put("gender", gender);
+                    params.put("phone", phone);
+
+                    final String tempPwd = passwordGenerator();
+                    params.put("password", tempPwd);
+
+                    params.put("birthday", birthday);
+                    params.put("school", school);
+                    params.put("schoolYear", schoolYear);
+                    params.put("christian", christian);
+                    params.put("yearAccepted", yearAccepted);
+                    params.put("baptized", baptized);
+                    params.put("yearBaptized", yearBaptized);
                     params.put("levelname", Constants.USER_LEVEL_LIST);
 
                     ParseCloud.callFunctionInBackground("signupUser", params, new FunctionCallback<String>() {
@@ -256,10 +389,35 @@ public class FragmentNewComer extends DialogFragment {
                             if (e == null) {
                                 pDialog.dismiss();
                                 Toast.makeText(getActivity(), "User Created", Toast.LENGTH_LONG).show();
-                                sendNewUserEmail(firstname + " " + lastname, newusername, email);
+
+                                String fullname;
+                                if (initial.equals("")) fullname = firstname + " " + lastname;
+                                else fullname = firstname + " " + initial + " " + lastname;
+
+                                sendNewUserEmail(fullname, newUsername, tempPwd, email);
+
+                                Spinner spn = (Spinner) getFragmentView().findViewById(R.id.RegisTypespinner);
+                                String type = (String)spn.getSelectedItem();
+
+                                if (type == "New Comer") {
+                                    sendWelcomeEmail(email);
+
+                                    String uName = ((MainActivity)getActivity()).getUserName();
+                                    ParseOperation.saveNewComer(nextDate, nexcell, newUsername, uName);
+                                } else {
+                                    ArrayMap<String, String> currMap = ((MainActivity)getActivity()).getNexcellUserMap();
+                                    currMap.put(newUsername, fullname);
+                                    ((MainActivity)getActivity()).setNexcellUserMap(currMap);
+                                }
+
+                            } else if (e.toString().contains("invalid email address")) {
+                                pDialog.dismiss();
+                                UIDialog.onCreateMsgDialog(getActivity(), "Invalid Email Address", "Please enter a valid email address to create new user");
                             } else if (e.toString().contains("name exist")) {
                                 pDialog.dismiss();
                                 UIDialog.onCreateMsgDialog(getActivity(), "Name already exist!", "Your name already exist in the system. Please enter an initial or middle name");
+                                init.setEnabled(true);
+                                init.setHint("Tap to enter...");
                             } else if (e.toString().contains("email taken")) {
                                 pDialog.dismiss();
                                 UIDialog.onCreateMsgDialog(getActivity(), "Email Taken!", "This email address " + email + " already has an account");
@@ -276,9 +434,19 @@ public class FragmentNewComer extends DialogFragment {
         }).start();
     }
 
-    private void sendNewUserEmail(String fullname, String username, String useremail)
+    private void sendWelcomeEmail(String newComerEmail)
     {
-        String toRecipients = ParseOperation.getNexcellLeadersRecipient(nexcell, getActivity()) + "," + useremail;
+        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity()) + "," + newComerEmail;
+        String ccRecipients = Constants.SYSTEM_GMAIL;
+
+        SendMailAsync sendMail = new SendMailAsync(getActivity());
+        sendMail.execute("New Comer for Nexcell " + nexcellLabel, "Let's welcome " + findValue("First Name") + " to Nexis. For more information, " +
+                "you can export member's information from the Nexis mobile app!", toRecipients, ccRecipients, "");
+    }
+
+    private void sendNewUserEmail(String fullname, String username, String pwd, String useremail)
+    {
+        String toRecipients = useremail;
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         DateTime currentTime = new DateTime();
@@ -287,8 +455,8 @@ public class FragmentNewComer extends DialogFragment {
         String emailSubject = "Nexis user account for nexcell " + nexcell;
 
         String emailBody = String.format("Below is the details of the new account for nexcell %s\n\n"
-                        + "Full Name: %s \nUsername: %s \nEmail: %s \n\nTime of Creation: %s",
-                nexcellLabel, fullname, username, useremail, currentDateTimeString);
+                        + "Full Name: %s \nUsername: %s \n" + "Temporary Password: %s \nEmail: %s \n\nTime of Creation: %s",
+                nexcellLabel, fullname, username, pwd, useremail, currentDateTimeString);
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
         sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, "", "");
@@ -301,7 +469,7 @@ public class FragmentNewComer extends DialogFragment {
 			
 			newComerBirthday = new DateTime(year, monthOfYear+1, dayOfMonth, 0, 0, 0, 0, DateTimeZone.UTC);
 
-			dateButton.setText(newComerBirthday.toString("MMM dd, YYYY"));
+            dateButton.setText(newComerBirthday.toString("MMM dd, YYYY"));
 		}
 	};
 	
@@ -317,22 +485,15 @@ public class FragmentNewComer extends DialogFragment {
 
             if (checkMissingField()) return;
 
-            signupUser();
-
-            Spinner spn = (Spinner) getFragmentView().findViewById(R.id.RegisTypespinner);
-            String type = (String)spn.getSelectedItem();
-
-            if (type == "New Comer") sendEmailInfo();
+            signupUser(getFragmentView());
 		}
 	};
-	
-	private DialogInterface.OnClickListener clearDataListener = new DialogInterface.OnClickListener() {
 
-		@Override
-		public void onClick(DialogInterface dialog, int id) {
-			clearInfo(getFragmentView());
-		}
-	}; 
+    public String passwordGenerator()
+    {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(50, random).toString(32);
+    }
 	
 	public View getFragmentView()
 	{

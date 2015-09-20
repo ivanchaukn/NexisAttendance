@@ -1,10 +1,14 @@
 package com.nexis;
 
 import com.parse.Parse;
-import com.parse.ParseQuery;
 
 import android.app.Application;
 import android.content.Context;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.search.IntegerComparisonTerm;
 
 public class NexisApplication extends Application {
 
@@ -60,9 +64,23 @@ public class NexisApplication extends Application {
         return member_;
     }
 
+    public static List<Integer> getLevels()
+    {
+        List<Integer> result = new ArrayList<>();
+        if (member_) result.add(0);
+        if (ESM_) result.add(1);
+        if (couns_) result.add(2);
+        if (commi_) result.add(3);
+        if (dev_) result.add(4);
+
+        return result;
+    }
+
     public static Context getContext() {
         return instance;
     }
+
+
 
     @Override
     public void onCreate() {
@@ -71,10 +89,9 @@ public class NexisApplication extends Application {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, Constants.PARSE_APPLICATION_ID, Constants.PARSE_CLEINT_KEY);
 
-        ParseOperation.saveYearDate(this);
-        ParseOperation.refreshAttendanceLocalData1(this);
-        ParseOperation.refreshAttendanceLocalData(this);
-
         Data.initializeNexcell(this);
+
+        ParseOperation.saveYearDate(this);
+        ParseOperation.refreshAttendanceLocalData(this);
     }
 }

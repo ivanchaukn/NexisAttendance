@@ -5,7 +5,6 @@ import com.nexis.AttendanceView.AttendanceAdapter;
 import com.nexis.Activity.MainActivity;
 import com.nexis.AttendanceView.AttendanceItem1;
 import com.nexis.Constants;
-import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -135,17 +134,16 @@ public class FragmentAttendance extends DialogFragment {
         userName = ((MainActivity)getActivity()).getUserName();
         userNexcell = ((MainActivity)getActivity()).getUserNexcell();
         userNexcellLabel = ((MainActivity)getActivity()).getUserNexcellLabel();
-        setupNexcellUsers();
+        usernameMap = ((MainActivity)getActivity()).getNexcellUserMap();
+        setupNexcellUsers(usernameMap);
     }
 
-    private void setupNexcellUsers()
+    private void setupNexcellUsers(ArrayMap<String, String> map)
     {
-        usernameMap = Data.getNexcellMemberNameMap(userNexcell, getActivity());
-
         usernameList.clear();
         userFullnameList.clear();
-        usernameList.addAll(usernameMap.keySet());
-        userFullnameList.addAll(usernameMap.values());
+        usernameList.addAll(map.keySet());
+        userFullnameList.addAll(map.values());
     }
 
     private void setupDate()
@@ -170,7 +168,7 @@ public class FragmentAttendance extends DialogFragment {
             @Override
             public void onRefresh() {
                 populateCardsAsync popCard = new populateCardsAsync();
-                popCard.execute("");
+                popCard.execute();
             }
         });
 
@@ -179,7 +177,7 @@ public class FragmentAttendance extends DialogFragment {
     private void populateCards()
     {
         ArrayMap<String, List<String>> rowMap;
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData1(userNexcell, null, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, true, getActivity());
 
         if (nexcellObject.isEmpty()) return;
 
@@ -213,9 +211,12 @@ public class FragmentAttendance extends DialogFragment {
     {
 
         protected Void doInBackground(String... info) {
-            ParseOperation.refreshAttendanceLocalData1(getActivity());
+            ParseOperation.refreshAttendanceLocalData(getActivity());
             populateCards();
-            setupNexcellUsers();
+
+            ((MainActivity)getActivity()).refreshUserMap();
+            usernameMap = ((MainActivity)getActivity()).getNexcellUserMap();
+            setupNexcellUsers(usernameMap);
 
             return null;
         }
@@ -291,7 +292,7 @@ public class FragmentAttendance extends DialogFragment {
 
     private  List<ParseObject> getRecentSubmit(DateTime newDate)
     {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData1(userNexcell, newDate, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, newDate, false, getActivity());
         return nexcellObject;
     }
 
@@ -354,7 +355,7 @@ public class FragmentAttendance extends DialogFragment {
 
         String currentDateTimeString = currentTime.toString("yyyy-MM-dd HH:mm:ss.SSS");
 
-        String emailSubject = "**TESTING Confirmation for " + userNexcellLabel + " Attendance Submission -- " + dateString;
+        String emailSubject = "Confirmation for " + userNexcellLabel + " Attendance Submission -- " + dateString;
 
         String emailBody = String.format("Below is the submission for Nexcell %s %s: \n\n"
                         + "Fellowship: %s \nService: %s \nCollege: %s \nNew Comer: %s \n\nTime of Submission: %s \nSubmitted By: %s",
@@ -401,7 +402,7 @@ public class FragmentAttendance extends DialogFragment {
 
     private void fellowshipDialog()
     {
-        showSubmitDialog(tempMap.get(Constants.FELLOWSHIP_STRING), Constants.FELLOWSHIP_STRING, "Next", null, new DialogInterface.OnClickListener() {
+                showSubmitDialog(tempMap.get(Constants.FELLOWSHIP_STRING), Constants.FELLOWSHIP_STRING, "Next", null, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int id) {

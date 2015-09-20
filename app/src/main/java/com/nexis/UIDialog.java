@@ -2,10 +2,13 @@ package com.nexis;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 
 public class UIDialog {
@@ -73,9 +76,9 @@ public class UIDialog {
         builder.setMessage(msg)
 	   		  .setPositiveButton("Yes", positiveButtonListener)
 	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(DialogInterface dialog, int id) {
-	               }
-	    });
+                   public void onClick(DialogInterface dialog, int id) {
+                   }
+               });
 
         AlertDialog d = builder.create();
         d.show();
@@ -96,6 +99,25 @@ public class UIDialog {
 
         AlertDialog d = builder.create();
         d.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        d.show();
+    }
+
+    static public void onCreateTextDialog(Context actv, View Viewlayout, String titleText, String subtitleText, DialogInterface.OnClickListener posLstn){
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+
+        TextView title = (TextView) Viewlayout.findViewById(R.id.tvDialogTitle);
+        title.setText(subtitleText);
+
+        builder.setView(Viewlayout);
+        builder.setTitle(titleText);
+
+        builder.setPositiveButton("Submit", posLstn)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        AlertDialog d = builder.create();
         d.show();
     }
 

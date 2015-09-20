@@ -6,18 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.nexis.Activity.MainActivity;
 import com.nexis.Activity.StatusActivity;
 import com.nexis.Constants;
 import com.nexis.Data;
@@ -58,6 +55,7 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         objects.add(new AdminListItem("User Management", "Modify user information and access level"));
         objects.add(new AdminListItem("Nexcell Management", "Nexis group distribution"));
         objects.add(new AdminListItem("Send Report", "Send out weekly report to committee and counsellors"));
+        objects.add(new AdminListItem("Master Contact List", "Generate master contact list for Nexis"));
 
         GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
 
@@ -81,6 +79,8 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
             case 3:
                 UIDialog.onCreateActionDialog(getActivity(), "Send Report", "Are you sure you want to send weekly report?", sendReportListener);
                 break;
+            case 4:
+                UIDialog.onCreateActionDialog(getActivity(), "Send Master Contact", "Are you sure you want to send master contact list?", sendMasterContactListListener);
         }
     }
 
@@ -142,13 +142,22 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         }
     };
 
+    private DialogInterface.OnClickListener sendMasterContactListListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+            String toRep = ParseOperation.getCommCounsRecipient(getActivity());
+            ((MainActivity)getActivity()).genContactReport(null, toRep);
+        }
+    };
+
     private void sendWeeklyReport()
     {
         String today = new DateTime().toString("yyyy-MM-dd");
 
         String filePath = getActivity().getFilesDir().getPath() +  "/Nexis Attendance " + today + ".xls";
 
-        String toRecipients = ParseOperation.getWeeklyReportRecipient(getActivity());
+        String toRecipients = ParseOperation.getCommCounsRecipient(getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         List<String> nexcellTitles = new ArrayList<>(Data.NEXCELL_LIST);

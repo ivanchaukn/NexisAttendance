@@ -77,7 +77,8 @@ public class WeeklyReport {
 
     private void parseData()
     {
-        nexcellObject = ParseOperation.getNexcellData(null, null, context);
+        //TODO fix report data
+        nexcellObject = ParseOperation.getNexcellData(null, null, true, context);
 
         int startRow = 0;
 
@@ -213,7 +214,6 @@ public class WeeklyReport {
 			palette.setColorAtIndex(HSSFColor.TURQUOISE.index, (byte) 182, (byte) 221, (byte) 232);
 			palette.setColorAtIndex(HSSFColor.LIGHT_TURQUOISE.index, (byte) 219, (byte) 229, (byte) 241);
 			palette.setColorAtIndex(HSSFColor.PLUM.index, (byte) 204, (byte) 192, (byte) 218);
-			
 			
 			//Table Title Cell Style
 			CellStyle tableTitleStyle = wb.createCellStyle();

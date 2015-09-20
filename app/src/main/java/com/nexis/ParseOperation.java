@@ -19,10 +19,8 @@ import android.support.v4.util.ArrayMap;
 public class ParseOperation {
 
     private static final String ATD_LABEL = "attendance";
-    private static final String OLDATD_LABEL = "OLDattendance";
 
-	static public int getMostRecentVersionCode(Context actv)
-	{
+	static public int getMostRecentVersionCode(Context actv) {
 		try
         {
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("VersionCode");
@@ -41,8 +39,7 @@ public class ParseOperation {
 		return -1;
 	}
 
-    static public void saveYearDate(Context actv)
-    {
+    static public void saveYearDate(Context actv) {
         List<ParseObject> nexcellObject = new ArrayList<>();
 
         try
@@ -62,8 +59,7 @@ public class ParseOperation {
         Constants.NEXIS_END_DATE = nexcellObject.get(0).getDate("End_Date");
     }
 
-    static public ParseUser getUserByUserName(String username, Context actv)
-    {
+    static public ParseUser getUserByUserName(String username, Context actv) {
         List<ParseUser> nexcellObject = new ArrayList<>();
 
         try
@@ -80,33 +76,40 @@ public class ParseOperation {
         if (!nexcellObject.isEmpty()) return nexcellObject.get(0);
         else return null;
     }
-	
-	
-	static public List<ParseObject> getUserList(String nexcell, List<Boolean> levels, Context actv)
-	{
+
+	static public List<ParseObject> getUserList(String nexcell, List<Boolean> levels, Context actv) {
         List<ParseObject> nexcellObject = new ArrayList<>();
 
 		try
         {
             List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
-            for (int i = 0; i < levels.size(); i++)
+            if (levels.contains(true))
             {
-                if (levels.get(i))
+                for (int i = 0; i < levels.size(); i++)
                 {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-                    query.whereEqualTo(Constants.USER_LEVEL_LIST.get(i), true);
-                    queries.add(query);
+                    if (levels.get(i))
+                    {
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+                        query.whereEqualTo(Constants.USER_LEVEL_LIST.get(i), true);
+                        queries.add(query);
+                    }
                 }
+
+                ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+
+                if(nexcell != null) mainQuery.whereEqualTo("nexcell", nexcell);
+
+                mainQuery.orderByAscending("username");
+
+                nexcellObject = mainQuery.find();
+
+            } else {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+                if(nexcell != null) query.whereEqualTo("nexcell", nexcell);
+                nexcellObject = query.find();
+
             }
-
-            ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
-
-            if(nexcell != null) mainQuery.whereEqualTo("Nexcell", nexcell);
-
-            mainQuery.orderByAscending("username");
-
-            nexcellObject = mainQuery.find();
 
         }
         catch (ParseException e)
@@ -117,22 +120,19 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 
-    static public String getSubmitDataRecipient(String nexcell, Context actv)
-    {
+    static public String getSubmitDataRecipient(String nexcell, Context actv) {
         List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
 
         return extractEmail(users);
     }
 
-    static public String getWeeklyReportRecipient(Context actv)
-    {
+    static public String getCommCounsRecipient(Context actv) {
         List<ParseObject> users = getUserList(null, Arrays.asList(false, false, true, true, false), actv);
 
         return extractEmail(users);
     }
 
-    static public String getNewComerFormRecipient(String nexcell, Context actv)
-    {
+    static public String getNewComerFormRecipient(String nexcell, Context actv) {
         List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, false, true, true, true), actv);
         List<ParseObject> commi = getUserList(null, Arrays.asList(false, false, true, false, false), actv);
         users.addAll(commi);
@@ -140,16 +140,32 @@ public class ParseOperation {
         return extractEmail(users);
     }
 
-    static public String getNexcellLeadersRecipient(String nexcell, Context actv)
-    {
+    static public String getNexcellLeadersRecipient(String nexcell, Context actv) {
         List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
-
 
         return extractEmail(users);
     }
 
-    static private String extractEmail(List<ParseObject> list)
+    static public List<ParseUser> getSchools(Context actv)
     {
+        List<ParseUser> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.orderByAscending("school");
+
+            nexcellObject = query.find();
+        }
+        catch(Exception e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        return nexcellObject;
+    }
+
+    static private String extractEmail(List<ParseObject> list) {
         List<String> emails = new ArrayList<>();
 
         for(ParseObject x: list) emails.add(x.get("email").toString());
@@ -181,34 +197,7 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 	
-	static public List<ParseObject> getNexcellData(String nexcell, DateTime date, Context actv) {
-
-        List<ParseObject> nexcellObject = new ArrayList<>();
-
-        try
-        {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
-            query.fromLocalDatastore();
-            query.fromPin(OLDATD_LABEL);
-
-            if (nexcell != null) query.whereEqualTo("Nexcell", nexcell);
-            if (date != null) query.whereEqualTo("Date", date.toDate());
-
-            query.orderByAscending("Date");
-            query.addAscendingOrder("Nexcell");
-            query.setLimit(1000);
-
-            nexcellObject = query.find();
-        }
-        catch (ParseException e)
-        {
-            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-        }
-
-        return nexcellObject;
-    }
-
-    static public List<ParseObject> getNexcellData1(String nexcell, DateTime date, Context actv) {
+    static public List<ParseObject> getNexcellData(String nexcell, DateTime date, boolean localDb, Context actv) {
 
         List<ParseObject> nexcellObject = new ArrayList<>();
 
@@ -220,8 +209,12 @@ public class ParseOperation {
             while (true)
             {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("UserAttendance");
-                query.fromLocalDatastore();
-                query.fromPin(ATD_LABEL);
+
+                if (localDb)
+                {
+                    query.fromLocalDatastore();
+                    query.fromPin(ATD_LABEL);
+                }
 
                 if (nexcell != null) query.whereEqualTo("nexcell", nexcell);
                 if (date != null) query.whereEqualTo("date", date.toDate());
@@ -247,7 +240,7 @@ public class ParseOperation {
         return nexcellObject;
     }
 
-    static public void refreshAttendanceLocalData1(Context actv) {
+    static public void refreshAttendanceLocalData(Context actv) {
 
         List<ParseObject> nexcellObject = new ArrayList<>();
 
@@ -274,31 +267,7 @@ public class ParseOperation {
                 else break;
             }
 
-            ParseObject.pinAllInBackground(ATD_LABEL, nexcellObject);
-        }
-        catch (ParseException e)
-        {
-            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
-        }
-    }
-
-    static public void refreshAttendanceLocalData(Context actv) {
-
-        List<ParseObject> nexcellObject;
-
-        try
-        {
-            ParseObject.unpinAllInBackground(OLDATD_LABEL);
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Attendance");
-
-            query.whereGreaterThanOrEqualTo("Date", Constants.NEXIS_START_DATE);
-            query.whereLessThanOrEqualTo("Date", Constants.NEXIS_END_DATE);
-            query.setLimit(1000);
-
-            nexcellObject = query.find();
-
-            ParseObject.pinAllInBackground(OLDATD_LABEL, nexcellObject);
+            ParseObject.pinAll(ATD_LABEL, nexcellObject);
         }
         catch (ParseException e)
         {
@@ -312,9 +281,13 @@ public class ParseOperation {
 
     static public void deleteData(String nexcell, DateTime date, Context actv) {
 
-        List<ParseObject> obj = getNexcellData1(nexcell, date, actv);
+        List<ParseObject> obj = getNexcellData(nexcell, date, true, actv);
 
-        if (!obj.isEmpty()) ParseObject.deleteAllInBackground(obj);
+        if (!obj.isEmpty())
+        {
+            ParseObject.deleteAllInBackground(obj);
+            ParseObject.unpinAllInBackground(obj);
+        }
     }
 
     static public void saveUserAttendance(ArrayMap<String, List<String>> dataMap, DateTime date, String nexcell, String userName, Context actv) {
@@ -341,7 +314,19 @@ public class ParseOperation {
             }
         }
 
-        ParseObject.pinAllInBackground(users);
+        ParseObject.pinAllInBackground(ATD_LABEL, users);
         ParseObject.saveAllInBackground(users);
+    }
+
+    static public void saveNewComer(DateTime date, String nexcell, String newComerName, String userName) {
+
+        ParseObject data = new ParseObject("UserAttendance");
+        data.put("date", date.toDate());
+        data.put("nexcell", nexcell);
+        data.put("userName", newComerName);
+        data.put("category", "NewComer");
+        data.put("saveBy", userName);
+
+        data.saveEventually();
     }
 }

@@ -55,7 +55,7 @@
                     android:id="@+id/newComerFirstName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:inputType="textCapSentences|textPersonName"
                     android:hint="Tap to enter..."
                     android:textColorHint="@color/selected_gray"
                     android:textSize="14dp"
@@ -80,7 +80,7 @@
                     android:layout_width="264dp"
                     android:layout_height="wrap_content"
                     android:ems="9"
-                    android:inputType="textPersonName"
+                    android:inputType="textCapSentences|textPersonName"
                     android:hint="Tap to enter..."
                     android:textColorHint="@color/selected_gray"
                     android:textColor="@color/dark_gray"
@@ -94,22 +94,23 @@
                 android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/textView02"
+                    android:id="@+id/textView03"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Initial:"
                     android:textSize="13dp" />
 
                 <EditText
-                    android:id="@+id/newComerLastName"
+                    android:id="@+id/newComerInitial"
                     android:layout_width="264dp"
                     android:layout_height="wrap_content"
                     android:ems="9"
-                    android:inputType="textPersonName"
-                    android:hint="Tap to enter..."
+                    android:inputType="textCapSentences|textPersonName"
+                    android:hint="Not required"
                     android:textColorHint="@color/selected_gray"
                     android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:enabled="false" />
             </TableRow>
 
             <TableRow
@@ -119,7 +120,7 @@
                 android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/textView03"
+                    android:id="@+id/textView16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -205,31 +206,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/textView06"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Home Phone:"
-                    android:textSize="13dp" />
-
-                <EditText
-                    android:id="@+id/newComerHomePhone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="9"
-                    android:inputType="phone"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
-            </TableRow>
-
-            <TableRow
                 android:id="@+id/tableRow9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -248,78 +224,6 @@
                     android:layout_height="wrap_content"
                     android:ems="9"
                     android:inputType="textEmailAddress"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tableRow10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/textView07"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Address:"
-                    android:textSize="13dp" />
-
-                <EditText
-                    android:id="@+id/newComerAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="9"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tableRow11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/textView08"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Postal Code:"
-                    android:textSize="13dp" />
-
-                <EditText
-                    android:id="@+id/newComerPostalCode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="9"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/tableRow12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/textView09"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="City:"
-                    android:textSize="13dp" />
-
-                <EditText
-                    android:id="@+id/newComerCity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="9"
                     android:hint="Tap to enter..."
                     android:textColorHint="@color/selected_gray"
                     android:textColor="@color/dark_gray"
@@ -359,15 +263,11 @@
                     android:text="School*:"
                     android:textSize="13dp" />
 
-                <EditText
-                    android:id="@+id/newComerSchool"
-                    android:layout_width="wrap_content"
+                <Spinner
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="9"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
+                    android:id="@+id/schoolSpinner"
+                    android:spinnerMode="dropdown"/>
             </TableRow>
 
             <TableRow
@@ -381,17 +281,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Grade/Year*:"
-                    android:textSize="13dp" />
+                    android:textSize="13dp"
+                    android:layout_gravity="center_vertical" />
 
-                <EditText
-                    android:id="@+id/newComerGradeYear"
-                    android:layout_width="wrap_content"
+                <Spinner
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="9"
-                    android:hint="Tap to enter..."
-                    android:textColorHint="@color/selected_gray"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="14dp" />
+                    android:id="@+id/schoolYearSpinner"
+                    android:spinnerMode="dropdown"/>
+
             </TableRow>
 
             <TableRow

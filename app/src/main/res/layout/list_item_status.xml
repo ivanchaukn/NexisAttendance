@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:text="Nexcell:"
-        android:textSize="18dp"
+        android:textSize="16dp"
         android:textColor="#ff2a2a2a"
         android:fontFamily="sans-serif-light"
         android:gravity="center_vertical"

@@ -7,10 +7,8 @@ import com.parse.ParseObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,7 +82,7 @@ public class Data {
     public static ArrayMap<String, String> getNexcellMemberNameMap(String nexcell, Context actv)
     {
         ArrayMap<String, String> names = new ArrayMap<>();
-        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(true, true, true, true, true), actv);
+        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(false, false, false, false, false), actv);
 
         for(ParseObject x : users)
         {
