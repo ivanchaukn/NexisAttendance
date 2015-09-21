@@ -1,14 +1,13 @@
 package com.nexis;
 
 import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 
 import android.app.Application;
 import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.mail.search.IntegerComparisonTerm;
 
 public class NexisApplication extends Application {
 
@@ -86,6 +85,7 @@ public class NexisApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        ParseCrashReporting.enable(this);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, Constants.PARSE_APPLICATION_ID, Constants.PARSE_CLEINT_KEY);
 

@@ -508,7 +508,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="normal"
-            fab:fab_label="New Form"
+            fab:fab_label="Reset Form"
             android:src="@drawable/ic_action_edit"
             fab:fab_colorNormal="@color/yellowbuttonPrimaryColor"
             fab:fab_colorPressed="@color/yellowbuttonPressColor"

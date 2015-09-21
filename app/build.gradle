@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.parse'
 
 android {
     compileSdkVersion 21
@@ -35,9 +36,9 @@ dependencies {
     compile 'info.hoang8f:android-segmented:1.0.5'
     compile 'se.simbio.encryption:library:1.2.0'
     compile 'com.github.clans:fab:1.5.2'
+    compile fileTree(dir: 'libs', include: 'ParseCrashReporting-*.jar')
     compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
-    compile fileTree(dir: 'libs', include: 'ParseCrashReporting-*.jar')
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')
     compile files('libs/androidplot-core-0.6.0.jar')

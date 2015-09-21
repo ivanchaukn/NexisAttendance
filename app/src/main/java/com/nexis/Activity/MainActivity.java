@@ -1,93 +1,93 @@
-package com.nexis.Activity;
+    package com.nexis.Activity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+    import android.content.DialogInterface;
+    import android.content.Intent;
+    import android.os.AsyncTask;
+    import android.os.Build;
+    import android.os.Bundle;
+    import android.support.v4.app.Fragment;
+    import android.support.v4.app.FragmentManager;
+    import android.support.v4.app.FragmentTransaction;
+    import android.support.v4.util.ArrayMap;
+    import android.support.v4.widget.DrawerLayout;
+    import android.support.v7.app.ActionBarActivity;
+    import android.support.v7.widget.Toolbar;
+    import android.view.Menu;
+    import android.view.MenuItem;
+    import android.widget.Toast;
 
-import com.nexis.Constants;
-import com.nexis.Data;
-import com.nexis.ExcelReports.ContactForm;
-import com.nexis.Fragments.FragmentAdmin;
-import com.nexis.Fragments.FragmentNewComer;
-import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
-import com.nexis.Fragments.FragmentStat;
-import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
-import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
-import com.nexis.NavigationDrawer.NavigationDrawerFragment;
-import com.nexis.NexisApplication;
-import com.nexis.ParseOperation;
-import com.nexis.R;
-import com.nexis.SendMailAsync;
-import com.nexis.UIDialog;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
+    import com.nexis.Constants;
+    import com.nexis.Data;
+    import com.nexis.ExcelReports.ContactForm;
+    import com.nexis.Fragments.FragmentAdmin;
+    import com.nexis.Fragments.FragmentRegistration;
+    import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
+    import com.nexis.Fragments.FragmentStat;
+    import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
+    import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
+    import com.nexis.NavigationDrawer.NavigationDrawerFragment;
+    import com.nexis.NexisApplication;
+    import com.nexis.ParseOperation;
+    import com.nexis.R;
+    import com.nexis.SendMailAsync;
+    import com.nexis.UIDialog;
+    import com.parse.ParseException;
+    import com.parse.ParseInstallation;
+    import com.parse.ParseObject;
+    import com.parse.ParsePush;
+    import com.parse.ParseQuery;
+    import com.parse.ParseUser;
 
-import org.joda.time.DateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+    import org.joda.time.DateTime;
+    import java.util.ArrayList;
+    import java.util.Arrays;
+    import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
+    public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks, NavigationFooterCallbacks {
 
-    private Toolbar mToolbar;
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+        private Toolbar mToolbar;
+        private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private static String userName, userFirstName, userLastName, userInitial, userNexcell, fullName;
+        private static String userName, userFirstName, userLastName, userInitial, userNexcell, fullName;
 
-    private ArrayMap<String, String> usernameMap;
+        private ArrayMap<String, String> usernameMap;
 
-    List<Fragment> fragments = new ArrayList<>();
+        List<Fragment> fragments = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
 
-        try
-        {
-            setupUser();
-            usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
+            try
+            {
+                setupUser();
+                usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
 
-            setContentView(R.layout.activity_main);
-            mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-            setSupportActionBar(mToolbar);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+                setContentView(R.layout.activity_main);
+                mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+                setSupportActionBar(mToolbar);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-            mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_drawer);
-            mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
+                mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_drawer);
+                mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
-            if (userInitial.equals("")) fullName = userFirstName + " " + userLastName;
-            else fullName = userFirstName + " " + userInitial + " " + userLastName;
+                if (userInitial.equals("")) fullName = userFirstName + " " + userLastName;
+                else fullName = userFirstName + " " + userInitial + " " + userLastName;
 
-            mNavigationDrawerFragment.updateProfile(fullName, Data.getNexcellLabel(userNexcell));
+                mNavigationDrawerFragment.updateProfile(fullName, Data.getNexcellLabel(userNexcell));
 
-            // Subscribe the Broadcast push channel
-            ParsePush.subscribeInBackground("");
-            ParsePush.subscribeInBackground(userNexcell);
+                // Subscribe the Broadcast push channel
+                ParsePush.subscribeInBackground("");
+                ParsePush.subscribeInBackground(userNexcell);
 
-            ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
-            ParseInstallation.getCurrentInstallation().saveInBackground();
+                ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
+                ParseInstallation.getCurrentInstallation().saveInBackground();
+            }
+            catch (Exception e)
+            {
+                UIDialog.onCreateErrorDialog(this, "MainActivity error");
+            }
         }
-        catch (Exception e)
-        {
-            UIDialog.onCreateErrorDialog(this, "MainActivity error");
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,7 +143,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         fragments.add(FragmentAttendance.newInstance());
         fragments.add(FragmentStat.newInstance());
-        fragments.add(FragmentNewComer.newInstance());
+        fragments.add(FragmentRegistration.newInstance());
         fragments.add(FragmentAdmin.newInstance());
 
         displayFragment(position);

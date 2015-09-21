@@ -44,7 +44,7 @@ public final class Constants {
 
 	public static List<String> USER_LEVEL_LIST = Arrays.asList("member", "esm", "committee", "counsellor", "developer");
 
-    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","New Comer Form", "System Administration");
+    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","Registration Form", "System Administration");
 
 	public static List<String> CATEGORY_LIST = Arrays.asList(FELLOWSHIP_STRING, SERVICE_STRING, COLLEGE_STRING, NEWCOMER_STRING);
 	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList(HS_STRING, UNI_STRING, NEXIS_STRING);

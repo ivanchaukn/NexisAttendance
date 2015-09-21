@@ -54,7 +54,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FragmentNewComer extends DialogFragment {
+public class FragmentRegistration extends DialogFragment {
 
 	private String nexcell, nexcellLabel, filePath;
 	private DateTime newComerBirthday, defaultDate, nextDate;
@@ -72,15 +72,15 @@ public class FragmentNewComer extends DialogFragment {
     private List<String> yearSpinner = new ArrayList<>();
     private List<String> regisSpinner = Arrays.asList("New Comer", "Existing member");
 
-	public static FragmentNewComer newInstance() {
-		FragmentNewComer fragment = new FragmentNewComer();
+	public static FragmentRegistration newInstance() {
+		FragmentRegistration fragment = new FragmentRegistration();
 		Bundle args = new Bundle();
-		args.putInt("NewComer", 3);
+		args.putInt("Registration", 3);
 		fragment.setArguments(args);
 		return fragment;
 	}
 
-	public FragmentNewComer() {
+	public FragmentRegistration() {
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class FragmentNewComer extends DialogFragment {
 
         setupDate();
 
-        filePath = getActivity().getFilesDir().getPath().toString() + "/NewComer.xls";
+        filePath = getActivity().getFilesDir().getPath().toString() + "/Registration.xls";
 
         nexcell = ((MainActivity)getActivity()).getUserNexcell();
         nexcellLabel = ((MainActivity)getActivity()).getUserNexcellLabel();
@@ -137,7 +137,7 @@ public class FragmentNewComer extends DialogFragment {
             @Override
             public void onClick(View v) {
                 hideKeyboard(rootView);
-                UIDialog.onCreateActionDialog(getActivity(), "New Form", "Are you sure you want to start a new form?", new DialogInterface.OnClickListener() {
+                UIDialog.onCreateActionDialog(getActivity(), "Reset Form", "Are you sure you want to start a new form?", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

@@ -3,6 +3,6 @@
     tools:context="com.example.nexis.MainActivity" >
 
     <item android:id="@+id/gen_contact"
-        android:title="Nexcell Contacts"/>
+        android:title="Download Contacts"/>
 
 </menu>
