@@ -3,8 +3,9 @@ package com.nexis.Fragments.AttendancePackage;
 import com.github.clans.fab.FloatingActionButton;
 import com.nexis.AttendanceView.AttendanceAdapter;
 import com.nexis.Activity.MainActivity;
-import com.nexis.AttendanceView.AttendanceItem1;
+import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Constants;
+import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -38,9 +39,10 @@ public class FragmentAttendance extends DialogFragment {
 
     private View rootView;
 
+    private boolean override;
     private DateTime nextDate;
     private String userName, userNexcell, userNexcellLabel;
-    private List<AttendanceItem1> attendanceList;
+    private List<AttendanceItem> attendanceList;
     private DateTime dialogDate;
 
     private RecyclerView mRecyclerView;
@@ -93,7 +95,10 @@ public class FragmentAttendance extends DialogFragment {
 
         ((MainActivity) getActivity()).setToolbarElevation(0);
 
-        mAttendanceAdapter = new AttendanceAdapter(attendanceList);
+        boolean devVal = Data.getCacheLevel(getActivity(), "developer");
+        boolean commiVal = Data.getCacheLevel(getActivity(), "committee");
+
+        mAttendanceAdapter = new AttendanceAdapter(attendanceList, devVal, commiVal);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setAdapter(mAttendanceAdapter);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -110,6 +115,7 @@ public class FragmentAttendance extends DialogFragment {
             public void onClick(View v) {
                 dialogDate = nextDate;
                 tempMap = genNewMap();
+                override = false;
                 fellowshipDialog();
             }
         });
@@ -171,13 +177,12 @@ public class FragmentAttendance extends DialogFragment {
                 popCard.execute();
             }
         });
-
     }
 
     private void populateCards()
     {
         ArrayMap<String, List<String>> rowMap;
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, true, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, null, true, getActivity());
 
         if (nexcellObject.isEmpty()) return;
 
@@ -240,11 +245,12 @@ public class FragmentAttendance extends DialogFragment {
 
     private void addToAtdList(final ArrayMap<String, List<String>> map, final DateTime date)
     {
-        AttendanceItem1 additem =  new AttendanceItem1(map, date, new View.OnClickListener() {
+        AttendanceItem additem =  new AttendanceItem(map, date, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogDate = date;
                 tempMap = map;
+                override = true;
                 fellowshipDialog();
             }
         });
@@ -272,7 +278,7 @@ public class FragmentAttendance extends DialogFragment {
     private int existInList(DateTime date)
     {
         for (int i = 0; i < attendanceList.size(); i++) {
-            if (attendanceList.get(i).getDate() == date) return i;
+            if (attendanceList.get(i).getDate().equals(date)) return i;
         }
         return -1;
     }
@@ -292,7 +298,7 @@ public class FragmentAttendance extends DialogFragment {
 
     private  List<ParseObject> getRecentSubmit(DateTime newDate)
     {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, newDate, false, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, newDate, false, getActivity());
         return nexcellObject;
     }
 
@@ -315,13 +321,13 @@ public class FragmentAttendance extends DialogFragment {
         }
     }
 
-    public void uploadConfirmation(final boolean override, final DateTime newDate)
+    public void uploadConfirmation(final boolean flag, final DateTime newDate)
     {
         UIDialog.onCreateActionDialog(getActivity(), "Confirmation", "Are you sure you want to submit?", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 List<ParseObject> nexcellObject = getRecentSubmit(newDate);
-                if (!override && !nexcellObject.isEmpty()) {
+                if (!flag && !nexcellObject.isEmpty()) {
                     UIDialog.onCreateInvalidDialog(getActivity(), "The attendance has already submitted!");
                 } else {
                     Toast.makeText(getActivity(), "Saving...", Toast.LENGTH_LONG).show();
@@ -434,7 +440,7 @@ public class FragmentAttendance extends DialogFragment {
 
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                uploadConfirmation(false, nextDate);
+                uploadConfirmation(override, nextDate);
             }
         }, new DialogInterface.OnClickListener() {
 

@@ -1,45 +1,52 @@
 package com.nexis.AttendanceView;
 
+import android.support.v4.util.ArrayMap;
 import android.view.View;
-
+import com.nexis.Constants;
 import org.joda.time.DateTime;
-
+import java.util.HashMap;
 import java.util.List;
 
 public class AttendanceItem {
 
-    private int fInt;
-    private int sInt;
-    private int cInt;
-    private int nInt;
+    private ArrayMap<String, List<String>> rawData;
+    private HashMap<String, Integer> atdNum;
 
     private DateTime date;
     private View.OnClickListener buttonListener;
 
-    public AttendanceItem(List<Integer> dataPoints, DateTime dt, View.OnClickListener listener) {
+    public AttendanceItem(ArrayMap<String, List<String>> dataPoints, DateTime dt, View.OnClickListener listener) {
+        rawData = dataPoints;
+        atdNum = new HashMap<>();
+        aggregateData(dataPoints);
 
-        fInt = dataPoints.get(0);
-        sInt = dataPoints.get(1);
-        cInt = dataPoints.get(2);
-        nInt = dataPoints.get(3);
         date = dt;
         buttonListener = listener;
     }
 
+    private void aggregateData(ArrayMap<String, List<String>> data)
+    {
+        for (int i = 0; i < Constants.CATEGORY_LIST.size(); i++)
+        {
+            List<String> members = data.get(Constants.CATEGORY_LIST.get(i));
+            atdNum.put(Constants.CATEGORY_LIST.get(i), members.size());
+        }
+    }
+
     public String getFellowshipText() {
-        return Integer.toString(fInt);
+        return Integer.toString(atdNum.get("Fellowship"));
     }
 
     public String getServiceText() {
-        return Integer.toString(sInt);
+        return Integer.toString(atdNum.get("Service"));
     }
 
     public String getCollegeText() {
-        return Integer.toString(cInt);
+        return Integer.toString(atdNum.get("College"));
     }
 
     public String getNewComerText() {
-        return Integer.toString(nInt);
+        return Integer.toString(atdNum.get("NewComer"));
     }
 
     public String getDateText() {

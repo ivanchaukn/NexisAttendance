@@ -43,13 +43,15 @@ public class StatusActivity extends ActionBarActivity {
     private List<String> nexcellList;
     private List<Integer> statusList;
 
-    boolean counsVal = NexisApplication.getCouns();
-    boolean ESMVal = NexisApplication.getESM();
-    boolean devVal = NexisApplication.getDev();
+    boolean counsVal, ESMVal, devVal;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
+
+        ESMVal = Data.getCacheLevel(this, "esm");
+        counsVal = Data.getCacheLevel(this, "counsellor");
+        devVal= Data.getCacheLevel(this, "developer");
 
         ParseOperation.refreshAttendanceLocalData(this);
 
@@ -91,11 +93,11 @@ public class StatusActivity extends ActionBarActivity {
     public void setupNexcell()
     {
         date = new DateTime(DateTimeZone.UTC);
-        if (date.getDayOfWeek() - 1 < DateTimeConstants.FRIDAY) date = date.minusWeeks(1);
+        if (date.getDayOfWeek() < DateTimeConstants.FRIDAY) date = date.minusWeeks(1);
         date = date.withDayOfWeek(DateTimeConstants.FRIDAY);
         date = date.withTimeAtStartOfDay();
 
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, date, true, this);
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, "Fellowship", date, true, this);
         List<String> dataNexcell = new ArrayList<>();
 
         for (ParseObject x: nexcellObject)

@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
-import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Constants;
 import com.nexis.R;
 

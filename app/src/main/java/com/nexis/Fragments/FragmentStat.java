@@ -106,7 +106,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         Intent i;
         Bundle b;
 
-        nexcellObject = ParseOperation.getNexcellData(null, null, true, getActivity());
+        nexcellObject = ParseOperation.getNexcellData(null, null, null, true, getActivity());
 
         switch (pos) {
             case 0:

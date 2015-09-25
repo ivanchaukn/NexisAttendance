@@ -1,6 +1,8 @@
 package com.nexis.ExcelReports;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.util.ArrayMap;
 
 import com.nexis.Constants;
 import com.nexis.Data;
@@ -21,14 +23,22 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 public class WeeklyReport {
 
@@ -55,6 +65,8 @@ public class WeeklyReport {
 
     public void genReport()
     {
+        initializeDateList();
+
         initialize();
         parseData();
 
@@ -74,97 +86,47 @@ public class WeeklyReport {
         columnsNum = categoryListSize * nexcellListSize;
     }
 
+    private void initializeDateList()
+    {
+        DateTime sDate = new DateTime(Constants.NEXIS_START_DATE);
+        sDate = sDate.withZone(DateTimeZone.UTC).withDayOfWeek(DateTimeConstants.FRIDAY);
+
+        while(sDate.isBefore(DateTime.now()))
+        {
+            dateList.add(sDate);
+            sDate = sDate.plusWeeks(1);
+        }
+    }
 
     private void parseData()
     {
-        //TODO fix report data
-        nexcellObject = ParseOperation.getNexcellData(null, null, true, context);
-
-        int startRow = 0;
-
-        while(startRow < nexcellObject.size() && !Data.NEXCELL_LIST.contains(nexcellObject.get(startRow).get("Nexcell"))) startRow++;
-
-        if (startRow == nexcellObject.size()) return;
-
-        DateTime rowDate = new DateTime(nexcellObject.get(startRow).get("Date"), DateTimeZone.UTC);
-
-        List<Integer> row = new ArrayList<>();
-        List<Integer> hsData = Arrays.asList(0, 0, 0, 0);
-        List<Integer> uniData = Arrays.asList(0, 0, 0, 0);
-        List<Integer> nexisData = Arrays.asList(0, 0, 0, 0);
-
-        int nexcellCount = 0;
-
-        for(int i = startRow; i < nexcellObject.size(); i++)
+        for(DateTime i: dateList)
         {
-            DateTime currentDate = new DateTime(nexcellObject.get(i).get("Date"), DateTimeZone.UTC);
-            String currentNexcell = (String)nexcellObject.get(i).get("Nexcell");
+            List<Integer> row = new ArrayList<>();
+            List<Integer> hsRow = Arrays.asList(0, 0, 0, 0);
+            List<Integer> uniRow = Arrays.asList(0, 0, 0, 0);
+            List<Integer> nexisRow = Arrays.asList(0, 0, 0, 0);
 
-            if (!Data.NEXCELL_LIST.contains(currentNexcell)) continue;
-
-            if (!currentDate.equals(rowDate))
+            for(String j: Data.NEXCELL_ACTIVE_LIST)
             {
-                while (nexcellCount != Data.NEXCELL_LIST.size())
+                for (int k = 0 ; k < Constants.CATEGORY_LIST.size(); k++)
                 {
-                    row.addAll(Arrays.asList(0, 0, 0, 0));
-                    nexcellCount++;
+                    nexcellObject = ParseOperation.getNexcellData(j, Constants.CATEGORY_LIST.get(k), i, true, context);
+                    int members = nexcellObject.size();
+
+                    if (Data.getNexcellStage(j).equals(Constants.HS_STRING)) hsRow.set(k, hsRow.get(k) + members);
+                    else uniRow.set(k, uniRow.get(k) + members);
+
+                    nexisRow.set(k, nexisRow.get(k) + members);
+                    row.add(members);
                 }
-
-                for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
-
-                //Add data to the stat_menu list
-                dateList.add(rowDate);
-                row.addAll(hsData);
-                row.addAll(uniData);
-                row.addAll(nexisData);
-                mainList.add(row);
-
-                //clear containers and update variable
-                rowDate = currentDate;
-                row = new ArrayList<>();
-                hsData = Arrays.asList(0, 0, 0, 0);
-                uniData = Arrays.asList(0, 0, 0, 0);
-
-                nexcellCount = 0;
             }
 
-            while (!currentNexcell.equals(Data.NEXCELL_LIST.get(nexcellCount)))
-            {
-                row.addAll(Arrays.asList(0, 0, 0, 0));
-                nexcellCount++;
-            }
-
-            for(int j = 0; j < categoryListSize; j++)
-            {
-                List<Integer> tempData;
-
-                int num = nexcellObject.get(i).getInt(Constants.CATEGORY_LIST.get(j));
-                row.add(num);
-
-                if (Data.getNexcellStage(currentNexcell).equals("HighSchool")) tempData = hsData;
-                else tempData = uniData;
-
-                int newTotal = tempData.get(j) + num;
-                tempData.set(j, newTotal);
-            }
-
-            nexcellCount++;
+            row.addAll(hsRow);
+            row.addAll(uniRow);
+            row.addAll(nexisRow);
+            mainList.add(row);
         }
-
-        while (nexcellCount != Data.NEXCELL_LIST.size())
-        {
-            row.addAll(Arrays.asList(0, 0, 0, 0));
-            nexcellCount++;
-        }
-
-        for(int j = 0; j < nexisData.size(); j++) nexisData.set(j, hsData.get(j) + uniData.get(j));
-
-        //Add the last row to the stat_menu list
-        dateList.add(rowDate);
-        row.addAll(hsData);
-        row.addAll(uniData);
-        row.addAll(nexisData);
-        mainList.add(row);
     }
 
     private void reorderRawData()

@@ -186,8 +186,8 @@ public class ParseOperation {
             query.whereGreaterThanOrEqualTo("End_Date", new Date());
             query.orderByAscending("Name");
             if (nameOnly) query.selectKeys(Arrays.asList("Name"));
-            
-        	nexcellObject = query.find();
+
+            nexcellObject = query.find();
         }
         catch (ParseException e)
         {
@@ -197,7 +197,7 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 	
-    static public List<ParseObject> getNexcellData(String nexcell, DateTime date, boolean localDb, Context actv) {
+    static public List<ParseObject> getNexcellData(String nexcell, String cat, DateTime date, boolean localDb, Context actv) {
 
         List<ParseObject> nexcellObject = new ArrayList<>();
 
@@ -218,6 +218,7 @@ public class ParseOperation {
 
                 if (nexcell != null) query.whereEqualTo("nexcell", nexcell);
                 if (date != null) query.whereEqualTo("date", date.toDate());
+                if (cat != null) query.whereEqualTo("category", cat);
 
                 query.orderByAscending("date");
                 query.addAscendingOrder("nexcell");
@@ -279,14 +280,57 @@ public class ParseOperation {
         //TODO: user cloud code to update user levels
 	}
 
+    static public List<ParseObject> getDeleteData(String nexcell, DateTime date, List<String> catList, Context actv) {
+
+        List<ParseObject> nexcellObject = new ArrayList<>();
+
+        try
+        {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserAttendance");
+
+            query.fromLocalDatastore();
+            query.fromPin(ATD_LABEL);
+
+            query.whereEqualTo("nexcell", nexcell);
+            query.whereEqualTo("date", date.toDate());
+            query.whereContainedIn("category", catList);
+
+            nexcellObject = query.find();
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
+        }
+
+        return nexcellObject;
+    }
+
     static public void deleteData(String nexcell, DateTime date, Context actv) {
 
-        List<ParseObject> obj = getNexcellData(nexcell, date, true, actv);
+        List<ParseObject> nexcellObject;
 
-        if (!obj.isEmpty())
+        try
         {
-            ParseObject.deleteAllInBackground(obj);
-            ParseObject.unpinAllInBackground(obj);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserAttendance");
+
+            query.fromLocalDatastore();
+            query.fromPin(ATD_LABEL);
+
+            query.whereEqualTo("nexcell", nexcell);
+            query.whereEqualTo("date", date.toDate());
+            query.whereContainedIn("category", Arrays.asList("Fellowship", "Service", "College"));
+
+            nexcellObject = query.find();
+
+            if (!nexcellObject.isEmpty())
+            {
+                ParseObject.deleteAllInBackground(nexcellObject);
+                ParseObject.unpinAllInBackground(nexcellObject);
+            }
+        }
+        catch (ParseException e)
+        {
+            UIDialog.onCreateErrorDialog(actv, e + ". Parse Query");
         }
     }
 
@@ -296,18 +340,16 @@ public class ParseOperation {
 
         List<ParseObject> users = new ArrayList<>();
 
-        for (int i = 0; i < dataMap.size(); i++)
+        for(int i = 0; i < Constants.CATEGORY_LIST.size() - 1; i++)
+        //for (int i = 0; i < dataMap.size(); i++)
         {
             String cat = Constants.CATEGORY_LIST.get(i);
-            for(String nameString : dataMap.valueAt(i))
+            for(String nameString : dataMap.get(cat))
             {
-                int start = nameString.indexOf("(");
-                String name = nameString.substring(start + 1, nameString.length());
-
                 ParseObject data = new ParseObject("UserAttendance");
                 data.put("date", date.toDate());
                 data.put("nexcell", nexcell);
-                data.put("userName", name);
+                data.put("userName", nameString);
                 data.put("category", cat);
                 data.put("saveBy", userName);
                 users.add(data);

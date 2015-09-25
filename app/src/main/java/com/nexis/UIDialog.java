@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-
 public class UIDialog {
 
     static public void onCreateErrorDialog(Context actv, String errorType) {

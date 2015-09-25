@@ -1,5 +1,6 @@
 package com.nexis.Activity;
 
+import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -24,18 +25,14 @@ public class SplashActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
 
+        //Initialize global variables
+        ParseOperation.saveYearDate(this);
+        ParseOperation.refreshAttendanceLocalData(this);
+        Data.initializeNexcell(this);
+
 		loadBackgroundData loadData = new loadBackgroundData();
 		loadData.execute();
 	}
-	
-	private DialogInterface.OnClickListener googlePlayListener = new DialogInterface.OnClickListener() {
-
-		@Override
-		public void onClick(DialogInterface dialog, int id) {
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+ "com.nexis")));
-			endActivity();
-		}
-	};
 
     private DialogInterface.OnClickListener exitListener = new DialogInterface.OnClickListener() {
 
@@ -106,20 +103,7 @@ public class SplashActivity extends Activity{
                 return e.toString();
             }
 
-            try
-    		{
-    			int mostRecentCode = ParseOperation.getMostRecentVersionCode(SplashActivity.this);
-    			
-    			PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-    			int versionNumber = pinfo.versionCode;
-
-                if (mostRecentCode > versionNumber) return "Update";
-    			else return "Success";
-    		}
-    		catch(Exception e)
-    		{
-    			return e.toString();
-    		}
+            return Data.checkVersionCode(SplashActivity.this);
         }
  
         @Override
@@ -138,7 +122,7 @@ public class SplashActivity extends Activity{
                 }
 	            else if (result == "Update")
 	            {
-	            	UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "Update app", "A new version is available. Please update through google play!", googlePlayListener);
+                    Data.promptUpdate(getApplicationContext());
 	            }
 	            else 
 	            {

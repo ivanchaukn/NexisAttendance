@@ -8,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.nexis.NexisApplication;
 import com.nexis.R;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 
 import java.util.List;
@@ -21,15 +19,18 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
 
     private View v;
 
-    private List<AttendanceItem1> mData;
+    private List<AttendanceItem> mData;
     private int mSelectedPosition;
     private int mTouchedPosition = -1;
 
-    public boolean devVal = NexisApplication.getDev();
-    public boolean commiVal = NexisApplication.getCommi();
+    public boolean devVal;
+    public boolean commiVal;
 
-    public AttendanceAdapter(List<AttendanceItem1> data) {
+
+    public AttendanceAdapter(List<AttendanceItem> data, boolean dev, boolean comm) {
         mData = data;
+        devVal = dev;
+        commiVal = comm;
     }
 
     @Override
