@@ -39,15 +39,20 @@ public final class Constants {
 	public static final String COLLEGE_STRING = "College";
 	public static final String NEWCOMER_STRING = "NewComer";
 
+	public static final String MEMBER_STRING = "member";
+	public static final String ESM_STRING = "esm";
+	public static final String COUNS_STRING = "counsellor";
+	public static final String COMMI_STRING = "committee";
+	public static final String DEVEP_STRING = "developer";
+
 	public static Date NEXIS_START_DATE;
 	public static Date NEXIS_END_DATE;
 
-	public static List<String> USER_LEVEL_LIST = Arrays.asList("member", "esm", "committee", "counsellor", "developer");
-
-    public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","Registration Form", "System Administration");
-
+	public static List<String> USER_LEVEL_LIST = Arrays.asList(MEMBER_STRING,ESM_STRING,COUNS_STRING,COMMI_STRING,DEVEP_STRING);
 	public static List<String> CATEGORY_LIST = Arrays.asList(FELLOWSHIP_STRING, SERVICE_STRING, COLLEGE_STRING, NEWCOMER_STRING);
 	public static List<String> NEXCELL_CATEGORY_LIST = Arrays.asList(HS_STRING, UNI_STRING, NEXIS_STRING);
+
+	public static List<String> FRAGMENT_NAME = Arrays.asList("Attendance","Statistics","Registration Form", "System Administration");
 
 	public static List<Integer> BLUE_COLOR_TEMPLATE = Arrays.asList(Color.rgb(0, 67, 87), Color.rgb(118, 174, 175), Color.rgb(136, 180, 187), Color.rgb(148, 212, 212), Color.rgb(159, 249, 249));
 	public static List<Integer> GREEN_COLOR_TEMPLATE = Arrays.asList(Color.rgb(48, 111, 44), Color.rgb(55, 146, 49), Color.rgb(115, 175, 111), Color.rgb(129, 161, 127), Color.rgb(165, 218, 161));

@@ -6,6 +6,7 @@ import com.nexis.Activity.MainActivity;
 import com.nexis.AttendanceView.AttendanceItem;
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -66,7 +67,7 @@ public class FragmentAttendance extends DialogFragment {
     }
 
     @Override
-     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         rootView = inflater.inflate(R.layout.fragment_attendance, container, false);
 
@@ -95,8 +96,8 @@ public class FragmentAttendance extends DialogFragment {
 
         ((MainActivity) getActivity()).setToolbarElevation(0);
 
-        boolean devVal = Data.getCacheLevel(getActivity(), "developer");
-        boolean commiVal = Data.getCacheLevel(getActivity(), "committee");
+        boolean devVal = GeneralOperation.getCacheLevel(getActivity(), "developer");
+        boolean commiVal = GeneralOperation.getCacheLevel(getActivity(), "committee");
 
         mAttendanceAdapter = new AttendanceAdapter(attendanceList, devVal, commiVal);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());

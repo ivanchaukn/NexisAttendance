@@ -1,5 +1,7 @@
 package com.nexis.Activity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,21 +15,27 @@ import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.DescriptionList.DescListAdapter;
+import com.nexis.DescriptionList.DescListItem;
 import com.nexis.ExcelReports.ContactForm;
 import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentRegistration;
 import com.nexis.Fragments.AttendancePackage.FragmentAttendance;
 import com.nexis.Fragments.FragmentStat;
+import com.nexis.GeneralOperation;
 import com.nexis.NavigationDrawer.NavigationDrawerCallbacks;
 import com.nexis.NavigationDrawer.NavigationFooterCallbacks;
 import com.nexis.NavigationDrawer.NavigationDrawerFragment;
-import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -49,7 +57,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private static String userName, userFirstName, userLastName, userInitial, userNexcell, fullName;
+    private static String userName, userFirstName, userLastName, userInitial, userNexcell, userEmail, fullName;
 
     private ArrayMap<String, String> usernameMap;
 
@@ -61,8 +69,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         try
         {
-            String status = Data.checkVersionCode(this);
-            if (status == "Update") Data.promptUpdate(this);
+            String status = GeneralOperation.checkVersionCode(this);
+            if (status == "Update") GeneralOperation.promptUpdate(this);
 
             setupUser();
             usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
@@ -93,14 +101,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     }
 
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Data.hasRole(this)) getMenuInflater().inflate(R.menu.main_menu, menu);
+        if (GeneralOperation.hasRole(this)) getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -109,29 +112,51 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
+
         switch (id) {
             case R.id.gen_contact:
-                UIDialog.onCreateActionDialog(this, "Download Contact List", "Are you sure you want to send nexcell contact list?", sendContactListListener);
+                View vi = this.getLayoutInflater().inflate(R.layout.listview_dialog, null);
+                ListView lv = (ListView) vi.findViewById(R.id.dialogList);
+
+                final AlertDialog d = UIDialog.onCreateListViewDialog(this, "Download Contact List", lv, false);
+                d.show();
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int pos, long id) {
+                        d.dismiss();
+
+                        String recipient = "";
+                        switch (pos) {
+                            case 0:
+                                recipient = userEmail + "," + Constants.SYSTEM_GMAIL;
+                                break;
+                            case 1:
+                                recipient = ParseOperation.getNexcellLeadersRecipient(userNexcell, getApplicationContext());
+
+                        }
+                        contactReportAsync crp = new contactReportAsync();
+                        crp.execute(userNexcell, recipient);
+                    }
+                });
+
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private DialogInterface.OnClickListener sendContactListListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            String toRep = ParseOperation.getNexcellLeadersRecipient(userNexcell, getApplicationContext());
-            contactReportAsync crp = new contactReportAsync();
-            crp.execute(userNexcell, toRep);
-        }
-    };
-
-
     @Override
     public void onNavigationDrawerItemSelected(int position, int prevPosition)
     {
+        //TODO: fix graphs
+        if (position == 1)
+        {
+            UIDialog.onCreateMsgDialog(this, "Not Available", "Statistics tab is currently not available");
+            return;
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment currentfrag = fragmentManager.findFragmentById(R.id.container);
 
@@ -143,10 +168,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         getSupportActionBar().setTitle(Constants.FRAGMENT_NAME.get(position));
 
-        fragments.add(FragmentAttendance.newInstance());
-        fragments.add(FragmentStat.newInstance());
-        fragments.add(FragmentRegistration.newInstance());
-        fragments.add(FragmentAdmin.newInstance());
+        if (fragments.isEmpty())
+        {
+            fragments.add(FragmentAttendance.newInstance());
+            fragments.add(FragmentStat.newInstance());
+            fragments.add(FragmentRegistration.newInstance());
+            fragments.add(FragmentAdmin.newInstance());
+        }
 
         displayFragment(position);
     }
@@ -214,7 +242,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         String filePath;
 
         protected void onPreExecute () {
-            filePath = getApplication().getFilesDir().getPath() +  "/New Comer" + ".xls";
+            filePath = getApplication().getFilesDir().getPath() +  "/Nexcell Contact List" + ".xls";
         }
 
         protected String[] doInBackground(String... info) {
@@ -273,6 +301,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         try {
             ParseUser user = ParseUser.getCurrentUser();
             userName = user.getUsername();
+            userEmail = user.getEmail();
             userFirstName = (String) user.get("firstName");
             userLastName = (String) user.get("lastName");
             userInitial = (String) user.get("initial");
@@ -283,11 +312,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             List<ParseObject> obj = userQuery.find();
 
             SharedPreferences.Editor editor = getSharedPreferences("levels", MODE_PRIVATE).edit();
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(0),obj.get(0).getBoolean("member"));
+            editor.putBoolean(Constants.USER_LEVEL_LIST.get(0), obj.get(0).getBoolean("member"));
             editor.putBoolean(Constants.USER_LEVEL_LIST.get(1), obj.get(0).getBoolean("esm"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(2),obj.get(0).getBoolean("developer"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(3),obj.get(0).getBoolean("committee"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(4), obj.get(0).getBoolean("counsellor"));
+            editor.putBoolean(Constants.USER_LEVEL_LIST.get(2), obj.get(0).getBoolean("counsellor"));
+            editor.putBoolean(Constants.USER_LEVEL_LIST.get(3), obj.get(0).getBoolean("committee"));
+            editor.putBoolean(Constants.USER_LEVEL_LIST.get(4), obj.get(0).getBoolean("developer"));
             editor.commit();
 
         } catch(ParseException e)
@@ -309,6 +338,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public String getUserName()
     {
         return userName;
+    }
+
+    public String getUserEmail()
+    {
+        return userEmail;
     }
 
     public void refreshUserMap()

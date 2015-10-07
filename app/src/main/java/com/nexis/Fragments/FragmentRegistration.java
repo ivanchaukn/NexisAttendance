@@ -12,6 +12,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.nexis.Constants;
 import com.nexis.Activity.MainActivity;
+import com.nexis.Data;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -219,18 +220,14 @@ public class FragmentRegistration extends DialogFragment {
 
     private void setupSpinnerValues()
     {
+        yearSpinner.clear();
+        schoolSpinner.clear();
+
         List<String> years = Arrays.asList("Grade 8", "Grade 9", "Grade 10", "Grade 11",
                                            "Grade 12", "Year 1", "Year 2", "Year 3", "Year 4");
-
         yearSpinner.addAll(years);
 
-        List<ParseUser> nexcellObject = ParseOperation.getSchools(getActivity());
-
-        for(ParseObject x : nexcellObject)
-        {
-            String school = (String)x.get("school");
-            if (!(schoolSpinner.contains(school))) schoolSpinner.add((String)x.get("school"));
-        }
+        schoolSpinner.addAll(Data.SCHOOL_LIST);
         schoolSpinner.add("Others...");
     }
 
@@ -259,6 +256,9 @@ public class FragmentRegistration extends DialogFragment {
             }
             else if (v instanceof RadioGroup) {
                 ((RadioGroup)v).clearCheck();
+            }
+            else if (v instanceof Spinner) {
+                ((Spinner)v).setSelection(0);
             }
             else if(v instanceof ViewGroup && (((ViewGroup)v).getChildCount() > 0)) {
                 clearInfo(v);

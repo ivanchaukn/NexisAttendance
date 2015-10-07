@@ -1,6 +1,6 @@
 package com.nexis.Fragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,9 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.Utils;
@@ -20,6 +18,8 @@ import com.nexis.Activity.MainActivity;
 import com.nexis.Activity.StatusActivity;
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.DescriptionList.DescListAdapter;
+import com.nexis.DescriptionList.DescListItem;
 import com.nexis.ExcelReports.WeeklyReport;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -51,15 +51,15 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         // initialize the utilities
         Utils.init(getResources());
 
-        ArrayList<AdminListItem> objects = new ArrayList<>();
+        ArrayList<DescListItem> objects = new ArrayList<>();
 
-        objects.add(new AdminListItem("Real-Time Status", "Monitor the attendance status for each nexcell"));
-        objects.add(new AdminListItem("User Management", "Modify user information and access level"));
-        objects.add(new AdminListItem("Nexcell Management", "Nexis group distribution"));
-        objects.add(new AdminListItem("Weekly Report", "Send out weekly report to committee and counsellors"));
-        objects.add(new AdminListItem("Master Contact List", "Generate master contact list for Nexis"));
+        objects.add(new DescListItem("Real-Time Status", "Monitor the attendance status for each nexcell", null));
+        objects.add(new DescListItem("User Management", "Modify user information and access level", null));
+        objects.add(new DescListItem("Nexcell Management", "Nexis group distribution", null));
+        objects.add(new DescListItem("Weekly Report", "Send out weekly report to committee and counsellors", null));
+        objects.add(new DescListItem("Master Contact List", "Generate master contact list for Nexis", null));
 
-        GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
+        DescListAdapter adapter = new DescListAdapter(getActivity(), objects);
 
         ListView lv = (ListView) rootView.findViewById(R.id.adminList);
         lv.setAdapter(adapter);
@@ -72,6 +72,13 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
     public void onItemClick(AdapterView<?> av, View v, int pos, long arg3) {
 
         Intent i;
+        final AlertDialog d;
+
+        final String selfEmail = ((MainActivity)getActivity()).getUserName() + "," + Constants.SYSTEM_GMAIL;
+        final String ccEmail = ParseOperation.getCommCounsRecipient(getActivity());
+
+        View vi = getActivity().getLayoutInflater().inflate(R.layout.listview_dialog, null);
+        ListView lv = (ListView) vi.findViewById(R.id.dialogList);
 
         switch (pos) {
             case 0:
@@ -79,105 +86,75 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                 startActivity(i);
                 break;
             case 3:
-                UIDialog.onCreateActionDialog(getActivity(), "Send Weekly Report", "Are you sure you want to send weekly report?", sendReportListener);
+                d = UIDialog.onCreateListViewDialog(getActivity(), "Send Weekly Report", lv, true);
+                d.show();
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int pos, long id) {
+                        d.dismiss();
+
+                        String recipient = "";
+                        switch (pos) {
+                            case 0:
+                                recipient = selfEmail;
+                                break;
+                            case 1:
+                                recipient = ccEmail;
+
+                        }
+
+                        ParseOperation.refreshAttendanceLocalData(getActivity());
+
+                        Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
+                        weeklyReportAsync report = new weeklyReportAsync();
+                        report.execute(recipient);
+                    }
+                });
                 break;
+
             case 4:
-                UIDialog.onCreateActionDialog(getActivity(), "Send Master Contact", "Are you sure you want to send master contact list?", sendMasterContactListListener);
+                d = UIDialog.onCreateListViewDialog(getActivity(), "Send Master Contact", lv, true);
+                d.show();
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int pos, long id) {
+                        d.dismiss();
+
+                        String recipient = "";
+                        switch (pos) {
+                            case 0:
+                                recipient = selfEmail;
+                                break;
+                            case 1:
+                                recipient = ccEmail;
+
+                        }
+
+                        Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
+                        ((MainActivity) getActivity()).genContactReport(null, recipient);
+                    }
+                });
         }
     }
 
-    private class AdminListItem {
-        String name;
-        String desc;
-
-        public AdminListItem(String n, String d) {
-            name = n;
-            desc = d;
-        }
-    }
-
-    private class GraphListAdapter extends ArrayAdapter<AdminListItem> {
-
-        public GraphListAdapter(Context context, List<AdminListItem> objects) {
-            super(context, 0, objects);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            AdminListItem c = getItem(position);
-
-            ViewHolder holder;
-
-            if (convertView == null) {
-
-                holder = new ViewHolder();
-
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_desc, null);
-                holder.tvName = (TextView) convertView.findViewById(R.id.tvName);
-                holder.tvDesc = (TextView) convertView.findViewById(R.id.tvDesc);
-
-                convertView.setTag(holder);
-
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.tvName.setText(c.name);
-            holder.tvDesc.setText(c.desc);
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-
-            TextView tvName, tvDesc;
-        }
-    }
-
-    private DialogInterface.OnClickListener sendReportListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            ParseOperation.refreshAttendanceLocalData(getActivity());
-
-            Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
-
-            weeklyReportAsync report = new weeklyReportAsync();
-            report.execute();
-        }
-    };
-
-    private DialogInterface.OnClickListener sendMasterContactListListener = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            String toRep = ParseOperation.getCommCounsRecipient(getActivity());
-            ((MainActivity)getActivity()).genContactReport(null, toRep);
-        }
-    };
-
-    public class weeklyReportAsync extends AsyncTask<String, Void, Void>
+    public class weeklyReportAsync extends AsyncTask<String, Void, String>
     {
         String today = new DateTime().toString("yyyy-MM-dd");
         String filePath = getActivity().getFilesDir().getPath() +  "/Nexis Attendance " + today + ".xls";
 
-        protected Void doInBackground(String... info) {
+        protected String doInBackground(String... info) {
             List<String> nexcellTitles = new ArrayList<>(Data.NEXCELL_LIST);
             nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
             WeeklyReport report = new WeeklyReport(getActivity(), filePath);
             report.genReport();
 
-            return null;
+            return info[0];
         }
 
-        protected void onPostExecute(Void exception) {
-            String toRecipients = ParseOperation.getCommCounsRecipient(getActivity());
-            String ccRecipients = Constants.SYSTEM_GMAIL;
-
+        protected void onPostExecute(String rep) {
             SendMailAsync sendMail = new SendMailAsync(getActivity());
-            sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , toRecipients, ccRecipients, filePath);
+            sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , rep, Constants.SYSTEM_GMAIL, filePath);
         }
     }
 }

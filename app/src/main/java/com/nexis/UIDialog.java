@@ -1,14 +1,17 @@
 package com.nexis;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.nexis.DescriptionList.DescListAdapter;
+import com.nexis.DescriptionList.DescListItem;
 
 public class UIDialog {
 
@@ -111,35 +114,31 @@ public class UIDialog {
         builder.setTitle(titleText);
 
         builder.setPositiveButton("Submit", posLstn)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
 
-        AlertDialog d = builder.create();
-        d.show();
-    }
+    AlertDialog d = builder.create();
+    d.show();
+}
 
-    static public void onCreateCustomDialog(Context actv, String title, View Viewlayout, String posButton, String negaButton,
-                                            DialogInterface.OnClickListener positiveButtonListener, DialogInterface.OnClickListener negativeButtonListener)
-    {
+    static public AlertDialog onCreateListViewDialog(Context actv, String titleText, ListView lv, boolean cc){
         AlertDialog.Builder builder = new AlertDialog.Builder(actv);
 
-        //LayoutInflater inflater = ((Activity)actv).getLayoutInflater();
+        ArrayList<DescListItem> objects = new ArrayList<>();
 
-        // Inflate and set the text for the dialog
-        // Pass null as the parent view because its going in the dialog text
-        builder.setView(Viewlayout);
+        objects.add(new DescListItem("Only Me", "Only you will receive the report", R.drawable.ic_person_black_24dp));
 
-        builder.setTitle(title);
+        if (cc) objects.add(new DescListItem("Committee and Counsellor", "All committees and counsellors in Nexis", R.drawable.ic_group_black_24dp));
+        else objects.add(new DescListItem("Nexcell Leaders", "All leaders in the nexcell", R.drawable.ic_group_black_24dp));
 
-        builder.setPositiveButton(posButton, positiveButtonListener);
+        DescListAdapter adapter = new DescListAdapter(actv, objects);
+        lv.setAdapter(adapter);
 
-        if (negaButton != "") {
-            builder.setNegativeButton(negaButton, negativeButtonListener);
-        }
+        builder.setView((View) lv.getParent());
+        builder.setTitle(titleText);
 
-        AlertDialog d = builder.create();
-        d.show();
+        return builder.create();
     }
 }

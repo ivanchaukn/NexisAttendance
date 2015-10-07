@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
@@ -49,9 +50,9 @@ public class StatusActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
 
-        ESMVal = Data.getCacheLevel(this, "esm");
-        counsVal = Data.getCacheLevel(this, "counsellor");
-        devVal= Data.getCacheLevel(this, "developer");
+        ESMVal = GeneralOperation.getCacheLevel(this, "esm");
+        counsVal = GeneralOperation.getCacheLevel(this, "counsellor");
+        devVal= GeneralOperation.getCacheLevel(this, "developer");
 
         ParseOperation.refreshAttendanceLocalData(this);
 

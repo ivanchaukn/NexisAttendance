@@ -121,7 +121,7 @@ public class ParseOperation {
 	}
 
     static public String getSubmitDataRecipient(String nexcell, Context actv) {
-        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, true, false, false), actv);
 
         return extractEmail(users);
     }
@@ -132,18 +132,24 @@ public class ParseOperation {
         return extractEmail(users);
     }
 
-    static public String getNewComerFormRecipient(String nexcell, Context actv) {
-        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, false, true, true, true), actv);
-        List<ParseObject> commi = getUserList(null, Arrays.asList(false, false, true, false, false), actv);
-        users.addAll(commi);
+    static public String getNexcellLeadersRecipient(String nexcell, Context actv) {
+        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, true, false, false), actv);
 
         return extractEmail(users);
     }
 
-    static public String getNexcellLeadersRecipient(String nexcell, Context actv) {
-        List<ParseObject> users = getUserList(nexcell, Arrays.asList(false, true, false, true, false), actv);
+    static public String getNewComerFormRecipient(String nexcell, Context actv) {
+        return getCommCounsRecipient(actv) + "," + getNexcellLeadersRecipient(nexcell, actv);
+    }
 
-        return extractEmail(users);
+    static private String extractEmail(List<ParseObject> list) {
+        List<String> emails = new ArrayList<>();
+
+        for(ParseObject x: list) emails.add(x.get("email").toString());
+
+        String recipients = StringUtils.join(emails, ", ");
+
+        return recipients;
     }
 
     static public List<ParseUser> getSchools(Context actv)
@@ -163,16 +169,6 @@ public class ParseOperation {
         }
 
         return nexcellObject;
-    }
-
-    static private String extractEmail(List<ParseObject> list) {
-        List<String> emails = new ArrayList<>();
-
-        for(ParseObject x: list) emails.add(x.get("email").toString());
-
-        String recipients = StringUtils.join(emails, ", ");
-
-        return recipients;
     }
 
 	static public List<ParseObject> getNexcellList(boolean nameOnly, Context actv) {

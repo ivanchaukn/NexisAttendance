@@ -1,6 +1,5 @@
 package com.nexis.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -11,9 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.Utils;
@@ -21,6 +18,8 @@ import com.nexis.Activity.BarChartListActivity;
 import com.nexis.Activity.PieChartActivity;
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.DescriptionList.DescListAdapter;
+import com.nexis.DescriptionList.DescListItem;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.parse.ParseObject;
@@ -60,14 +59,14 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         // initialize the utilities
         Utils.init(getResources());
 
-        ArrayList<GraphListItem> objects = new ArrayList<>();
+        ArrayList<DescListItem> objects = new ArrayList<>();
 
-        objects.add(new GraphListItem("Fellowship Attendance Chart", "Display fellowship attendance record"));
-        objects.add(new GraphListItem("Service Statistic Chart", "Display the weekly service attendance"));
-        objects.add(new GraphListItem("College Statistic Chart", "Display the weekly college attendance"));
-        objects.add(new GraphListItem("Pie Chart Distribution", "Display nexcell distribution"));
+        objects.add(new DescListItem("Fellowship Attendance Chart", "Display fellowship attendance record", null));
+        objects.add(new DescListItem("Service Statistic Chart", "Display the weekly service attendance", null));
+        objects.add(new DescListItem("College Statistic Chart", "Display the weekly college attendance", null));
+        objects.add(new DescListItem("Pie Chart Distribution", "Display nexcell distribution", null));
 
-        GraphListAdapter adapter = new GraphListAdapter(getActivity(), objects);
+        DescListAdapter adapter = new DescListAdapter(getActivity(), objects);
 
         ListView lv = (ListView) rootView.findViewById(R.id.graphList);
         lv.setAdapter(adapter);
@@ -205,54 +204,5 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         }
 
         getActivity().overridePendingTransition(R.anim.move_right_in_activity, R.anim.move_left_out_activity);
-    }
-
-    private class GraphListItem {
-        String name;
-        String desc;
-
-        public GraphListItem(String n, String d) {
-            name = n;
-            desc = d;
-        }
-    }
-
-    private class GraphListAdapter extends ArrayAdapter<GraphListItem> {
-
-        public GraphListAdapter(Context context, List<GraphListItem> objects) {
-            super(context, 0, objects);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            GraphListItem c = getItem(position);
-
-            ViewHolder holder;
-
-            if (convertView == null) {
-
-                holder = new ViewHolder();
-
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_desc, null);
-                holder.tvName = (TextView) convertView.findViewById(R.id.tvName);
-                holder.tvDesc = (TextView) convertView.findViewById(R.id.tvDesc);
-
-                convertView.setTag(holder);
-
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.tvName.setText(c.name);
-            holder.tvDesc.setText(c.desc);
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-
-            TextView tvName, tvDesc;
-        }
     }
 }

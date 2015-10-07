@@ -1,6 +1,7 @@
 package com.nexis.Activity;
 
 import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -24,11 +25,6 @@ public class SplashActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
-
-        //Initialize global variables
-        ParseOperation.saveYearDate(this);
-        ParseOperation.refreshAttendanceLocalData(this);
-        Data.initializeNexcell(this);
 
 		loadBackgroundData loadData = new loadBackgroundData();
 		loadData.execute();
@@ -65,7 +61,7 @@ public class SplashActivity extends Activity{
                     endActivity();
                 }
             }
-        }, 2000);
+        }, 0);
 	}
 	
 	private void endActivity()
@@ -103,7 +99,7 @@ public class SplashActivity extends Activity{
                 return e.toString();
             }
 
-            return Data.checkVersionCode(SplashActivity.this);
+            return GeneralOperation.checkVersionCode(SplashActivity.this);
         }
  
         @Override
@@ -114,6 +110,12 @@ public class SplashActivity extends Activity{
             {
                 if (result == "Success")
                 {
+                    //Initialize global variables
+                    ParseOperation.saveYearDate(getApplicationContext());
+                    ParseOperation.refreshAttendanceLocalData(getApplicationContext());
+                    Data.initializeNexcell(getApplicationContext());
+                    Data.initializeSchools(getApplicationContext());
+
                     checkCurrentUser();
                 }
                 else if(result == "NoConnection")
@@ -122,7 +124,7 @@ public class SplashActivity extends Activity{
                 }
 	            else if (result == "Update")
 	            {
-                    Data.promptUpdate(getApplicationContext());
+                    GeneralOperation.promptUpdate(getApplicationContext());
 	            }
 	            else 
 	            {

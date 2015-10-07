@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.nexis.Constants;
 import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.NexisApplication;
 import com.nexis.R;
 
@@ -151,8 +152,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
 
-        boolean devVal = Data.getCacheLevel(getActivity(), "developer");
-        boolean commiVal = Data.getCacheLevel(getActivity(), "committee");
+        boolean devVal = GeneralOperation.getCacheLevel(getActivity(), "developer");
+        boolean commiVal = GeneralOperation.getCacheLevel(getActivity(), "committee");
 
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(0), getResources().getDrawable(R.drawable.ic_attendance)));
         items.add(new NavigationItem(Constants.FRAGMENT_NAME.get(1), getResources().getDrawable(R.drawable.ic_statistic)));
