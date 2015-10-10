@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/nexcellName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Nexcell:"
+        android:textSize="16dp"
+        android:textColor="#ff2a2a2a"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:id="@+id/statusName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Missing"
+        android:textSize="18dp"
+        android:textColor="#ffff0000"
+        android:fontFamily="sans-serif-light"
+        android:layout_alignTop="@+id/nexcellName"
+        android:layout_toRightOf="@+id/nexcellName"
+        android:layout_toEndOf="@+id/nexcellName"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:focusableInTouchMode="true" />
+
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/emailNotiButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:background="#ffff615f"
+        android:text="Email"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/pushNotiButton" />
+
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/pushNotiButton"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:background="#ff47b3ff"
+        android:text="Push"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/emailNotiButton"
+        android:layout_toStartOf="@+id/emailNotiButton" />
+
+
+
+</RelativeLayout>

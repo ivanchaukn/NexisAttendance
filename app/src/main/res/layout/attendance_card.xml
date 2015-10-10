@@ -1,0 +1,178 @@
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    card_view:cardElevation="2dp"
+    card_view:cardCornerRadius="5dp"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_weight="0.2">
+
+            <TextView
+                android:id="@+id/cardDateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feb 13"
+                android:textColor="@android:color/black"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="fill_vertical"
+                android:textSize="30dp"
+                android:textScaleX="0.9"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/cardYearText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:fontFamily="sans-serif-thin"
+                android:text="2015"
+                android:textColor="@android:color/black"
+                android:textSize="12dp"
+                android:layout_below="@+id/cardDateText"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="-5dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.75">
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fellowship: "
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:layout_alignTop="@+id/textView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/fellowshipText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/textView1"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service: "
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_alignBottom="@+id/serviceText"
+                android:layout_toRightOf="@+id/newComerText"
+                android:layout_toEndOf="@+id/newComerText" />
+
+            <TextView
+                android:id="@+id/serviceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:layout_alignTop="@+id/fellowshipText"
+                android:layout_toRightOf="@+id/textView"
+                android:layout_toEndOf="@+id/textView" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Comer: "
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="15dp" />
+
+            <TextView
+                android:id="@+id/newComerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:layout_alignTop="@+id/textView4"
+                android:layout_toRightOf="@+id/textView4"
+                android:layout_toEndOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="College: "
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="15dp"
+                android:layout_alignBottom="@+id/newComerText"
+                android:layout_alignRight="@+id/textView"
+                android:layout_alignEnd="@+id/textView" />
+
+            <TextView
+                android:id="@+id/collegeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="@android:color/black"
+                android:textSize="16dp"
+                android:layout_alignTop="@+id/textView6"
+                android:layout_toRightOf="@+id/textView6"
+                android:layout_toEndOf="@+id/textView6" />
+
+        </RelativeLayout>
+
+        <ImageButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="16dp"
+            android:scaleType="fitStart"
+            android:background="@drawable/ic_action_edit"
+            android:id="@+id/cardEditButton"
+            android:layout_gravity="center_vertical"
+            android:visibility="visible"
+            android:backgroundTint="#ff626262">
+
+        </ImageButton>
+
+
+    </LinearLayout>
+
+ </android.support.v7.widget.CardView>

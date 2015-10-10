@@ -1,11 +1,17 @@
 package com.nexis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.nexis.DescriptionList.DescListAdapter;
+import com.nexis.DescriptionList.DescListItem;
 
 public class UIDialog {
 
@@ -44,9 +50,8 @@ public class UIDialog {
         builder.setMessage(String.format("%s", msg));
         builder.setTitle(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-             public void onClick(DialogInterface dialog, int id) 
-             {
-             }
+            public void onClick(DialogInterface dialog, int id) {
+            }
         });
         
         AlertDialog d = builder.create();
@@ -73,26 +78,67 @@ public class UIDialog {
         builder.setMessage(msg)
 	   		  .setPositiveButton("Yes", positiveButtonListener)
 	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(DialogInterface dialog, int id) {
-	               }
-	    });
+                   public void onClick(DialogInterface dialog, int id) {
+                   }
+               });
 
         AlertDialog d = builder.create();
         d.show();
 	}
 	
-	static public void onCreateListDialog(Context actv, String title, List<String> list, DialogInterface.OnClickListener clickListener)
-	{
-		AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+	static public void onCreateMultiChoiceListDialog(Context actv, String title, List<String> list, boolean[] blList, DialogInterface.OnMultiChoiceClickListener clickListener,
+                                                      String posButton, String negButton, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
         builder.setTitle(title);
-	    
-	    if (list != null)
-	    {
-	    	final CharSequence[] nList = list.toArray(new CharSequence[list.size()]);
-	    	builder.setItems(nList, clickListener);
-	    }
-	    
-	    AlertDialog d = builder.create();
+
+        final CharSequence[] nList = list.toArray(new CharSequence[list.size()]);
+        boolean bl[] = blList;
+        builder.setMultiChoiceItems(nList, bl, clickListener);
+
+        if (posButton != null) builder.setPositiveButton(posButton, positiveListener);
+        if (negButton != null) builder.setNegativeButton(negButton, negativeListener);
+
+        AlertDialog d = builder.create();
+        d.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
         d.show();
-	}
+    }
+
+    static public void onCreateTextDialog(Context actv, View Viewlayout, String titleText, String subtitleText, DialogInterface.OnClickListener posLstn){
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+
+        TextView title = (TextView) Viewlayout.findViewById(R.id.tvDialogTitle);
+        title.setText(subtitleText);
+
+        builder.setView(Viewlayout);
+        builder.setTitle(titleText);
+
+        builder.setPositiveButton("Submit", posLstn)
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+
+    AlertDialog d = builder.create();
+    d.show();
+}
+
+    static public AlertDialog onCreateListViewDialog(Context actv, String titleText, ListView lv, boolean cc){
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+
+        ArrayList<DescListItem> objects = new ArrayList<>();
+
+        objects.add(new DescListItem("Only Me", "Only you will receive the report", R.drawable.ic_person_black_24dp));
+
+        if (cc) objects.add(new DescListItem("Committee and Counsellor", "All committees and counsellors in Nexis", R.drawable.ic_group_black_24dp));
+        else objects.add(new DescListItem("Nexcell Leaders", "All leaders in the nexcell", R.drawable.ic_group_black_24dp));
+
+        DescListAdapter adapter = new DescListAdapter(actv, objects);
+        lv.setAdapter(adapter);
+
+        builder.setView((View) lv.getParent());
+        builder.setTitle(titleText);
+
+        return builder.create();
+    }
 }

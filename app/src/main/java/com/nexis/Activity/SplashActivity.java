@@ -1,5 +1,7 @@
 package com.nexis.Activity;
 
+import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -15,6 +17,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class SplashActivity extends Activity{
 	
@@ -22,20 +25,10 @@ public class SplashActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
-		
+
 		loadBackgroundData loadData = new loadBackgroundData();
 		loadData.execute();
-		
 	}
-	
-	private DialogInterface.OnClickListener googlePlayListener = new DialogInterface.OnClickListener() {
-
-		@Override
-		public void onClick(DialogInterface dialog, int id) {
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+ "com.nexis")));
-			endActivity();
-		}
-	};
 
     private DialogInterface.OnClickListener exitListener = new DialogInterface.OnClickListener() {
 
@@ -47,23 +40,28 @@ public class SplashActivity extends Activity{
 
 	private void checkCurrentUser()
 	{
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		
-    	if (currentUser != null) {
-    		//Switch to Main Activity
-		    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(i);
-            
-            endActivity();
-    	}
-    	else
-    	{
-    		//Switch to Login Activity
-		    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(i);
-            
-            endActivity();
-    	}
+		final ParseUser currentUser = ParseUser.getCurrentUser();
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+
+                if (currentUser != null) {
+                    //Switch to Main Activity
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+
+                    endActivity();
+                }
+                else {
+                    //Switch to Login Activity
+                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(i);
+
+                    endActivity();
+                }
+            }
+        }, 0);
 	}
 	
 	private void endActivity()
@@ -83,32 +81,25 @@ public class SplashActivity extends Activity{
 
             try
             {
-                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                 if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED &&
-                         connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) return "NoConnection";
+                NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                if (wifi.getState() != NetworkInfo.State.CONNECTED)
+                {
+                    if (mobile != null && mobile.getState() != NetworkInfo.State.CONNECTED)
+                    {
+                        return "NoConnection";
+                    }
+                }
             }
             catch(Exception e)
             {
                 return e.toString();
             }
 
-            try
-    		{
-    			int mostRecentCode = ParseOperation.getMostRecentVersionCode(SplashActivity.this);
-    			
-    			PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-    			int versionNumber = pinfo.versionCode;
-
-                if (mostRecentCode != versionNumber) return "Update";
-    			else checkCurrentUser();
-    		}
-    		catch(Exception e)
-    		{
-    			return e.toString();
-    		}
-        	
-        	return "";
+            return GeneralOperation.checkVersionCode(SplashActivity.this);
         }
  
         @Override
@@ -117,20 +108,28 @@ public class SplashActivity extends Activity{
             
             if (result != "")
             {
-                if(result == "NoConnection")
+                if (result == "Success")
                 {
-                   UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
+                    //Initialize global variables
+                    ParseOperation.saveYearDate(getApplicationContext());
+                    ParseOperation.refreshAttendanceLocalData(getApplicationContext());
+                    Data.initializeNexcell(getApplicationContext());
+                    Data.initializeSchools(getApplicationContext());
+
+                    checkCurrentUser();
+                }
+                else if(result == "NoConnection")
+                {
+                    UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
                 }
 	            else if (result == "Update")
 	            {
-	            	UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "Update app", "A new version is available. Please update through google play!", googlePlayListener);
+                    GeneralOperation.promptUpdate(getApplicationContext());
 	            }
 	            else 
 	            {
 	            	UIDialog.onCreateErrorDialog(SplashActivity.this, result + ". Version Code");
 	            }
-
-
             }
         }
  

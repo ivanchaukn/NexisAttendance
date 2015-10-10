@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="4dp">
+
+    <RelativeLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="?attr/colorPrimary">
+
+        <RelativeLayout
+            android:id="@+id/header_infos_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="16dp"
+            android:layout_alignParentEnd="false">
+
+            <ImageView
+                android:id="@+id/header_picture"
+                android:layout_width="36dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_success"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:id="@+id/header_title"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="Status:"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_alignBaseline="@+id/statusTextView"
+                android:layout_alignBottom="@+id/statusTextView"
+                android:layout_alignLeft="@+id/header_subtitle"
+                android:layout_alignStart="@+id/header_subtitle" />
+
+            <TextView
+                android:id="@+id/header_subtitle"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Updated By:"
+                android:textColor="@android:color/white"
+                android:textSize="13dp"
+                android:textIsSelectable="false"
+                android:layout_marginLeft="13dp"
+                android:layout_marginStart="13dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/header_picture"
+                android:layout_toEndOf="@+id/header_picture" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Submitted"
+                android:id="@+id/statusTextView"
+                android:textColor="@android:color/white"
+                android:textIsSelectable="false"
+                android:textSize="17dp"
+                android:autoText="false"
+                android:password="false"
+                android:phoneNumber="false"
+                android:singleLine="false"
+                android:layout_above="@+id/updateTextView"
+                android:layout_toRightOf="@+id/header_title"
+                android:layout_toEndOf="@+id/header_title"
+                android:layout_marginLeft="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="N/A"
+                android:id="@+id/updateTextView"
+                android:textColor="@android:color/white"
+                android:textSize="12dp"
+                android:layout_alignBottom="@+id/header_subtitle"
+                android:layout_toRightOf="@+id/header_subtitle"
+                android:layout_toEndOf="@+id/header_subtitle"
+                android:layout_marginLeft="5dp" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Attendance Date:"
+                android:textColor="@android:color/white"
+                android:textSize="11dp"
+                android:textIsSelectable="false"
+                android:textStyle="italic"
+                android:layout_below="@+id/header_subtitle"
+                android:layout_alignLeft="@+id/header_subtitle"
+                android:layout_alignStart="@+id/header_subtitle" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:id="@+id/attendanceDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feb 20th, 2015"
+                android:textColor="@android:color/white"
+                android:textSize="11dp"
+                android:textIsSelectable="false"
+                android:textStyle="italic"
+                android:layout_alignTop="@+id/textView5"
+                android:layout_toRightOf="@+id/textView5"
+                android:layout_toEndOf="@+id/textView5"
+                android:layout_marginLeft="5dp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
