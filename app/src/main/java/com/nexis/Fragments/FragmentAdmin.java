@@ -74,7 +74,7 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         Intent i;
         final AlertDialog d;
 
-        final String selfEmail = ((MainActivity)getActivity()).getUserName() + "," + Constants.SYSTEM_GMAIL;
+        final String selfEmail = ((MainActivity)getActivity()).getUserEmail() + "," + Constants.SYSTEM_GMAIL;
         final String ccEmail = ParseOperation.getCommCounsRecipient(getActivity());
 
         View vi = getActivity().getLayoutInflater().inflate(R.layout.listview_dialog, null);

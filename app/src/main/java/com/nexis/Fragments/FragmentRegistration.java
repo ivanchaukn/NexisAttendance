@@ -400,7 +400,7 @@ public class FragmentRegistration extends DialogFragment {
                                 String type = (String)spn.getSelectedItem();
 
                                 if (type == "New Comer") {
-                                    sendWelcomeEmail(email);
+                                    sendWelcomeEmail();
 
                                     String uName = ((MainActivity)getActivity()).getUserName();
                                     ParseOperation.saveNewComer(nextDate, nexcell, newUsername, uName);
@@ -434,9 +434,9 @@ public class FragmentRegistration extends DialogFragment {
         }).start();
     }
 
-    private void sendWelcomeEmail(String newComerEmail)
+    private void sendWelcomeEmail()
     {
-        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity()) + "," + newComerEmail;
+        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
