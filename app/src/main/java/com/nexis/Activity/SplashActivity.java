@@ -112,7 +112,7 @@ public class SplashActivity extends Activity{
                 {
                     //Initialize global variables
                     ParseOperation.saveYearDate(getApplicationContext());
-                    ParseOperation.refreshAttendanceLocalData(getApplicationContext());
+                    ParseOperation.refreshAttendanceLocalData(null, null, getApplicationContext());
                     Data.initializeNexcell(getApplicationContext());
                     Data.initializeSchools(getApplicationContext());
 

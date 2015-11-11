@@ -1,9 +1,6 @@
 package com.nexis.ExcelReports;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.util.ArrayMap;
-
 import com.nexis.Constants;
 import com.nexis.Data;
 import com.nexis.ParseOperation;
@@ -30,15 +27,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 public class WeeklyReport {
 

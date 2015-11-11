@@ -217,7 +217,7 @@ public class FragmentAttendance extends DialogFragment {
     {
 
         protected Void doInBackground(String... info) {
-            ParseOperation.refreshAttendanceLocalData(getActivity());
+            ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
             populateCards();
 
             ((MainActivity)getActivity()).refreshUserMap();

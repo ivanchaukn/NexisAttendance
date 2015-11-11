@@ -1,6 +1,5 @@
 package com.nexis.Activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +23,6 @@ import android.widget.Toast;
 
 import com.nexis.Constants;
 import com.nexis.Data;
-import com.nexis.DescriptionList.DescListAdapter;
-import com.nexis.DescriptionList.DescListItem;
 import com.nexis.ExcelReports.ContactForm;
 import com.nexis.Fragments.FragmentAdmin;
 import com.nexis.Fragments.FragmentRegistration;

@@ -237,7 +237,7 @@ public class ParseOperation {
         return nexcellObject;
     }
 
-    static public void refreshAttendanceLocalData(Context actv) {
+    static public void refreshAttendanceLocalData(String nexcell, DateTime date, Context actv) {
 
         List<ParseObject> nexcellObject = new ArrayList<>();
 
@@ -254,13 +254,17 @@ public class ParseOperation {
 
                 query.whereGreaterThanOrEqualTo("date", Constants.NEXIS_START_DATE);
                 query.whereLessThanOrEqualTo("date", Constants.NEXIS_END_DATE);
+
+                if (nexcell != null) query.whereEqualTo("nexcell", nexcell);
+                if (date != null) query.whereEqualTo("date", date.toDate());
+
                 query.setSkip(skip);
                 query.setLimit(limit);
 
                 List<ParseObject> temp = query.find();
                 nexcellObject.addAll(temp);
 
-                if (temp.size() > limit) skip = skip + limit;
+                if (temp.size() == limit) skip = skip + limit;
                 else break;
             }
 

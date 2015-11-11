@@ -93,7 +93,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         int id = item.getItemId();
         switch (id) {
             case R.id.refresh_menu:
-                ParseOperation.refreshAttendanceLocalData(getActivity());
+                ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
                 Toast.makeText(getActivity(), "Data Updated", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);

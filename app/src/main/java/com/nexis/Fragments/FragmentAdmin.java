@@ -1,7 +1,6 @@
 package com.nexis.Fragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -75,7 +74,6 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
         final AlertDialog d;
 
         final String selfEmail = ((MainActivity)getActivity()).getUserEmail() + "," + Constants.SYSTEM_GMAIL;
-        final String ccEmail = ParseOperation.getCommCounsRecipient(getActivity());
 
         View vi = getActivity().getLayoutInflater().inflate(R.layout.listview_dialog, null);
         ListView lv = (ListView) vi.findViewById(R.id.dialogList);
@@ -99,11 +97,11 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                                 recipient = selfEmail;
                                 break;
                             case 1:
-                                recipient = ccEmail;
+                                recipient = ParseOperation.getCommCounsRecipient(getActivity());
 
                         }
 
-                        ParseOperation.refreshAttendanceLocalData(getActivity());
+                        ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
 
                         Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
                         weeklyReportAsync report = new weeklyReportAsync();
@@ -126,7 +124,7 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                                 recipient = selfEmail;
                                 break;
                             case 1:
-                                recipient = ccEmail;
+                                recipient = ParseOperation.getCommCounsRecipient(getActivity());
 
                         }
 

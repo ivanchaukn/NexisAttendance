@@ -54,7 +54,7 @@ public class StatusActivity extends ActionBarActivity {
         counsVal = GeneralOperation.getCacheLevel(this, "counsellor");
         devVal= GeneralOperation.getCacheLevel(this, "developer");
 
-        ParseOperation.refreshAttendanceLocalData(this);
+        ParseOperation.refreshAttendanceLocalData(null, date, this);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
 
