@@ -40,26 +40,26 @@ public class WeeklyReport {
 
     int categoryListSize, nexcellListSize, columnsNum;
 
-    List<String> nexcellList;
+		List<String> nexcellList;
 
-    List<Double> dateList = new ArrayList<>();
-    List<List<Integer>> excelDataList = new ArrayList<>();
+		List<Double> dateList = new ArrayList<>();
+		List<List<Integer>> excelDataList = new ArrayList<>();
 
-    HSSFWorkbook wb = new HSSFWorkbook();
-    Sheet sheet = wb.createSheet();
+		HSSFWorkbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
 
-    public WeeklyReport(Context actv, String nCell)
-    {
-        context = actv;
-		nexcell = nCell;
+		public WeeklyReport(Context actv, String nCell)
+		{
+			context = actv;
+			nexcell = nCell;
 
-		date = new DateTime().toString("yyyy-MM-dd");
-        filePath = actv.getFilesDir().getPath() +  "/Nexis Attendance " + date + ".xls";
-    }
+			date = new DateTime().toString("yyyy-MM-dd");
+			filePath = actv.getFilesDir().getPath() +  "/Nexis Attendance " + date + ".xls";
+		}
 
-    public void genReport()
-    {
-        initializeDateList();
+	public void genReport()
+	{
+		initializeDateList();
         initialize();
 
 		getAggregateData();

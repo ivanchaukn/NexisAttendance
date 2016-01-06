@@ -49,4 +49,5 @@
         <item name="android:windowEnterAnimation">@anim/dialog_left_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_right_out</item>
     </style>
+
 </resources>

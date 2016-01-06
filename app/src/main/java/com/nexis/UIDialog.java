@@ -16,7 +16,7 @@ import com.nexis.DescriptionList.DescListItem;
 public class UIDialog {
 
     static public void onCreateErrorDialog(Context actv, String errorType) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setMessage(String.format("%s Error, please contact administrator!", errorType));
         builder.setTitle("Error");
         builder.setIcon(R.drawable.ic_action_error);
@@ -31,7 +31,7 @@ public class UIDialog {
     }
 
     static public void onCreateInvalidDialog(Context actv, String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setMessage(String.format("%s", msg));
         builder.setTitle("Invalid");
         builder.setIcon(R.drawable.ic_action_warning);
@@ -46,7 +46,7 @@ public class UIDialog {
     }
 
     static public void onCreateMsgDialog(Context actv, String title, String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setMessage(String.format("%s", msg));
         builder.setTitle(title);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -60,7 +60,7 @@ public class UIDialog {
 	
 	static public void onCreateSimpleActionDialog(Context actv, String title, String msg, DialogInterface.OnClickListener buttonListener)
 	{
-		AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+		AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle(title);
         
         builder.setMessage(msg)
@@ -72,7 +72,7 @@ public class UIDialog {
 	
 	static public void onCreateActionDialog(Context actv, String title, String msg, DialogInterface.OnClickListener positiveButtonListener)
 	{
-		AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+		AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle(title);
         
         builder.setMessage(msg)
@@ -89,7 +89,7 @@ public class UIDialog {
 	static public void onCreateMultiChoiceListDialog(Context actv, String title, List<String> list, boolean[] blList, DialogInterface.OnMultiChoiceClickListener clickListener,
                                                       String posButton, String negButton, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle(title);
 
         final CharSequence[] nList = list.toArray(new CharSequence[list.size()]);
@@ -105,7 +105,7 @@ public class UIDialog {
     }
 
     static public void onCreateTextDialog(Context actv, View Viewlayout, String titleText, String subtitleText, DialogInterface.OnClickListener posLstn){
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
 
         TextView title = (TextView) Viewlayout.findViewById(R.id.tvDialogTitle);
         title.setText(subtitleText);
@@ -124,7 +124,7 @@ public class UIDialog {
 }
 
     static public AlertDialog onCreateListViewDialog(Context actv, String titleText, ListView lv, boolean cc){
-        AlertDialog.Builder builder = new AlertDialog.Builder(actv);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actv, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
 
         ArrayList<DescListItem> objects = new ArrayList<>();
 

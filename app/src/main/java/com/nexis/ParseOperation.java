@@ -127,12 +127,12 @@ public class ParseOperation {
     	return nexcellObject;
 	}
 
-    static public List<ParseUser> getSchools(boolean localDb, Context actv) {
-        List<ParseUser> nexcellObject = new ArrayList<>();
+    static public List<ParseObject> getSchools(boolean localDb, Context actv) {
+        List<ParseObject> nexcellObject = new ArrayList<>();
 
         try
         {
-            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
             query.orderByAscending("school");
 
             if (localDb) query.fromLocalDatastore();

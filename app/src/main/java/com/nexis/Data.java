@@ -50,7 +50,7 @@ public class Data {
     static public void initializeSchools(Context context)
     {
         SCHOOL_LIST = new ArrayList<>();
-        List<ParseUser> nexcellObject = ParseOperation.getSchools(true, context);
+        List<ParseObject> nexcellObject = ParseOperation.getSchools(true, context);
 
         for (ParseObject x : nexcellObject)
         {
