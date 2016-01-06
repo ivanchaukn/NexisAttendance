@@ -93,7 +93,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         int id = item.getItemId();
         switch (id) {
             case R.id.refresh_menu:
-                ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
+                Data.syncNexcellData(null, null, getActivity());
                 Toast.makeText(getActivity(), "Data Updated", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
@@ -105,7 +105,7 @@ public class FragmentStat extends DialogFragment implements AdapterView.OnItemCl
         Intent i;
         Bundle b;
 
-        nexcellObject = ParseOperation.getNexcellData(null, null, null, true, getActivity());
+        nexcellObject = ParseOperation.getUserAttendance(null, null, null, true, getActivity());
 
         switch (pos) {
             case 0:

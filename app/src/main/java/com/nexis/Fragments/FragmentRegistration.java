@@ -20,8 +20,6 @@ import com.nexis.SendMailAsync;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -404,11 +402,11 @@ public class FragmentRegistration extends DialogFragment {
 
                                     String uName = ((MainActivity)getActivity()).getUserName();
                                     ParseOperation.saveNewComer(nextDate, nexcell, newUsername, uName);
-                                } else {
-                                    ArrayMap<String, String> currMap = ((MainActivity)getActivity()).getNexcellUserMap();
-                                    currMap.put(newUsername, fullname);
-                                    ((MainActivity)getActivity()).setNexcellUserMap(currMap);
                                 }
+
+                                ArrayMap<String, String> currMap = Data.getNexcellMemberNameMap(nexcell, getActivity());
+                                currMap.put(newUsername, fullname);
+                                ((MainActivity)getActivity()).setNexcellUserMap(currMap);
 
                             } else if (e.toString().contains("invalid email address")) {
                                 pDialog.dismiss();
@@ -436,7 +434,7 @@ public class FragmentRegistration extends DialogFragment {
 
     private void sendWelcomeEmail()
     {
-        String toRecipients = ParseOperation.getNewComerFormRecipient(nexcell, getActivity());
+        String toRecipients = Data.getNewComerFormRecipient(nexcell, getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         SendMailAsync sendMail = new SendMailAsync(getActivity());
@@ -467,7 +465,7 @@ public class FragmentRegistration extends DialogFragment {
 		@Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 			
-			newComerBirthday = new DateTime(year, monthOfYear+1, dayOfMonth, 0, 0, 0, 0, DateTimeZone.UTC);
+			newComerBirthday = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0, 0, 0, DateTimeZone.UTC);
 
             dateButton.setText(newComerBirthday.toString("MMM dd, YYYY"));
 		}

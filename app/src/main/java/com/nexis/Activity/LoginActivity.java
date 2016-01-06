@@ -2,6 +2,8 @@ package com.nexis.Activity;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.nexis.Constants;
+import com.nexis.Data;
+import com.nexis.GeneralOperation;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.UIDialog;
@@ -10,12 +12,10 @@ import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.RequestPasswordResetCallback;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -79,7 +79,9 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                ParseUser user =  ParseOperation.getUserByUserName(username.getText().toString(), getApplicationContext());
+                if (!GeneralOperation.checkNetworkConnection(LoginActivity.this)) return;
+
+                ParseUser user =  ParseOperation.getUser(username.getText().toString(), false, getApplicationContext());
                 if (user != null)
                 {
                     boolean login = false;
@@ -98,14 +100,12 @@ public class LoginActivity extends Activity {
                                 public void done(ParseUser user, ParseException e) {
                                     if (e == null && user != null) {
 
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                                startActivity(i);
-                                                endCurrentActivity();
-                                            }
-                                        }, 1000);
+                                        String nexcell = (String) user.get("nexcell");
+                                        Data.setupApp(nexcell, true, LoginActivity.this);
+
+                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(i);
+                                        endCurrentActivity();
 
                                         return;
 

@@ -59,11 +59,8 @@ public class FragmentAttendance extends DialogFragment {
     private int mScrollOffset = 4;
 
 	public static FragmentAttendance newInstance() {
-		FragmentAttendance fragment = new FragmentAttendance();
-		return fragment;
-	}
-
-	public FragmentAttendance(){
+        FragmentAttendance fragment = new FragmentAttendance();
+        return fragment;
     }
 
     @Override
@@ -138,10 +135,11 @@ public class FragmentAttendance extends DialogFragment {
 
     private void setupUserInfo()
     {
-        userName = ((MainActivity)getActivity()).getUserName();
-        userNexcell = ((MainActivity)getActivity()).getUserNexcell();
-        userNexcellLabel = ((MainActivity)getActivity()).getUserNexcellLabel();
-        usernameMap = ((MainActivity)getActivity()).getNexcellUserMap();
+        MainActivity actv = ((MainActivity)getActivity());
+        userName = actv.getUserName();
+        userNexcell = actv.getUserNexcell();
+        userNexcellLabel = actv.getUserNexcellLabel();
+        usernameMap = Data.getNexcellMemberNameMap(userNexcell, getActivity());
         setupNexcellUsers(usernameMap);
     }
 
@@ -183,7 +181,7 @@ public class FragmentAttendance extends DialogFragment {
     private void populateCards()
     {
         ArrayMap<String, List<String>> rowMap;
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, null, true, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getUserAttendance(userNexcell, null, null, true, getActivity());
 
         if (nexcellObject.isEmpty()) return;
 
@@ -217,11 +215,14 @@ public class FragmentAttendance extends DialogFragment {
     {
 
         protected Void doInBackground(String... info) {
-            ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
+
+            if (GeneralOperation.checkNetworkConnection(getActivity())) {
+                Data.syncAllData(userNexcell, getActivity());
+            }
+
             populateCards();
 
-            ((MainActivity)getActivity()).refreshUserMap();
-            usernameMap = ((MainActivity)getActivity()).getNexcellUserMap();
+            usernameMap = Data.getNexcellMemberNameMap(userNexcell, getActivity());
             setupNexcellUsers(usernameMap);
 
             return null;
@@ -299,7 +300,7 @@ public class FragmentAttendance extends DialogFragment {
 
     private  List<ParseObject> getRecentSubmit(DateTime newDate)
     {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(userNexcell, null, newDate, false, getActivity());
+        List<ParseObject> nexcellObject = ParseOperation.getUserAttendance(userNexcell, null, newDate, true, getActivity());
         return nexcellObject;
     }
 
@@ -353,7 +354,7 @@ public class FragmentAttendance extends DialogFragment {
 
     private void sendEmail(DateTime newDate, ArrayMap<String, List<String>> data)
     {
-        String toRecipients = ParseOperation.getSubmitDataRecipient(userNexcell, getActivity());
+        String toRecipients = Data.getSubmitDataRecipient(userNexcell, getActivity());
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
         DateTime currentTime = new DateTime();

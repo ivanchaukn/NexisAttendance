@@ -11,20 +11,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 
 public class SplashActivity extends Activity{
+
+    private boolean networkConnection;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_screen);
+
+        networkConnection = false;
 
 		loadBackgroundData loadData = new loadBackgroundData();
 		loadData.execute();
@@ -42,18 +44,21 @@ public class SplashActivity extends Activity{
 	{
 		final ParseUser currentUser = ParseUser.getCurrentUser();
 
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 if (currentUser != null) {
+
+                    String nexcell = (String) currentUser.get("nexcell");
+                    Data.setupApp(nexcell, networkConnection, SplashActivity.this);
+
                     //Switch to Main Activity
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(i);
 
                     endActivity();
-                }
-                else {
+                } else {
                     //Switch to Login Activity
                     Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(i);
@@ -81,17 +86,12 @@ public class SplashActivity extends Activity{
 
             try
             {
-                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                boolean conn = GeneralOperation.checkNetworkConnection(SplashActivity.this);
 
-                NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-                NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-                if (wifi.getState() != NetworkInfo.State.CONNECTED)
+                if (conn)
                 {
-                    if (mobile != null && mobile.getState() != NetworkInfo.State.CONNECTED)
-                    {
-                        return "NoConnection";
-                    }
+                    networkConnection = true;
+                    return GeneralOperation.checkVersionCode(SplashActivity.this);
                 }
             }
             catch(Exception e)
@@ -99,7 +99,7 @@ public class SplashActivity extends Activity{
                 return e.toString();
             }
 
-            return GeneralOperation.checkVersionCode(SplashActivity.this);
+            return "Success";
         }
  
         @Override
@@ -110,21 +110,11 @@ public class SplashActivity extends Activity{
             {
                 if (result == "Success")
                 {
-                    //Initialize global variables
-                    ParseOperation.saveYearDate(getApplicationContext());
-                    ParseOperation.refreshAttendanceLocalData(null, null, getApplicationContext());
-                    Data.initializeNexcell(getApplicationContext());
-                    Data.initializeSchools(getApplicationContext());
-
                     checkCurrentUser();
                 }
-                else if(result == "NoConnection")
-                {
-                    UIDialog.onCreateSimpleActionDialog(SplashActivity.this, "No Network Connection", "Mobile Data turned off. Connect to Wi-Fi network instead or turn on mobile data and try again.", exitListener);
-                }
 	            else if (result == "Update")
-	            {
-                    GeneralOperation.promptUpdate(getApplicationContext());
+                {
+                    GeneralOperation.promptUpdate(SplashActivity.this);
 	            }
 	            else 
 	            {

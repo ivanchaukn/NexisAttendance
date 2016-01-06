@@ -65,10 +65,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         try
         {
-            String status = GeneralOperation.checkVersionCode(this);
-            if (status == "Update") GeneralOperation.promptUpdate(this);
-
             setupUser();
+
             usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
 
             setContentView(R.layout.activity_main);
@@ -84,12 +82,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
             mNavigationDrawerFragment.updateProfile(fullName, Data.getNexcellLabel(userNexcell));
 
-            // Subscribe the Broadcast push channel
-            ParsePush.subscribeInBackground("");
-            ParsePush.subscribeInBackground(userNexcell);
+            if (GeneralOperation.checkNetworkConnection(this))
+            {
+                // Subscribe the Broadcast push channel
+                ParsePush.subscribeInBackground("");
+                ParsePush.subscribeInBackground(userNexcell);
 
-            ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
-            ParseInstallation.getCurrentInstallation().saveInBackground();
+                ParseInstallation.getCurrentInstallation().put("lastSignIn", userName);
+                ParseInstallation.getCurrentInstallation().saveInBackground();
+            }
         }
         catch (Exception e)
         {
@@ -107,7 +108,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
@@ -130,7 +130,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                                 recipient = userEmail + "," + Constants.SYSTEM_GMAIL;
                                 break;
                             case 1:
-                                recipient = ParseOperation.getNexcellLeadersRecipient(userNexcell, getApplicationContext());
+                                recipient = Data.getNexcellLeadersRecipient(userNexcell, getApplicationContext());
 
                         }
                         contactReportAsync crp = new contactReportAsync();
@@ -233,17 +233,30 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         crp.execute(nexcell, toRep);
     }
 
+    private void setupUser()
+    {
+        ParseUser user = ParseUser.getCurrentUser();
+        userName = user.getUsername();
+        userEmail = user.getEmail();
+        userFirstName = (String) user.get("firstName");
+        userLastName = (String) user.get("lastName");
+        userInitial = (String) user.get("initial");
+        userNexcell = (String) user.get("nexcell");
+
+        Data.saveUserLevels(user, this);
+    }
+
     public class contactReportAsync extends AsyncTask<String, Void, String[]>
     {
-        String filePath;
+        String filePath = getApplication().getFilesDir().getPath() +  "/Nexcell Contact List" + ".xls";
 
         protected void onPreExecute () {
-            filePath = getApplication().getFilesDir().getPath() +  "/Nexcell Contact List" + ".xls";
+            Toast.makeText(MainActivity.this, "Creating Contact List...", Toast.LENGTH_LONG).show();
         }
 
         protected String[] doInBackground(String... info) {
 
-            List<ParseObject> userList = ParseOperation.getUserList(info[0], Arrays.asList(false, false, false, false, false), getApplication());
+            List<ParseObject> userList = ParseOperation.getUserList(info[0], Arrays.asList(false, false, false, false, false), false, getApplication());
 
             ContactForm form = new ContactForm(getApplication(), filePath, userList);
             form.genReport();
@@ -275,8 +288,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         }
     };
 
-    private void sendEmail(String filePath, String nexcell, String recipients)
-    {
+    private void sendEmail(String filePath, String nexcell, String recipients) {
         String toRecipients = recipients;
         String ccRecipients = Constants.SYSTEM_GMAIL;
 
@@ -290,35 +302,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         SendMailAsync sendMail = new SendMailAsync(this);
         sendMail.execute(emailSubject, emailBody, toRecipients, ccRecipients, filePath);
-    }
-
-    private void setupUser()
-    {
-        try {
-            ParseUser user = ParseUser.getCurrentUser();
-            userName = user.getUsername();
-            userEmail = user.getEmail();
-            userFirstName = (String) user.get("firstName");
-            userLastName = (String) user.get("lastName");
-            userInitial = (String) user.get("initial");
-            userNexcell = (String) user.get("nexcell");
-
-            ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("_User");
-            userQuery.whereEqualTo("username", userName);
-            List<ParseObject> obj = userQuery.find();
-
-            SharedPreferences.Editor editor = getSharedPreferences("levels", MODE_PRIVATE).edit();
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(0), obj.get(0).getBoolean("member"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(1), obj.get(0).getBoolean("esm"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(2), obj.get(0).getBoolean("counsellor"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(3), obj.get(0).getBoolean("committee"));
-            editor.putBoolean(Constants.USER_LEVEL_LIST.get(4), obj.get(0).getBoolean("developer"));
-            editor.commit();
-
-        } catch(ParseException e)
-        {
-            UIDialog.onCreateMsgDialog(this, "Error", "User set up error");
-        }
     }
 
     public String getUserNexcell()
@@ -339,16 +322,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public String getUserEmail()
     {
         return userEmail;
-    }
-
-    public void refreshUserMap()
-    {
-        usernameMap = Data.getNexcellMemberNameMap(userNexcell, this);
-    }
-
-    public ArrayMap<String, String> getNexcellUserMap()
-    {
-        return usernameMap;
     }
 
     public void setNexcellUserMap(ArrayMap<String, String> map)

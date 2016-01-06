@@ -22,7 +22,6 @@ public class NexisApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ParseCrashReporting.enable(this);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, Constants.PARSE_APPLICATION_ID, Constants.PARSE_CLEINT_KEY);
     }

@@ -211,6 +211,12 @@ category#com.nexis
 ADDED from AndroidManifest.xml:96:7
 	android:name
 		ADDED from AndroidManifest.xml:96:17
+meta-data#com.parse.push.notification_icon
+ADDED from AndroidManifest.xml:100:9
+	android:resource
+		ADDED from AndroidManifest.xml:100:68
+	android:name
+		ADDED from AndroidManifest.xml:100:20
 activity#android.support.v7.widget.TestActivity
 ADDED from com.android.support:recyclerview-v7:21.0.3:18:9
 	android:label

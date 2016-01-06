@@ -3,9 +3,9 @@ package com.nexis.ExcelReports;
 import android.content.Context;
 import com.nexis.Constants;
 import com.nexis.Data;
-import com.nexis.ParseOperation;
 import com.nexis.UIDialog;
-import com.parse.ParseObject;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
 
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -27,42 +27,42 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class WeeklyReport {
 
-    Context context;
-    String filePath;
+    public Context context;
+    public String filePath;
+	public String date;
+	public String nexcell;
 
     int categoryListSize, nexcellListSize, columnsNum;
 
     List<String> nexcellList;
-    List<ParseObject> nexcellObject;
 
-    List<DateTime> dateList = new ArrayList<>();
-    List<List<Integer>> mainList = new ArrayList<>();
+    List<Double> dateList = new ArrayList<>();
     List<List<Integer>> excelDataList = new ArrayList<>();
 
     HSSFWorkbook wb = new HSSFWorkbook();
     Sheet sheet = wb.createSheet();
 
-    public WeeklyReport(Context actv, String path)
+    public WeeklyReport(Context actv, String nCell)
     {
         context = actv;
-        filePath = path;
+		nexcell = nCell;
+
+		date = new DateTime().toString("yyyy-MM-dd");
+        filePath = actv.getFilesDir().getPath() +  "/Nexis Attendance " + date + ".xls";
     }
 
     public void genReport()
     {
         initializeDateList();
-
         initialize();
-        parseData();
 
-        if (mainList.size() == 0) UIDialog.onCreateInvalidDialog(context, "No data are found! Report cannot be generated");
-
-        reorderRawData();
+		getAggregateData();
         populateSheet();
     }
 
@@ -83,57 +83,49 @@ public class WeeklyReport {
 
         while(sDate.isBefore(DateTime.now()))
         {
-            dateList.add(sDate);
+			double excelDate = DateUtil.getExcelDate(sDate.toCalendar(Locale.CANADA), false);
+            dateList.add(excelDate);
             sDate = sDate.plusWeeks(1);
-        }
+		}
+	}
+
+	private void getAggregateData()
+	{
+		try
+		{
+			HashMap<String, Object> params = new HashMap<>();
+			params.put("start_dt", Constants.NEXIS_START_DATE);
+			params.put("end_dt", Constants.NEXIS_END_DATE);
+			params.put("date_list", dateList);
+			params.put("cat_list", Constants.CATEGORY_LIST);
+			params.put("nexcell_list", Data.NEXCELL_ACTIVE_LIST);
+			params.put("include_group", true);
+
+			excelDataList = ParseCloud.callFunction("nexcellAttendance", params);
+
+			for(int i = 0; i < excelDataList.size(); i++) {
+				List<Integer> new_list = excelDataList.get(i);
+				new_list.add(0, dateList.get(i).intValue());
+				excelDataList.set(i, new_list);
+			}
+		}
+		catch(ParseException e)
+		{
+			UIDialog.onCreateErrorDialog(context, e.toString());
+		}
     }
 
-    private void parseData()
-    {
-        for(DateTime i: dateList)
-        {
-            List<Integer> row = new ArrayList<>();
-            List<Integer> hsRow = Arrays.asList(0, 0, 0, 0);
-            List<Integer> uniRow = Arrays.asList(0, 0, 0, 0);
-            List<Integer> nexisRow = Arrays.asList(0, 0, 0, 0);
-
-            for(String j: Data.NEXCELL_ACTIVE_LIST)
-            {
-                for (int k = 0 ; k < Constants.CATEGORY_LIST.size(); k++)
-                {
-                    nexcellObject = ParseOperation.getNexcellData(j, Constants.CATEGORY_LIST.get(k), i, true, context);
-                    int members = nexcellObject.size();
-
-                    if (Data.getNexcellStage(j).equals(Constants.HS_STRING)) hsRow.set(k, hsRow.get(k) + members);
-                    else uniRow.set(k, uniRow.get(k) + members);
-
-                    nexisRow.set(k, nexisRow.get(k) + members);
-                    row.add(members);
-                }
-            }
-
-            row.addAll(hsRow);
-            row.addAll(uniRow);
-            row.addAll(nexisRow);
-            mainList.add(row);
-        }
-    }
-
-    private void reorderRawData()
-    {
-        for(int i = 0; i < dateList.size(); i++)
-        {
-            List<Integer> subDataList = new ArrayList<>();
-
-            double excelDate = DateUtil.getExcelDate(dateList.get(i).toCalendar(Locale.CANADA), false);
-
-            subDataList.add((int) Math.floor(excelDate)); //Add date to the row
-
-            subDataList.addAll(mainList.get(i)); //Append the entire row to subDataList
-
-            excelDataList.add(subDataList);
-        }
-    }
+	private void setColor()
+	{
+		HSSFPalette palette = wb.getCustomPalette();
+		palette.setColorAtIndex(HSSFColor.BLUE_GREY.index, (byte) 55, (byte) 96, (byte) 145);
+		palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 83, (byte) 142, (byte) 213);
+		palette.setColorAtIndex(HSSFColor.ORANGE.index, (byte) 228, (byte) 109, (byte) 10);
+		palette.setColorAtIndex(HSSFColor.LIGHT_ORANGE.index, (byte) 252, (byte) 213, (byte) 180);
+		palette.setColorAtIndex(HSSFColor.TURQUOISE.index, (byte) 182, (byte) 221, (byte) 232);
+		palette.setColorAtIndex(HSSFColor.LIGHT_TURQUOISE.index, (byte) 219, (byte) 229, (byte) 241);
+		palette.setColorAtIndex(HSSFColor.PLUM.index, (byte) 204, (byte) 192, (byte) 218);
+	}
 
 	private void populateSheet()
 	{
@@ -144,28 +136,21 @@ public class WeeklyReport {
 			
 			//FONT STYLE
 			Font whiteFont12 = wb.createFont();
-			whiteFont12.setFontHeightInPoints((short)12);
+			whiteFont12.setFontHeightInPoints((short) 12);
 			whiteFont12.setColor(IndexedColors.WHITE.index);
 
 			Font Font11 = wb.createFont();
-			Font11.setFontHeightInPoints((short)11);
+			Font11.setFontHeightInPoints((short) 11);
 
 			Font Font10 = wb.createFont();
-			Font10.setFontHeightInPoints((short)10);
+			Font10.setFontHeightInPoints((short) 10);
 
 			Font whiteBoldFont12 = wb.createFont();
-			whiteBoldFont12.setFontHeightInPoints((short)12);
+			whiteBoldFont12.setFontHeightInPoints((short) 12);
 			whiteBoldFont12.setColor(IndexedColors.WHITE.index);
 			whiteBoldFont12.setBoldweight(Font.BOLDWEIGHT_BOLD);
-			
-			HSSFPalette palette = wb.getCustomPalette();
-			palette.setColorAtIndex(HSSFColor.BLUE_GREY.index, (byte) 55, (byte) 96, (byte) 145);
-			palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 83, (byte) 142, (byte) 213);
-			palette.setColorAtIndex(HSSFColor.ORANGE.index, (byte) 228, (byte) 109, (byte) 10);
-			palette.setColorAtIndex(HSSFColor.LIGHT_ORANGE.index, (byte) 252, (byte) 213, (byte) 180);
-			palette.setColorAtIndex(HSSFColor.TURQUOISE.index, (byte) 182, (byte) 221, (byte) 232);
-			palette.setColorAtIndex(HSSFColor.LIGHT_TURQUOISE.index, (byte) 219, (byte) 229, (byte) 241);
-			palette.setColorAtIndex(HSSFColor.PLUM.index, (byte) 204, (byte) 192, (byte) 218);
+
+			setColor();
 			
 			//Table Title Cell Style
 			CellStyle tableTitleStyle = wb.createCellStyle();
@@ -272,7 +257,7 @@ public class WeeklyReport {
 			Cell titleCell = titleRow.createCell(1);
 			titleCell.setCellStyle(tableTitleStyle);
 
-			titleCell.setCellValue("Nexis Attendance Summary");
+			titleCell.setCellValue(Constants.NEXIS_STRING + " Attendance Summary");
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, columnsNum));
 
             Row nexcellRow = sheet.createRow(1);
@@ -292,8 +277,8 @@ public class WeeklyReport {
                 sheet.addMergedRegion(new CellRangeAddress(1, 1, (1 + i * categoryListSize), (i + 1) * categoryListSize));
 
                 //Assign Nexcell level title cell style
-                if (nexcellName == "HighSchool" || nexcellName == "University") nCell.setCellStyle(nexcellOrangeStyle);
-                else if (nexcellName == "Nexis") nCell.setCellStyle(nexcellRedStyle);
+                if (nexcellName == Constants.HS_STRING|| nexcellName == Constants.UNI_STRING) nCell.setCellStyle(nexcellOrangeStyle);
+                else if (nexcellName == Constants.NEXIS_STRING) nCell.setCellStyle(nexcellRedStyle);
                 else if (i%2 == 0) nCell.setCellStyle(nexcellDarkBlueStyle);
                 else nCell.setCellStyle(nexcellLightBlueStyle);
 
@@ -330,8 +315,8 @@ public class WeeklyReport {
 					else currentStyle.cloneStyleFrom(dataBlueStyle);
 
 					//data level cell borders
-					if ((j-1)%4 == 0) currentStyle.setBorderLeft(CellStyle.BORDER_MEDIUM);
-					else if (j%4 == 0) currentStyle.setBorderRight(CellStyle.BORDER_MEDIUM);
+					if ((j - 1) % 4 == 0) currentStyle.setBorderLeft(CellStyle.BORDER_MEDIUM);
+					else if (j % 4 == 0) currentStyle.setBorderRight(CellStyle.BORDER_MEDIUM);
 					
 					if (i == excelDataList.size() - 1) currentStyle.setBorderBottom(CellStyle.BORDER_MEDIUM);
 					

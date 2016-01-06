@@ -1,17 +1,13 @@
 package com.nexis;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.net.Uri;
 import android.support.v4.util.ArrayMap;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -32,17 +28,17 @@ public class Data {
         // restrict instantiation
     }
 
-    public static String getNexcellLabel(String nexcell)
+    static public String getNexcellLabel(String nexcell)
     {
         return (String) NEXCELL_DETAILS.get(nexcell).get(0);
     }
 
-    public static String getNexcellStage(String nexcell)
+    static public String getNexcellStage(String nexcell)
     {
         return (String) NEXCELL_DETAILS.get(nexcell).get(1);
     }
 
-    public static List<String> getLabels(List<String> nexcellList)
+    static public List<String> getLabels(List<String> nexcellList)
     {
         List<String> labels = new ArrayList<>();
 
@@ -51,10 +47,10 @@ public class Data {
         return labels;
     }
 
-    public static void initializeSchools(Context context)
+    static public void initializeSchools(Context context)
     {
         SCHOOL_LIST = new ArrayList<>();
-        List<ParseUser> nexcellObject = ParseOperation.getSchools(context);
+        List<ParseUser> nexcellObject = ParseOperation.getSchools(true, context);
 
         for (ParseObject x : nexcellObject)
         {
@@ -63,9 +59,9 @@ public class Data {
         }
     }
 
-    public static void initializeNexcell(Context context)
+    static public void initializeNexcell(Context context)
     {
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellList(false, context);
+        List<ParseObject> nexcellObject = ParseOperation.getNexcellList(false, true, context);
 
         List<String> chdgroupsList = new ArrayList<>();
         for (ParseObject x : nexcellObject)
@@ -100,10 +96,100 @@ public class Data {
         }
     }
 
+    static public void setupApp(String nexcell, boolean conn, Context context)
+    {
+        if (conn) Data.syncAllData(nexcell, context);
+
+        //Initialize global variables
+        Data.setYearDate(context);
+        Data.initializeNexcell(context);
+        Data.initializeSchools(context);
+    }
+
+    static public void syncYearDate(Context actv) {
+        ParseOperation.getYearDate(false, actv);
+    }
+
+    static public void syncNexcellData(String nexcell, DateTime date, Context actv) {
+        ParseOperation.getUserAttendance(nexcell, null, date, false, actv);
+    }
+
+    static public void syncUserList(String nexcell, Context actv) {
+        ParseOperation.getUserList(nexcell, Arrays.asList(false, false, false, false, false), false, actv);
+    }
+
+    static public void syncNexcellList(Context actv) {
+        ParseOperation.getNexcellList(false, false, actv);
+    }
+
+    static public void syncSchoolList(Context actv) {
+        ParseOperation.getSchools(false, actv);
+    }
+
+    static public void syncAllData(String nexcell, Context actv) {
+        syncYearDate(actv);
+        syncNexcellData(nexcell, null, actv);
+        syncUserList(nexcell, actv);
+        syncNexcellList(actv);
+        syncSchoolList(actv);
+    }
+
+    static private String extractEmail(List<ParseObject> list) {
+        List<String> emails = new ArrayList<>();
+
+        for(ParseObject x: list) emails.add(x.get("email").toString());
+
+        String recipients = StringUtils.join(emails, ", ");
+
+        return recipients;
+    }
+
+    static public String getSubmitDataRecipient(String nexcell, Context actv) {
+        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(false, true, true, false, false), true, actv);
+
+        return extractEmail(users);
+    }
+
+    static public String getCommCounsRecipient(Context actv) {
+        List<ParseObject> users = ParseOperation.getUserList(null, Arrays.asList(false, false, true, true, false), true, actv);
+
+        return extractEmail(users);
+    }
+
+    static public String getNexcellLeadersRecipient(String nexcell, Context actv) {
+        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(false, true, true, false, false), true, actv);
+
+        return extractEmail(users);
+    }
+
+    static public String getNewComerFormRecipient(String nexcell, Context actv) {
+        return getCommCounsRecipient(actv) + "," + getNexcellLeadersRecipient(nexcell, actv);
+    }
+
+    static public void setYearDate(Context actv) {
+        List<ParseObject> obj = ParseOperation.getYearDate(true, actv);
+
+        Constants.NEXIS_START_DATE = obj.get(0).getDate("Start_Date");
+        Constants.NEXIS_END_DATE = obj.get(0).getDate("End_Date");
+    }
+
+    static public void saveUserLevels(ParseUser user, Context actv) {
+
+        SharedPreferences.Editor editor = actv.getSharedPreferences("levels", actv.MODE_PRIVATE).edit();
+
+        editor.putBoolean(Constants.USER_LEVEL_LIST.get(0), user.getBoolean("member"));
+        editor.putBoolean(Constants.USER_LEVEL_LIST.get(1), user.getBoolean("esm"));
+        editor.putBoolean(Constants.USER_LEVEL_LIST.get(2), user.getBoolean("counsellor"));
+        editor.putBoolean(Constants.USER_LEVEL_LIST.get(3), user.getBoolean("committee"));
+        editor.putBoolean(Constants.USER_LEVEL_LIST.get(4), user.getBoolean("developer"));
+
+        editor.commit();
+    }
+
     public static ArrayMap<String, String> getNexcellMemberNameMap(String nexcell, Context actv)
     {
         ArrayMap<String, String> names = new ArrayMap<>();
-        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(false, false, false, false, false), actv);
+        List<ParseObject> users = ParseOperation.getUserList(nexcell, Arrays.asList(false, false, false, false, false), true, actv);
 
         for(ParseObject x : users)
         {

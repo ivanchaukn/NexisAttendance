@@ -1,6 +1,7 @@
 package com.nexis.Fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.nexis.Data;
 import com.nexis.DescriptionList.DescListAdapter;
 import com.nexis.DescriptionList.DescListItem;
 import com.nexis.ExcelReports.WeeklyReport;
+import com.nexis.GeneralOperation;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -97,15 +99,16 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                                 recipient = selfEmail;
                                 break;
                             case 1:
-                                recipient = ParseOperation.getCommCounsRecipient(getActivity());
+                                recipient = Data.getCommCounsRecipient(getActivity());
 
                         }
 
-                        ParseOperation.refreshAttendanceLocalData(null, null, getActivity());
-
-                        Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
-                        weeklyReportAsync report = new weeklyReportAsync();
-                        report.execute(recipient);
+                        if (GeneralOperation.checkNetworkConnection(getActivity())) {
+                            weeklyReportAsync report = new weeklyReportAsync();
+                            report.execute(null, recipient);
+                        } else {
+                            UIDialog.onCreateErrorDialog(getActivity(), "Please connect to internet before generating any reports!");
+                        }
                     }
                 });
                 break;
@@ -124,12 +127,16 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
                                 recipient = selfEmail;
                                 break;
                             case 1:
-                                recipient = ParseOperation.getCommCounsRecipient(getActivity());
+                                recipient = Data.getCommCounsRecipient(getActivity());
 
                         }
 
-                        Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
-                        ((MainActivity) getActivity()).genContactReport(null, recipient);
+                        if (GeneralOperation.checkNetworkConnection(getActivity())) {
+                            Toast.makeText(getActivity(), "Creating Report...", Toast.LENGTH_SHORT).show();
+                            ((MainActivity) getActivity()).genContactReport(null, recipient);
+                        } else {
+                            UIDialog.onCreateErrorDialog(getActivity(), "Please connect to internet before generating any reports!");
+                        }
                     }
                 });
         }
@@ -139,18 +146,25 @@ public class FragmentAdmin extends DialogFragment implements AdapterView.OnItemC
     {
         String today = new DateTime().toString("yyyy-MM-dd");
         String filePath = getActivity().getFilesDir().getPath() +  "/Nexis Attendance " + today + ".xls";
+        ProgressDialog pDialog;
+
+        protected void onPreExecute() {
+            pDialog = ProgressDialog.show(getActivity(), "Please wait ...", "Creating Weekly Report ...", true);
+            pDialog.setCancelable(false);
+        }
 
         protected String doInBackground(String... info) {
             List<String> nexcellTitles = new ArrayList<>(Data.NEXCELL_LIST);
             nexcellTitles.addAll(Constants.NEXCELL_CATEGORY_LIST);
 
-            WeeklyReport report = new WeeklyReport(getActivity(), filePath);
+            WeeklyReport report = new WeeklyReport(getActivity(), info[0]);
             report.genReport();
 
-            return info[0];
+            return info[1];
         }
 
         protected void onPostExecute(String rep) {
+            pDialog.dismiss();
             SendMailAsync sendMail = new SendMailAsync(getActivity());
             sendMail.execute("Nexis Weekly Attendance Report", "Nexis Weekly Attendance Report for " + today , rep, Constants.SYSTEM_GMAIL, filePath);
         }

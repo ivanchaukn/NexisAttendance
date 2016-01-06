@@ -6,11 +6,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 public class GeneralOperation {
 
-    public static String checkVersionCode(Context actv)
+    static public boolean checkNetworkConnection(Context actv)
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) actv.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (wifi.getState() == NetworkInfo.State.CONNECTED ||
+                mobile.getState() == NetworkInfo.State.CONNECTED)
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static public String checkVersionCode(Context actv)
     {
         try
         {
@@ -28,7 +46,7 @@ public class GeneralOperation {
         }
     }
 
-    public static void promptUpdate(final Context actv)
+    static public void promptUpdate(final Context actv)
     {
         UIDialog.onCreateSimpleActionDialog(actv, "Update app", "A new version is available. Please update through google play!", new DialogInterface.OnClickListener() {
 
@@ -40,13 +58,13 @@ public class GeneralOperation {
         });
     }
 
-    public static boolean getCacheLevel(Context actv, String lev)
+    static public boolean getCacheLevel(Context actv, String lev)
     {
         SharedPreferences cache = actv.getSharedPreferences("levels", Context.MODE_PRIVATE);
         return cache.getBoolean(lev, false);
     }
 
-    public static boolean hasRole(Context actv)
+    static public boolean hasRole(Context actv)
     {
         for(String x : Constants.USER_LEVEL_LIST)
         {

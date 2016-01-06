@@ -19,7 +19,6 @@ import com.gc.materialdesign.views.ButtonRectangle;
 import com.nexis.Constants;
 import com.nexis.Data;
 import com.nexis.GeneralOperation;
-import com.nexis.NexisApplication;
 import com.nexis.ParseOperation;
 import com.nexis.R;
 import com.nexis.SendMailAsync;
@@ -50,18 +49,20 @@ public class StatusActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
 
+        nexcellList = new ArrayList<>();
+        statusList = new ArrayList<>();
+
         ESMVal = GeneralOperation.getCacheLevel(this, "esm");
         counsVal = GeneralOperation.getCacheLevel(this, "counsellor");
         devVal= GeneralOperation.getCacheLevel(this, "developer");
 
-        ParseOperation.refreshAttendanceLocalData(null, date, this);
+        setupDate();
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-
-        nexcellList = new ArrayList<>();
-        statusList = new ArrayList<>();
+        if (GeneralOperation.checkNetworkConnection(this)) Data.syncNexcellData(null, date, this);
 
         setupNexcell();
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
 
         mToolbar.setTitle("Real-Time Status " + date.toString("MMM-dd"));
 
@@ -91,14 +92,17 @@ public class StatusActivity extends ActionBarActivity {
         lv.setAdapter(adapter);
     }
 
-    public void setupNexcell()
+    private void setupDate()
     {
         date = new DateTime(DateTimeZone.UTC);
         if (date.getDayOfWeek() < DateTimeConstants.FRIDAY) date = date.minusWeeks(1);
         date = date.withDayOfWeek(DateTimeConstants.FRIDAY);
         date = date.withTimeAtStartOfDay();
+    }
 
-        List<ParseObject> nexcellObject = ParseOperation.getNexcellData(null, "Fellowship", date, true, this);
+    public void setupNexcell()
+    {
+        List<ParseObject> nexcellObject = ParseOperation.getUserAttendance(null, null, date, true, this);
         List<String> dataNexcell = new ArrayList<>();
 
         for (ParseObject x: nexcellObject)
@@ -129,7 +133,7 @@ public class StatusActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int id) {
                 SendMailAsync sendMail = new SendMailAsync(getApplicationContext());
 
-                String toRecipients = ParseOperation.getSubmitDataRecipient(nexcell, getApplicationContext());
+                String toRecipients = Data.getSubmitDataRecipient(nexcell, getApplicationContext());
                 String ccRecipients = Constants.SYSTEM_GMAIL;
 
                 sendMail.execute("SUBMIT ATTENDANCE ASAP", "Please submit the attendance for " + date.toString("YYYY-MM-dd"), toRecipients, ccRecipients, "");
